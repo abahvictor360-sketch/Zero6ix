@@ -2,10 +2,10 @@ export const site = {
   name: "Web Purchase",
   tagline: "Pay for anything online, in any currency",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  email: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@webpurchase.ng",
-  phone: process.env.NEXT_PUBLIC_SUPPORT_PHONE ?? "+234 800 000 0000",
-  whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000").replace(/\D/g, ""),
-  address: process.env.NEXT_PUBLIC_OFFICE_ADDRESS ?? "Plot 5, Admiralty Way, Lekki Phase 1, Lagos, Nigeria",
+  email: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "zero6ixlimited@gmail.com",
+  phone: process.env.NEXT_PUBLIC_SUPPORT_PHONE ?? "+234 803 617 7408",
+  whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348036177408").replace(/\D/g, ""),
+  address: process.env.NEXT_PUBLIC_OFFICE_ADDRESS ?? "28 Chief Charles Street, off Peace Drive, Trans Amadi, Port Harcourt, Rivers State, Nigeria",
   rcNumber: process.env.NEXT_PUBLIC_RC_NUMBER ?? "RC 0000000",
 };
 

@@ -50,7 +50,7 @@ export default function TermsPage() {
       <p>We may update these Terms from time to time. Material changes will be notified by email or in your dashboard. Continued use after changes take effect means you accept them.</p>
 
       <h2>10. Governing law</h2>
-      <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Disputes will first be addressed through our support team and, failing resolution, by the courts of Lagos State.</p>
+      <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Disputes will first be addressed through our support team and, failing resolution, by the courts of Rivers State.</p>
 
       <h2>11. Contact</h2>
       <p>{site.name}, {site.address}. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>

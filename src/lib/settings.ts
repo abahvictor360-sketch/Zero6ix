@@ -25,12 +25,12 @@ export const DEFAULT_RATES: ExchangeRate[] = [
 ];
 
 export const DEFAULT_SHIPPING: ShippingRate[] = [
-  { id: "us", origin_region: "US", label: "United States → Lagos", rate_per_kg_usd: 12.5, min_charge_usd: 25, delivery_days_min: 7, delivery_days_max: 14 },
-  { id: "uk", origin_region: "UK", label: "United Kingdom → Lagos", rate_per_kg_usd: 9.5, min_charge_usd: 20, delivery_days_min: 5, delivery_days_max: 10 },
-  { id: "ca", origin_region: "CA", label: "Canada → Lagos", rate_per_kg_usd: 14, min_charge_usd: 30, delivery_days_min: 10, delivery_days_max: 18 },
-  { id: "eu", origin_region: "EU", label: "Europe (DE/FR/NL) → Lagos", rate_per_kg_usd: 11, min_charge_usd: 25, delivery_days_min: 7, delivery_days_max: 14 },
-  { id: "cn", origin_region: "CN", label: "China → Lagos", rate_per_kg_usd: 8, min_charge_usd: 15, delivery_days_min: 14, delivery_days_max: 28 },
-  { id: "ae", origin_region: "AE", label: "UAE (Dubai) → Lagos", rate_per_kg_usd: 7.5, min_charge_usd: 15, delivery_days_min: 5, delivery_days_max: 10 },
+  { id: "us", origin_region: "US", label: "United States → Nigeria", rate_per_kg_usd: 12.5, min_charge_usd: 25, delivery_days_min: 7, delivery_days_max: 14 },
+  { id: "uk", origin_region: "UK", label: "United Kingdom → Nigeria", rate_per_kg_usd: 9.5, min_charge_usd: 20, delivery_days_min: 5, delivery_days_max: 10 },
+  { id: "ca", origin_region: "CA", label: "Canada → Nigeria", rate_per_kg_usd: 14, min_charge_usd: 30, delivery_days_min: 10, delivery_days_max: 18 },
+  { id: "eu", origin_region: "EU", label: "Europe (DE/FR/NL) → Nigeria", rate_per_kg_usd: 11, min_charge_usd: 25, delivery_days_min: 7, delivery_days_max: 14 },
+  { id: "cn", origin_region: "CN", label: "China → Nigeria", rate_per_kg_usd: 8, min_charge_usd: 15, delivery_days_min: 14, delivery_days_max: 28 },
+  { id: "ae", origin_region: "AE", label: "UAE (Dubai) → Nigeria", rate_per_kg_usd: 7.5, min_charge_usd: 15, delivery_days_min: 5, delivery_days_max: 10 },
 ];
 
 /** Anonymous (public) client — RLS limits it to public reference data. */

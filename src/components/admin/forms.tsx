@@ -82,7 +82,7 @@ export function ShippingRateForm({ rate }: { rate?: ShippingRate }) {
     <form action={action} className="grid items-end gap-2 sm:grid-cols-[70px_1.5fr_1fr_1fr_80px_80px_auto_auto]">
       <div className="sm:col-span-8">{state.error && <FormMessage state={state} />}</div>
       <input name="origin_region" defaultValue={rate?.origin_region} readOnly={!!rate} className="input uppercase" placeholder="US" aria-label="Origin code" required />
-      <input name="label" defaultValue={rate?.label} className="input" placeholder="United States → Lagos" aria-label="Label" required />
+      <input name="label" defaultValue={rate?.label} className="input" placeholder="United States → Nigeria" aria-label="Label" required />
       <input name="rate_per_kg_usd" defaultValue={rate?.rate_per_kg_usd} className="input" placeholder="$/kg" aria-label="Rate per kg USD" required />
       <input name="min_charge_usd" defaultValue={rate?.min_charge_usd} className="input" placeholder="Min $" aria-label="Minimum charge USD" required />
       <input name="delivery_days_min" defaultValue={rate?.delivery_days_min} className="input" placeholder="Min days" aria-label="Min days" required />

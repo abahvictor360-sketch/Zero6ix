@@ -16,7 +16,7 @@ const FLOW = [
   { icon: ShoppingBag, t: "We buy it", d: "We order from the store using our foreign accounts." },
   { icon: Warehouse, t: "Received abroad", d: "Your item arrives at our hub, gets weighed and inspected." },
   { icon: Plane, t: "Shipped to Nigeria", d: "Air freight with tracking number and customs clearance." },
-  { icon: Home, t: "Delivered", d: "Door delivery nationwide or pickup in Lagos." },
+  { icon: Home, t: "Delivered", d: "Door delivery nationwide or pickup at our Port Harcourt office." },
 ];
 
 export default async function ShopAndShipPage() {

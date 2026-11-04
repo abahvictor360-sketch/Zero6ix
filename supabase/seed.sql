@@ -28,12 +28,12 @@ insert into public.exchange_rates (currency, name, symbol, buy_rate, sell_rate, 
 on conflict (currency) do nothing;
 
 insert into public.shipping_rates (origin_region, label, rate_per_kg_usd, min_charge_usd, delivery_days_min, delivery_days_max, sort_order) values
-  ('US', 'United States → Lagos', 12.50, 25, 7, 14, 1),
-  ('UK', 'United Kingdom → Lagos', 9.50, 20, 5, 10, 2),
-  ('CA', 'Canada → Lagos', 14.00, 30, 10, 18, 3),
-  ('EU', 'Europe (DE/FR/NL) → Lagos', 11.00, 25, 7, 14, 4),
-  ('CN', 'China → Lagos', 8.00, 15, 14, 28, 5),
-  ('AE', 'UAE (Dubai) → Lagos', 7.50, 15, 5, 10, 6)
+  ('US', 'United States → Nigeria', 12.50, 25, 7, 14, 1),
+  ('UK', 'United Kingdom → Nigeria', 9.50, 20, 5, 10, 2),
+  ('CA', 'Canada → Nigeria', 14.00, 30, 10, 18, 3),
+  ('EU', 'Europe (DE/FR/NL) → Nigeria', 11.00, 25, 7, 14, 4),
+  ('CN', 'China → Nigeria', 8.00, 15, 14, 28, 5),
+  ('AE', 'UAE (Dubai) → Nigeria', 7.50, 15, 5, 10, 6)
 on conflict (origin_region) do nothing;
 
 insert into public.prohibited_keywords (keyword, category, severity) values

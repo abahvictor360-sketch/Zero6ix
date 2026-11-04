@@ -29,7 +29,7 @@ export default function AboutPage() {
       <section className="container grid gap-10 py-16 lg:grid-cols-2">
         <div className="muted space-y-4 text-lg leading-8">
           <p>
-            {site.name} is a Lagos-based &quot;pay-for-me&quot; and shop-and-ship service. Students use us for exam and application fees,
+            {site.name} is a Port Harcourt-based &quot;pay-for-me&quot; and shop-and-ship service. Students use us for exam and application fees,
             freelancers for software and ad credits, and organisations — schools, NGOs and SMEs — to pay for team tools in bulk with
             proper invoices and monthly statements.
           </p>

@@ -53,8 +53,7 @@ async function rest<T>(query: string, init: RequestInit = {}): Promise<T> {
     ...init,
     cache: "no-store",
     headers: {
-      apikey: key(),
-      Authorization: `Bearer ${key()}`,
+      ...supabaseAuthHeaders(key()),
       "Content-Type": "application/json",
       Prefer: "return=representation",
       ...init.headers,
@@ -99,4 +98,12 @@ export async function findByInvoice(invoiceNumber: string, email: string) {
   if (!/^[A-Z0-9-]{3,40}$/i.test(inv)) return null;
   const [row] = await rest<Row[]>(`?invoice_number=ilike.${encodeURIComponent(inv)}&email=${eq(String(email).trim().toLowerCase())}&limit=1`);
   return toOrder(row);
+}
+
+/**
+ * Legacy keys (JWTs, "eyJ...") go in both headers; the newer sb_publishable_ /
+ * sb_secret_ keys must only be sent as `apikey` (they are not JWTs).
+ */
+export function supabaseAuthHeaders(k: string): Record<string, string> {
+  return k.startsWith("eyJ") ? { apikey: k, Authorization: `Bearer ${k}` } : { apikey: k };
 }

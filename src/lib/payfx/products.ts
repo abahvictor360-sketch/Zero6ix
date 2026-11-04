@@ -2,6 +2,7 @@ import "server-only";
 import { ITEMS, type LogoKey, type PayfxItem } from "./catalog";
 import { LOGOS } from "./icons";
 import { envValue } from "@/lib/env";
+import { supabaseAuthHeaders } from "./store";
 
 /**
  * Products come from the leadloop Supabase table public.payfx_products
@@ -20,7 +21,7 @@ export async function getProducts(): Promise<{ items: PayfxItem[]; source: "data
   if (!base() || !anonKey()) return { items: ITEMS, source: "built-in" };
   try {
     const res = await fetch(`${base()}/rest/v1/payfx_products?select=*&active=eq.true&order=sort_order.asc`, {
-      headers: { apikey: anonKey(), Authorization: `Bearer ${anonKey()}` },
+      headers: supabaseAuthHeaders(anonKey()),
       next: { revalidate: 60 },
       signal: AbortSignal.timeout(8000),
     });

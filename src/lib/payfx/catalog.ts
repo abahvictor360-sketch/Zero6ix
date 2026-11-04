@@ -11,8 +11,15 @@ export const CURRENCIES: Record<CurrencyCode, { code: CurrencyCode; symbol: stri
   USD: { code: "USD", symbol: "US$", perNgn: 1 / EXCHANGE_RATE },
 };
 
+/** Currency table for a given USD rate (the admin can change the rate). */
+export const currenciesFor = (usdRate: number): typeof CURRENCIES => ({
+  NGN: CURRENCIES.NGN,
+  USD: { ...CURRENCIES.USD, perNgn: 1 / usdRate },
+});
+
 export const round2 = (n: number) => Math.round(n * 100) / 100;
-export const convert = (ngnAmount: number, currency: CurrencyCode) => round2(ngnAmount * CURRENCIES[currency].perNgn);
+export const convert = (ngnAmount: number, currency: CurrencyCode, usdRate = EXCHANGE_RATE) =>
+  round2(ngnAmount * currenciesFor(usdRate)[currency].perNgn);
 
 export type LogoKey = "supabase" | "claude" | "anthropic" | "googlemaps" | "apple" | "hostinger" | "deploy" | "backup" | "monitor" | "test" | "other";
 

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
-import { CURRENCIES, EXCHANGE_RATE, convert, gatewayName, round2, type CurrencyCode } from "@/lib/payfx/catalog";
+import { CURRENCIES, convert, gatewayName, round2, type CurrencyCode } from "@/lib/payfx/catalog";
 import { getProductsById } from "@/lib/payfx/products";
 import { GATEWAYS, type GatewayId } from "@/lib/payfx/gateways";
 import { createOrder, storeConfigured } from "@/lib/payfx/store";
 import { siteBase } from "@/lib/payfx/orders";
+import { getUsdRate } from "@/lib/payfx/settings";
 import { site } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -40,12 +41,12 @@ export async function POST(request: Request) {
   if (!storeConfigured()) return NextResponse.json({ error: "Checkout is not set up yet. Please contact us." }, { status: 503 });
 
   // Prices always come from the server (database or built-in list), never from the browser.
-  const ITEMS_BY_ID = await getProductsById();
+  const [ITEMS_BY_ID, usdRate] = await Promise.all([getProductsById(), getUsdRate()]);
   const ids = [...new Set(Array.isArray(body.items) ? body.items.map(String) : [])].filter((id) => ITEMS_BY_ID.has(id));
   if (!ids.length) return NextResponse.json({ error: "Select at least one item." }, { status: 400 });
   const lines = ids.map((id) => {
     const i = ITEMS_BY_ID.get(id)!;
-    return { id, name: i.name, subtitle: i.subtitle, period: i.period, purpose: i.purpose, amount: convert(i.amount, currency), ngnAmount: i.amount, logo: i.logo };
+    return { id, name: i.name, subtitle: i.subtitle, period: i.period, purpose: i.purpose, amount: convert(i.amount, currency, usdRate), ngnAmount: i.amount, logo: i.logo };
   });
 
   const ref = `PFX-${Date.now().toString(36).toUpperCase()}-${randomBytes(6).toString("hex").toUpperCase()}`;
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
         company: String(body.company ?? "").trim().slice(0, 120),
       },
       currency,
-      rate: EXCHANGE_RATE,
+      rate: usdRate,
       items: lines,
       total: round2(lines.reduce((s, l) => s + l.amount, 0)),
       ngnTotal: lines.reduce((s, l) => s + l.ngnAmount, 0),

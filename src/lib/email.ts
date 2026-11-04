@@ -38,7 +38,8 @@ export async function sendEmail(input: EmailInput): Promise<boolean> {
     console.info(`[email] RESEND_API_KEY not set: skipping "${input.subject}" to ${input.to}`);
     return false;
   }
-  const res = await fetch("https://api.resend.com/emails", {
+  // RESEND_API_URL: test-only override.
+  const res = await fetch(process.env.RESEND_API_URL || "https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({

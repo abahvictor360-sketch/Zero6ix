@@ -19,7 +19,7 @@ export default async function AdminItems({ searchParams }: { searchParams: Promi
     rows = await listProducts();
   } catch (e) {
     error = missingTable(e)
-      ? "The items table does not exist in the database yet. Run supabase/leadloop/payfx_products.sql in the Supabase SQL editor (leadloop project), or approve the setup request."
+      ? "The items table does not exist in the database yet. Run supabase/leadloop/checkout_admin.sql in the Supabase SQL editor (leadloop project), or approve the setup request."
       : e instanceof StoreError ? e.message : "Could not load items.";
   }
   const total = rows.filter((r) => r.active).reduce((s, r) => s + r.amount_ngn, 0);

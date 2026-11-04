@@ -7,6 +7,7 @@ import { fileFrom, uploadFile, validateFile, UploadError } from "@/lib/storage";
 import { notifyStaff } from "@/lib/notifications";
 import { sendEmail } from "@/lib/email";
 import { site } from "@/lib/site";
+import { storeContactMessage } from "@/lib/payfx/admin-store";
 import { contactSchema, formToObject, zodErrorState, type ActionState } from "@/lib/validation";
 
 const ENQUIRY = { service: "Pay for a service", item: "Buy an item", business: "Business / bulk payments", other: "General enquiry" } as const;
@@ -108,8 +109,14 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
     }
   }
 
+  // Keep a copy for the checkout admin (/checkout-admin > Messages) when its database is connected.
+  const stored = await storeContactMessage({
+    name: d.name, email: d.email, phone: d.phone ?? null, country: d.country ?? null,
+    enquiry: ENQUIRY[d.enquiry], subject: d.subject, message: d.message,
+  });
+
   if (!dbReady && !emailReady) {
-    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry])) return { ok: true, message: SENT };
+    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry]) || stored) return { ok: true, message: SENT };
     // Nothing server-side could deliver the message, so let the browser open an email draft.
     return { ok: false, data: { fallback: "mailto" } };
   }
@@ -145,7 +152,7 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
   });
   if (!delivered && !id) {
     // Resend refused (e.g. testing mode before the domain is verified): don't lose the enquiry.
-    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry])) return { ok: true, message: SENT };
+    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry]) || stored) return { ok: true, message: SENT };
     return { ok: false, data: { fallback: "mailto" } };
   }
 

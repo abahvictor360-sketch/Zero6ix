@@ -1,5 +1,6 @@
--- Run on the leadloop Supabase project (holds payfx_orders, shared with payfx.vercel.app).
--- Products sold on webpurchase.app/checkout (edit them at /checkout-admin). Prices in Naira.
+-- Run once in the leadloop Supabase project: SQL Editor > New query > paste > Run.
+-- Safe to run again. Sets up the checkout items and the checkout admin tables.
+-- Items sold on webpurchase.app/checkout (edit them at /checkout-admin). Prices in Naira.
 create table if not exists public.payfx_products (
   id text primary key check (id ~ '^[a-z0-9-]{2,60}$'),
   name text not null,
@@ -37,3 +38,49 @@ on conflict (id) do nothing;
 
 -- Test items are not offered.
 delete from public.payfx_products where is_test;
+
+-- ---------------------------------------------------------------------------
+-- Checkout admin (/checkout-admin). Server-only tables: RLS on, no public
+-- policies, so only the service-role key used by the website can read/write.
+-- ---------------------------------------------------------------------------
+
+-- Settings edited in the admin (e.g. usd_rate).
+create table if not exists public.payfx_settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamptz not null default now(),
+  updated_by text
+);
+alter table public.payfx_settings enable row level security;
+revoke all on public.payfx_settings from anon, authenticated;
+
+-- Who did what in the admin.
+create table if not exists public.payfx_admin_log (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  admin_email text not null,
+  action text not null,
+  target text,
+  details jsonb not null default '{}'::jsonb
+);
+create index if not exists payfx_admin_log_at_idx on public.payfx_admin_log (at desc);
+alter table public.payfx_admin_log enable row level security;
+revoke all on public.payfx_admin_log from anon, authenticated;
+
+-- Contact form messages from webpurchase.app/contact.
+create table if not exists public.payfx_contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name text not null,
+  email text not null,
+  phone text,
+  country text,
+  enquiry text,
+  subject text not null,
+  message text not null,
+  status text not null default 'new' check (status in ('new', 'read', 'replied', 'archived')),
+  notes text
+);
+create index if not exists payfx_contact_messages_created_idx on public.payfx_contact_messages (created_at desc);
+alter table public.payfx_contact_messages enable row level security;
+revoke all on public.payfx_contact_messages from anon, authenticated;

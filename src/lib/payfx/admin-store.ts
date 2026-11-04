@@ -31,7 +31,8 @@ async function rest<T>(path: string, init: RequestInit = {}): Promise<T> {
     const body = (await res.json().catch(() => ({}))) as { message?: string; code?: string };
     throw new StoreError(body.message ?? `Database error ${res.status}`, res.status, body.code);
   }
-  return (res.status === 204 ? [] : res.json()) as Promise<T>;
+  const text = await res.text();
+  return (text ? JSON.parse(text) : []) as T;
 }
 
 /* ---------- Products ---------- */
@@ -94,4 +95,92 @@ export async function listOrders(opts: { status?: "paid" | "pending"; q?: string
   if (q) params.set("or", `(invoice_number.ilike.*${q}*,email.ilike.*${q}*,ref.ilike.*${q}*)`);
   const rows = await rest<OrderRow[]>(`payfx_orders?${params}`);
   return rows.map<OrderSummary>((r) => ({ ...r.data, ref: r.ref, invoiceNumber: r.invoice_number, status: r.status, email: r.email }));
+}
+
+export async function deleteOrder(ref: string) {
+  await rest(`payfx_orders?ref=eq.${encodeURIComponent(ref)}`, { method: "DELETE" });
+}
+
+/* ---------- Activity log ---------- */
+
+export interface LogRow { id: number; at: string; admin_email: string; action: string; target: string | null; details: Record<string, unknown> }
+
+/** Best effort: never blocks an admin action if the log table is missing. */
+export async function logAdmin(adminEmail: string, action: string, target?: string | null, details: Record<string, unknown> = {}) {
+  try {
+    await rest("payfx_admin_log", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ admin_email: adminEmail, action, target: target ?? null, details }) });
+  } catch (e) {
+    console.warn("[checkout-admin] log failed", e instanceof Error ? e.message : e);
+  }
+}
+
+export async function listLog(limit = 200) {
+  return rest<LogRow[]>(`payfx_admin_log?select=*&order=at.desc&limit=${limit}`);
+}
+
+/** True if a sign-in link nonce was already used (recorded in the log). */
+export async function nonceUsed(nonce: string) {
+  try {
+    const rows = await rest<{ id: number }[]>(`payfx_admin_log?select=id&action=eq.sign_in&details->>nonce=eq.${encodeURIComponent(nonce)}&limit=1`);
+    return rows.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+/* ---------- Settings ---------- */
+
+export async function getSettings(): Promise<Record<string, unknown>> {
+  const rows = await rest<{ key: string; value: unknown }[]>("payfx_settings?select=key,value");
+  return Object.fromEntries(rows.map((r) => [r.key, r.value]));
+}
+
+export async function setSetting(k: string, value: unknown, by: string) {
+  await rest("payfx_settings?on_conflict=key", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ key: k, value, updated_at: new Date().toISOString(), updated_by: by }),
+  });
+}
+
+/* ---------- Contact messages ---------- */
+
+export type MessageStatus = "new" | "read" | "replied" | "archived";
+export interface MessageRow {
+  id: string; created_at: string; name: string; email: string; phone: string | null; country: string | null;
+  enquiry: string | null; subject: string; message: string; status: MessageStatus; notes: string | null;
+}
+
+export async function listMessages(status?: MessageStatus | "open") {
+  const filter = status === "open" ? "&status=in.(new,read)" : status ? `&status=eq.${status}` : "";
+  return rest<MessageRow[]>(`payfx_contact_messages?select=*&order=created_at.desc&limit=300${filter}`);
+}
+
+export async function countNewMessages() {
+  try {
+    const rows = await rest<{ id: string }[]>("payfx_contact_messages?select=id&status=eq.new&limit=1000");
+    return rows.length;
+  } catch {
+    return 0;
+  }
+}
+
+export async function updateMessage(id: string, patch: Partial<Pick<MessageRow, "status" | "notes">>) {
+  await rest(`payfx_contact_messages?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify(patch) });
+}
+
+export async function deleteMessage(id: string) {
+  await rest(`payfx_contact_messages?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+/** Called by the public contact form. Returns false (never throws) if it can't store. */
+export async function storeContactMessage(m: Omit<MessageRow, "id" | "created_at" | "status" | "notes">) {
+  if (!adminStoreConfigured()) return false;
+  try {
+    await rest("payfx_contact_messages", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify(m) });
+    return true;
+  } catch (e) {
+    console.warn("[contact] could not store message in leadloop", e instanceof Error ? e.message : e);
+    return false;
+  }
 }

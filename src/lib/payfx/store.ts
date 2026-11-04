@@ -42,6 +42,10 @@ export interface PayfxOrder {
   transactionId?: string;
   channel?: string;
   source?: string;
+  /** Set when an admin records a payment made outside the gateways. */
+  manualPayment?: { method: string; reference: string; note: string; by: string };
+  /** Private note from the admin (never shown to the customer). */
+  adminNote?: string;
 }
 
 const base = () => (envValue("PAYFX_SUPABASE_URL") || envValue("SUPABASE_URL")).replace(/\/$/, "");

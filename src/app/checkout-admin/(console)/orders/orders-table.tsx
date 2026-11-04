@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { money, gatewayName } from "@/lib/payfx/catalog";
 import type { OrderSummary } from "@/lib/payfx/admin-store";
 import { EmptyState, Pill } from "@/components/ui";
@@ -24,7 +25,7 @@ export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
             {orders.map((o) => (
               <tr key={o.ref} className="align-top">
                 <td className="px-4 py-3">
-                  <a href={`/checkout/invoice/${o.ref}`} target="_blank" rel="noreferrer" className="font-semibold text-brand-700 hover:underline dark:text-lime-400">{o.invoiceNumber}</a>
+                  <Link href={`/checkout-admin/orders/${encodeURIComponent(o.ref)}`} className="font-semibold text-brand-700 hover:underline dark:text-lime-400">{o.invoiceNumber}</Link>
                   <div className="text-xs text-slate-500">{gatewayName(o.gateway)}{o.source && !o.source.includes("webpurchase") ? " · payfx.vercel.app" : ""}</div>
                 </td>
                 <td className="px-4 py-3">

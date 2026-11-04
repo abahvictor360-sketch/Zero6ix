@@ -14,6 +14,9 @@ interface Row {
   amount_ngn: number | string; logo: string; is_test: boolean; sort_order: number;
 }
 
+/** Cache tag for the public product list; the admin revalidates it after edits. */
+export const PRODUCTS_TAG = "payfx-products";
+
 const base = () => (envValue("PAYFX_SUPABASE_URL") || envValue("SUPABASE_URL")).replace(/\/$/, "");
 const anonKey = () => envValue("PAYFX_SUPABASE_ANON_KEY");
 
@@ -22,16 +25,16 @@ export async function getProducts(): Promise<{ items: PayfxItem[]; source: "data
   try {
     const res = await fetch(`${base()}/rest/v1/payfx_products?select=*&active=eq.true&is_test=eq.false&order=sort_order.asc`, {
       headers: supabaseAuthHeaders(anonKey()),
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: [PRODUCTS_TAG] },
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) throw new Error(`Supabase ${res.status}`);
     const rows = (await res.json()) as Row[];
     const items = rows
-      .filter((r) => r.logo in LOGOS && Number(r.amount_ngn) > 0)
+      .filter((r) => Number(r.amount_ngn) > 0)
       .map<PayfxItem>((r) => ({
         id: r.id, name: r.name, subtitle: r.subtitle ?? undefined, period: r.period, purpose: r.purpose,
-        amount: Number(r.amount_ngn), logo: r.logo as LogoKey, test: r.is_test || undefined,
+        amount: Number(r.amount_ngn), logo: (r.logo in LOGOS ? r.logo : "other") as LogoKey, test: r.is_test || undefined,
       }));
     return items.length ? { items, source: "database" } : { items: ITEMS, source: "built-in" };
   } catch (e) {

@@ -14,7 +14,7 @@ export const CURRENCIES: Record<CurrencyCode, { code: CurrencyCode; symbol: stri
 export const round2 = (n: number) => Math.round(n * 100) / 100;
 export const convert = (ngnAmount: number, currency: CurrencyCode) => round2(ngnAmount * CURRENCIES[currency].perNgn);
 
-export type LogoKey = "supabase" | "claude" | "anthropic" | "googlemaps" | "apple" | "hostinger" | "deploy" | "backup" | "monitor" | "test";
+export type LogoKey = "supabase" | "claude" | "anthropic" | "googlemaps" | "apple" | "hostinger" | "deploy" | "backup" | "monitor" | "test" | "other";
 
 export interface PayfxItem {
   id: string;

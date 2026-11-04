@@ -31,6 +31,9 @@ export const LOGOS: Record<LogoKey, Logo> = {
     "M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9a4 4 0 0 1-.5 9", "M12 20v-7", "M9.5 15.5 12 13l2.5 2.5",
   ] },
   monitor: { title: "Uptime monitoring", color: "#DC2626", kind: "stroke", paths: ["M3 12h4l2.5-6 4 12 2.5-6H21"] },
+  other: { title: "Service", color: "#0F766E", kind: "stroke", paths: [
+    "M21 8 12 3 3 8v8l9 5 9-5V8z", "M3 8l9 5 9-5", "M12 13v8",
+  ] },
   test: { title: "Test", color: "#6B7280", kind: "stroke", paths: ["M21 12a9 9 0 1 1-18 0a9 9 0 1 1 18 0z", "m8 12.5 2.5 2.5L16 9.5"] },
 };
 

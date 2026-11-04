@@ -1,5 +1,5 @@
 -- Run on the leadloop Supabase project (holds payfx_orders, shared with payfx.vercel.app).
--- Products sold on webpurchase.app/payfx. Prices in Naira.
+-- Products sold on webpurchase.app/checkout (edit them at /checkout-admin). Prices in Naira.
 create table if not exists public.payfx_products (
   id text primary key check (id ~ '^[a-z0-9-]{2,60}$'),
   name text not null,
@@ -7,7 +7,7 @@ create table if not exists public.payfx_products (
   period text not null,
   purpose text not null,
   amount_ngn numeric(14, 2) not null check (amount_ngn > 0),
-  logo text not null check (logo in ('supabase','claude','anthropic','googlemaps','apple','hostinger','deploy','backup','monitor','test')),
+  logo text not null default 'other' check (logo ~ '^[a-z0-9-]{2,40}$'),
   is_test boolean not null default false,
   active boolean not null default true,
   sort_order integer not null default 0,
@@ -32,10 +32,8 @@ insert into public.payfx_products (id, name, subtitle, period, purpose, amount_n
   ('vps-upgrade', 'VPS upgrade', 'Hostinger', '24 months', 'More memory and disk space on the server to handle X Metrics reports and data exports.', 163800, 'hostinger', false, 70),
   ('daily-backup', 'Daily online backup', null, '12 months', 'Encrypted daily copy of all company data, kept off the main server for quick recovery.', 123800, 'backup', false, 80),
   ('monitoring', 'Error and uptime monitoring', null, '6 months', '24/7 checks on every app, with instant alerts to the admin when something fails or goes down.', 110150, 'monitor', false, 90)
-on conflict (id) do update set
-  name = excluded.name, subtitle = excluded.subtitle, period = excluded.period, purpose = excluded.purpose,
-  amount_ngn = excluded.amount_ngn, logo = excluded.logo, is_test = excluded.is_test, sort_order = excluded.sort_order,
-  active = true, updated_at = now();
+-- Seed only: never overwrite edits made in the admin.
+on conflict (id) do nothing;
 
 -- Test items are not offered.
-delete from public.payfx_products where is_test or id = 'website-deployment';
+delete from public.payfx_products where is_test;

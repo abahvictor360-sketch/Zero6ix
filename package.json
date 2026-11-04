@@ -2,7 +2,7 @@
   "name": "web-purchase",
   "version": "1.0.0",
   "private": true,
-  "description": "Web Purchase — Nigerian pay-for-me and shop-and-ship service",
+  "description": "Web Purchase \u2014 Nigerian pay-for-me and shop-and-ship service",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +13,7 @@
     "create-admin": "tsx scripts/create-admin.ts"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

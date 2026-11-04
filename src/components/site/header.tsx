@@ -24,7 +24,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
   useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-900/95 text-white backdrop-blur dark:bg-[#06140f]/90">
+    <header className="sticky top-0 z-40 print:hidden border-b border-white/10 bg-brand-900/95 text-white backdrop-blur dark:bg-[#06140f]/90">
       <div className="container flex h-16 items-center justify-between gap-2 sm:gap-4">
         <Logo light />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">

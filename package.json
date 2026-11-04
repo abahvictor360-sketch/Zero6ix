@@ -2,7 +2,7 @@
   "name": "web-purchase",
   "version": "1.0.0",
   "private": true,
-  "description": "Web Purchase \u2014 Nigerian pay-for-me and shop-and-ship service",
+  "description": "Web Purchase — Nigerian pay-for-me and shop-and-ship service",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -27,6 +27,7 @@
     "react-dom": "^19.1.1",
     "recharts": "^3.10.1",
     "server-only": "^0.0.1",
+    "simple-icons": "^16.36.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

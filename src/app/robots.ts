@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 
-const PRIVATE = ["/dashboard", "/admin", "/pay", "/api", "/auth", "/login", "/signup", "/forgot-password", "/reset-password", "/track"];
+const PRIVATE = ["/dashboard", "/admin", "/pay", "/payfx", "/api", "/auth", "/login", "/signup", "/forgot-password", "/reset-password", "/track"];
 
 /**
  * Search engines and AI answer engines (ChatGPT, Claude, Perplexity, Gemini,

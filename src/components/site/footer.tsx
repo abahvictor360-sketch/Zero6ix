@@ -11,7 +11,7 @@ const COLS = [
 
 export function SiteFooter() {
   return (
-    <footer className="bg-brand-950 text-white">
+    <footer className="bg-brand-950 text-white print:hidden">
       <div className="container grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div>
           <Logo light />

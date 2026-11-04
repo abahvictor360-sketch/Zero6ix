@@ -26,6 +26,8 @@ const LABELS: Record<string, string> = {
   message_note_saved: "Saved message note",
   message_deleted: "Deleted message",
   usd_rate_changed: "Changed USD rate",
+  link_created: "Created payment link",
+  link_emailed: "Emailed payment link",
 };
 
 function describe(r: LogRow) {
@@ -60,7 +62,7 @@ export default async function AdminActivity() {
         <div className="card p-0">
           <ul className="divide-y divide-slate-100 dark:divide-white/10">
             {rows.map((r) => {
-              const isOrder = r.action.startsWith("order_") && r.action !== "order_deleted" && r.target;
+              const isOrder = (r.action.startsWith("order_") || r.action.startsWith("link_")) && r.action !== "order_deleted" && r.target;
               return (
                 <li key={r.id} className="flex flex-col gap-1 px-5 py-3 text-sm sm:flex-row sm:items-center sm:gap-4">
                   <span className="w-40 shrink-0 text-xs text-slate-500">{new Date(r.at).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos" })}</span>

@@ -7,6 +7,10 @@ import { gatewayName, money } from "@/lib/payfx/catalog";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { documentNumber } from "@/lib/payfx/pdf";
 import { Alert, Pill } from "@/components/ui";
+import { site } from "@/lib/site";
+import { publicSiteUrl } from "@/lib/payfx/site-url";
+import { linkExpired } from "@/lib/payfx/store";
+import { ShareLink } from "../../links/share-link";
 import { SubmitButton } from "@/components/forms";
 import {
   deleteOrderAction, emailCustomerAction, markPaidAction, markUnpaidAction, saveOrderNoteAction, verifyOrderAction,
@@ -31,7 +35,7 @@ export default async function AdminOrderPage({ params, searchParams }: {
   params: Promise<{ ref: string }>;
   searchParams: Promise<{ notice?: string; error?: string }>;
 }) {
-  const [{ ref }, sp] = await Promise.all([params, searchParams]);
+  const [{ ref }, sp, base] = await Promise.all([params, searchParams, publicSiteUrl()]);
   let order;
   try {
     order = await getOrder(decodeURIComponent(ref));
@@ -120,6 +124,16 @@ export default async function AdminOrderPage({ params, searchParams }: {
         </div>
 
         <aside className="space-y-6">
+          {!paid && (
+            <section className="card">
+              <h2 className="font-semibold">Payment link</h2>
+              <p className="mt-1 text-xs text-slate-500">{linkExpired(order) ? "This link has expired." : "Send this to the customer to pay with " + (order.gateway === "paystack" ? "Paystack" : "Flutterwave") + "."}</p>
+              <div className="mt-3">
+                <ShareLink compact url={`${base}/checkout/link/${order.ref}`} text={`Hello ${order.customer.name.split(" ")[0]}, here is your ${site.name} payment link for ${money(order.total, order.currency)} (invoice ${order.invoiceNumber}):`} />
+              </div>
+            </section>
+          )}
+
           <section className="card">
             <h2 className="font-semibold">Documents</h2>
             <div className="mt-3 grid gap-2">

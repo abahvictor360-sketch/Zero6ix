@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, LayoutDashboard, Mail, Package, Receipt, Settings, Users } from "lucide-react";
+import { Activity, LayoutDashboard, Link2, Mail, Package, Receipt, Settings, Users } from "lucide-react";
 
 const LINKS = [
   { href: "/checkout-admin", label: "Overview", icon: LayoutDashboard },
   { href: "/checkout-admin/orders", label: "Orders", icon: Receipt },
+  { href: "/checkout-admin/links", label: "Payment links", icon: Link2 },
   { href: "/checkout-admin/items", label: "Items", icon: Package },
   { href: "/checkout-admin/customers", label: "Customers", icon: Users },
   { href: "/checkout-admin/messages", label: "Messages", icon: Mail },

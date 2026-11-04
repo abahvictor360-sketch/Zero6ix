@@ -61,7 +61,7 @@ export default async function AdminOverview() {
 
   return (
     <>
-      <PageHeader title="Overview" description="Checkout payments at a glance." actions={<Link href="/checkout-admin/items/new" className="btn btn-dark btn-sm">Add item</Link>} />
+      <PageHeader title="Overview" description="Checkout payments at a glance." actions={<><Link href="/checkout-admin/items/new" className="btn btn-outline btn-sm">Add item</Link><Link href="/checkout-admin/links/new" className="btn btn-dark btn-sm">Create payment link</Link></>} />
       {error && <Alert tone="error" className="mb-6">{error}</Alert>}
 
       {setupDone < setup.length && (

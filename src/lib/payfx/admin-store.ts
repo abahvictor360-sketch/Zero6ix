@@ -88,9 +88,10 @@ export interface OrderSummary extends PayfxOrder { email: string }
 
 interface OrderRow { ref: string; invoice_number: string; status: PayfxOrder["status"]; email: string; data: PayfxOrder }
 
-export async function listOrders(opts: { status?: "paid" | "pending"; q?: string; limit?: number } = {}) {
+export async function listOrders(opts: { status?: "paid" | "pending"; q?: string; limit?: number; linksOnly?: boolean } = {}) {
   const params = new URLSearchParams({ select: "ref,invoice_number,status,email,data", order: "data->>createdAt.desc", limit: String(opts.limit ?? 200) });
   if (opts.status) params.set("status", `eq.${opts.status}`);
+  if (opts.linksOnly) params.set("data->>source", "eq.admin-link");
   const q = opts.q?.trim().replace(/[,()*%]/g, " ").trim();
   if (q) params.set("or", `(invoice_number.ilike.*${q}*,email.ilike.*${q}*,ref.ilike.*${q}*)`);
   const rows = await rest<OrderRow[]>(`payfx_orders?${params}`);

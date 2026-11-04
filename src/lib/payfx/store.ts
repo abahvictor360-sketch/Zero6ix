@@ -1,4 +1,5 @@
 import "server-only";
+import { randomBytes } from "node:crypto";
 import type { CurrencyCode, LogoKey } from "./catalog";
 import { envValue } from "@/lib/env";
 
@@ -46,7 +47,16 @@ export interface PayfxOrder {
   manualPayment?: { method: string; reference: string; note: string; by: string };
   /** Private note from the admin (never shown to the customer). */
   adminNote?: string;
+  /** Set on payment links created in the admin (/checkout/link/<ref>). */
+  link?: { createdBy: string; message?: string; expiresAt?: string };
 }
+
+/** Unguessable order reference, used in invoice and payment-link URLs. */
+export const newOrderRef = () =>
+  `PFX-${Date.now().toString(36).toUpperCase()}-${randomBytes(6).toString("hex").toUpperCase()}`;
+
+export const linkExpired = (o: Pick<PayfxOrder, "status" | "link">) =>
+  o.status !== "paid" && Boolean(o.link?.expiresAt) && new Date(o.link!.expiresAt!).getTime() < Date.now();
 
 const base = () => (envValue("PAYFX_SUPABASE_URL") || envValue("SUPABASE_URL")).replace(/\/$/, "");
 const key = () => envValue("PAYFX_SUPABASE_SERVICE_ROLE_KEY");

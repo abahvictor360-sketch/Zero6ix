@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { GATEWAYS } from "@/lib/payfx/gateways";
-import { getOrder, updateOrder } from "@/lib/payfx/store";
+import { getOrder, linkExpired, updateOrder } from "@/lib/payfx/store";
 import { confirmPayment, siteBase } from "@/lib/payfx/orders";
 import { site } from "@/lib/site";
 
@@ -14,13 +14,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ ref:
   if (!order) return new NextResponse("Invoice not found", { status: 404 });
   const invoice = `${base}/checkout/invoice/${order.ref}`;
   if (order.status === "paid") return NextResponse.redirect(invoice);
+  if (linkExpired(order)) return NextResponse.redirect(`${base}/checkout/link/${order.ref}`);
   try {
     // The previous attempt may have gone through after all.
     order = (await confirmPayment(order.payRef).catch(() => null)) ?? order;
     if (order.status === "paid") return NextResponse.redirect(invoice);
     const attempts = (order.attempts ?? 0) + 1;
     order = (await updateOrder(order.ref, { attempts, payRef: `${order.ref}-R${attempts}` }))!;
-    const callback = `${base}/checkout/callback/${order.payRef}`;
+    const callback = `${base}/checkout/callback/${order.payRef}`; // returns to the invoice or payment-link page
     const url = order.gateway === "paystack"
       ? await GATEWAYS.paystack.initialize(order, callback)
       : await GATEWAYS.flutterwave.initialize(order, callback, site.name);

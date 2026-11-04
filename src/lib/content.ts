@@ -132,7 +132,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
 
 export const ITEM_STORES = ["Amazon", "eBay", "AliExpress", "Walmart", "Best Buy", "ASOS", "Etsy", "Apple Store", "Shein", "Target"];
 
-export interface FaqGroup { title: string; items: { q: string; a: string }[] }
+export interface FaqGroup { title: string; id?: string; items: { q: string; a: string }[] }
 
 export const FAQ_GROUPS: FaqGroup[] = [
   {
@@ -152,6 +152,19 @@ export const FAQ_GROUPS: FaqGroup[] = [
       { q: "How is the price calculated?", a: "Total = (foreign amount × our exchange rate) + service fee (+ shipping for physical items). The quote shows each line and locks the exchange rate for 24 hours." },
       { q: "How do I pay?", a: "You pay through a secure payment link powered by Paystack or Flutterwave, by card, bank transfer or USSD. We never see or store your card details." },
       { q: "What if my quote expires?", a: "Quotes lock the exchange rate for 24 hours. If it expires, just tell us and we'll re-issue it at the current rate." },
+    ],
+  },
+  {
+    title: "Payment links",
+    id: "payment-links",
+    items: [
+      { q: "What is a Web Purchase payment link?", a: "A payment link is a unique, secure web page we create just for you. It shows your name, what you are paying for and the exact amount, and lets you pay with Paystack by card, bank transfer or USSD. No account or sign-up is needed." },
+      { q: "How do I get a payment link?", a: "Contact us with what you want to pay for. Once we agree the amount, we create your link and send it to you by email, WhatsApp or SMS. You can pay straight away from your phone or computer." },
+      { q: "How do I know a payment link is genuine?", a: "Genuine links always start with https://webpurchase.app/checkout/ and show Zero6ix Limited (RC 8922251) and your invoice number. The payment itself happens on Paystack's secure page. We will never ask for your card PIN, OTP or password by phone, email or chat. If you are unsure, contact us at hello@webpurchase.app or +234 803 617 7408 before you pay." },
+      { q: "Can I pay a payment link in US dollars?", a: "Payment links are usually in Naira. If you need to pay in US dollars, tell us when you request the link and we will let you know whether a dollar link is available for your order." },
+      { q: "Does a payment link expire?", a: "Some links have an expiry date, which is shown on the payment page. If your link has expired, contact us for a new one. We may update the amount if the exchange rate has changed." },
+      { q: "What happens after I pay through a link?", a: "The page confirms your payment as soon as Paystack approves it, and you can download your invoice and receipt as PDFs right away. We then complete your order and keep you updated." },
+      { q: "Can someone else pay my link for me?", a: "Yes. Anyone with the link can see the invoice and pay it, so only share it with the person paying on your behalf, such as a parent, sponsor or employer." },
     ],
   },
   {
@@ -176,5 +189,13 @@ export const FAQ_GROUPS: FaqGroup[] = [
 
 export const FAQS = FAQ_GROUPS.flatMap((g) => g.items);
 
+const faq = (q: string) => FAQS.find((f) => f.q === q)!;
 /** The subset shown on the home page. */
-export const HOME_FAQS = [FAQS[0], FAQS[1], FAQS[5], FAQS[7], FAQS[9], FAQS[10]];
+export const HOME_FAQS = [
+  faq("What is Web Purchase?"),
+  faq("What can I pay for with Web Purchase?"),
+  faq("How much does Web Purchase charge?"),
+  faq("How do I pay?"),
+  faq("How long does it take?"),
+  faq("How do I buy from Amazon and ship to Nigeria?"),
+];

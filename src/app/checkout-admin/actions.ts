@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { headers } from "next/headers";
 import { redirect, unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import {
@@ -11,13 +10,15 @@ import {
   createProduct, deleteMessage, deleteOrder, deleteProduct, getProduct, logAdmin, nonceUsed, setSetting,
   StoreError, updateMessage, updateProduct, type MessageStatus,
 } from "@/lib/payfx/admin-store";
-import { getOrder, updateOrder } from "@/lib/payfx/store";
+import { createOrder, getOrder, newOrderRef, storeConfigured, updateOrder } from "@/lib/payfx/store";
+import { GATEWAYS } from "@/lib/payfx/gateways";
 import { confirmPayment } from "@/lib/payfx/orders";
-import { gatewayName, money } from "@/lib/payfx/catalog";
-import { PRODUCTS_TAG } from "@/lib/payfx/products";
-import { SETTINGS_TAG } from "@/lib/payfx/settings";
+import { convert, gatewayName, money, round2 } from "@/lib/payfx/catalog";
+import { getProductsById, PRODUCTS_TAG } from "@/lib/payfx/products";
+import { getUsdRate, SETTINGS_TAG } from "@/lib/payfx/settings";
 import { LOGOS } from "@/lib/payfx/icons";
 import { sendEmail } from "@/lib/email";
+import { publicSiteUrl as siteUrl } from "@/lib/payfx/site-url";
 import { site } from "@/lib/site";
 import { zodErrorState, type ActionState } from "@/lib/validation";
 
@@ -28,14 +29,6 @@ const errText = (e: unknown, fallback = "Something went wrong. Please try again.
       ? "A database table is missing. Run supabase/leadloop/checkout_admin.sql in the Supabase SQL editor (leadloop project)."
       : e.message
     : fallback;
-
-/** Absolute site URL for links in emails. Uses the configured site URL in production (never the request Host). */
-async function siteUrl() {
-  if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  return host ? `${h.get("x-forwarded-proto") ?? "http"}://${host}` : site.url.replace(/\/$/, "");
-}
 
 /* ================= Sign in / out ================= */
 
@@ -272,7 +265,9 @@ export async function emailCustomerAction(form: FormData) {
       paragraphs: kind === "receipt"
         ? [`We have received your payment of ${total} for invoice ${order.invoiceNumber}.`, "You can view and download your receipt using the button below."]
         : [`Here is your invoice ${order.invoiceNumber} for ${total}.`, "You can view it, download a PDF, or pay online using the button below."],
-      cta: { label: kind === "receipt" ? "View receipt" : "View invoice", url: `${base}/checkout/invoice/${order.ref}` },
+      cta: kind === "receipt"
+        ? { label: "View receipt", url: `${base}/checkout/invoice/${order.ref}` }
+        : { label: `View and pay ${total}`, url: `${base}/checkout/link/${order.ref}` },
     });
     if (!ok) msg = { error: "The email could not be sent. Check that RESEND_API_KEY is set." };
     else {
@@ -386,4 +381,101 @@ export async function testEmailAction(): Promise<ActionState> {
     paragraphs: ["This test was sent from the checkout admin settings page."],
   });
   return ok ? { ok: true, message: `Test email sent to ${admin}.` } : { error: "Sending failed. Check RESEND_API_KEY and the Resend domain." };
+}
+
+/* ================= Payment links ================= */
+
+const LinkSchema = z.object({
+  name: z.string().trim().min(2, "Enter the customer's name").max(120),
+  email: z.string().trim().toLowerCase().email("Enter a valid email (Paystack needs it for the receipt)").max(160),
+  phone: z.string().trim().max(40).optional().default(""),
+  company: z.string().trim().max(120).optional().default(""),
+  currency: z.enum(["NGN", "USD"]).default("NGN"),
+  message: z.string().trim().max(500).optional().default(""),
+  expires_days: z.string().optional().transform((v) => Math.max(0, Math.min(90, Math.round(Number(v) || 0)))),
+  send_email: z.string().optional().transform((v) => v === "on"),
+});
+
+export async function createPaymentLinkAction(_: ActionState | null, form: FormData): Promise<ActionState> {
+  const admin = await requireAdmin();
+  const parsed = LinkSchema.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return zodErrorState(parsed.error);
+  const d = parsed.data;
+
+  if (!GATEWAYS.paystack.configured()) return { error: "Paystack is not connected yet. Add PAYSTACK_SECRET_KEY in Vercel and redeploy." };
+  if (!GATEWAYS.paystack.currencies().includes(d.currency)) return { error: `Your Paystack account is set up for ${GATEWAYS.paystack.currencies().join(", ")} only. Choose NGN.` };
+  if (!storeConfigured()) return { error: "The database key is not set, so the link can't be saved." };
+
+  const [products, usdRate] = await Promise.all([getProductsById(), getUsdRate()]);
+  const fieldErrors: Record<string, string[]> = {};
+
+  const catalog = form.getAll("items").map(String).filter((id) => products.has(id)).map((id) => {
+    const i = products.get(id)!;
+    return { id, name: i.name, subtitle: i.subtitle, period: i.period, purpose: i.purpose, ngnAmount: i.amount, logo: i.logo };
+  });
+
+  const custom: typeof catalog = [];
+  for (let n = 0; n < 5; n++) {
+    const desc = String(form.get(`custom_desc_${n}`) ?? "").trim().slice(0, 120);
+    const rawAmt = String(form.get(`custom_amount_${n}`) ?? "").replace(/[₦,\s]/g, "");
+    if (!desc && !rawAmt) continue;
+    const amt = Number(rawAmt);
+    if (!desc) { fieldErrors[`custom_desc_${n}`] = ["Describe what this payment is for"]; continue; }
+    if (!Number.isFinite(amt) || amt < 100 || amt > 500_000_000) { fieldErrors[`custom_amount_${n}`] = ["Enter an amount of at least ₦100"]; continue; }
+    custom.push({
+      id: `custom-${n + 1}`, name: desc, subtitle: undefined,
+      period: String(form.get(`custom_period_${n}`) ?? "").trim().slice(0, 40) || "One time",
+      purpose: String(form.get(`custom_note_${n}`) ?? "").trim().slice(0, 300) || `Payment requested by ${site.name}.`,
+      ngnAmount: Math.round(amt * 100) / 100, logo: "other",
+    });
+  }
+  if (Object.keys(fieldErrors).length) return { error: "Please fix the highlighted fields.", fieldErrors };
+  const picked = [...catalog, ...custom];
+  if (!picked.length) return { error: "Add at least one item: pick from the list or enter a custom amount." };
+
+  const lines = picked.map((l) => ({ ...l, amount: convert(l.ngnAmount, d.currency, usdRate) }));
+  const ref = newOrderRef();
+  const expiresAt = d.expires_days ? new Date(Date.now() + d.expires_days * 86_400_000).toISOString() : undefined;
+  let invoiceNumber = "";
+  try {
+    const order = await createOrder({
+      ref,
+      status: "pending",
+      gateway: "paystack",
+      payRef: ref,
+      customer: { name: d.name, email: d.email, phone: d.phone, company: d.company },
+      currency: d.currency,
+      rate: usdRate,
+      items: lines,
+      total: round2(lines.reduce((s, l) => s + l.amount, 0)),
+      ngnTotal: lines.reduce((s, l) => s + l.ngnAmount, 0),
+      createdAt: new Date().toISOString(),
+      source: "admin-link",
+      link: { createdBy: admin, message: d.message || undefined, expiresAt },
+    });
+    invoiceNumber = order.invoiceNumber;
+    await logAdmin(admin, "link_created", ref, { invoice: invoiceNumber, to: d.email, total: order.total, currency: d.currency });
+
+    if (d.send_email) {
+      const url = `${await siteUrl()}/checkout/link/${ref}`;
+      const sent = await sendEmail({
+        to: d.email,
+        subject: `Payment request ${invoiceNumber} from ${site.name}`,
+        heading: `Hello ${d.name.split(" ")[0]}`,
+        paragraphs: [
+          `${site.name} has sent you a payment request of ${money(order.total, order.currency)} (invoice ${invoiceNumber}).`,
+          ...(d.message ? [d.message] : []),
+          "Tap the button to see the details and pay securely with Paystack by card, bank transfer or USSD.",
+          ...(expiresAt ? [`This link expires on ${new Date(expiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.`] : []),
+          `Genuine ${site.name} links always start with ${(process.env.NEXT_PUBLIC_SITE_URL ?? site.url).replace(/\/$/, "")}/checkout/. We will never ask for your card PIN or OTP.`,
+        ],
+        cta: { label: `Pay ${money(order.total, order.currency)}`, url },
+      });
+      if (sent) await logAdmin(admin, "link_emailed", ref, { invoice: invoiceNumber, to: d.email });
+    }
+  } catch (e) {
+    return { error: errText(e, "Could not create the link. Please try again.") };
+  }
+  revalidatePath(ADMIN_BASE, "layout");
+  redirect(back(`/links/${encodeURIComponent(ref)}`, { created: "1", ...(d.send_email ? { emailed: "1" } : {}) }));
 }

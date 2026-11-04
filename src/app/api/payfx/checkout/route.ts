@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { randomBytes } from "node:crypto";
 import { CURRENCIES, convert, gatewayName, round2, type CurrencyCode } from "@/lib/payfx/catalog";
 import { getProductsById } from "@/lib/payfx/products";
 import { GATEWAYS, type GatewayId } from "@/lib/payfx/gateways";
-import { createOrder, storeConfigured } from "@/lib/payfx/store";
+import { createOrder, newOrderRef, storeConfigured } from "@/lib/payfx/store";
 import { siteBase } from "@/lib/payfx/orders";
 import { getUsdRate } from "@/lib/payfx/settings";
 import { site } from "@/lib/site";
@@ -49,7 +48,7 @@ export async function POST(request: Request) {
     return { id, name: i.name, subtitle: i.subtitle, period: i.period, purpose: i.purpose, amount: convert(i.amount, currency, usdRate), ngnAmount: i.amount, logo: i.logo };
   });
 
-  const ref = `PFX-${Date.now().toString(36).toUpperCase()}-${randomBytes(6).toString("hex").toUpperCase()}`;
+  const ref = newOrderRef();
   let order;
   try {
     order = await createOrder({

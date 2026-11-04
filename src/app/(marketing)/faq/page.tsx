@@ -7,7 +7,7 @@ import { breadcrumbSchema, faqSchema, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
   title: "FAQ: paying foreign websites from Nigeria",
-  description: "What Web Purchase pays for, fees (5% + ₦1,000), paying from abroad in Naira or African currencies, shipping from Amazon, delivery times, safety and refunds.",
+  description: "What Web Purchase pays for, fees (5% + ₦1,000), paying from abroad in Naira or African currencies, secure Paystack payment links, shipping from Amazon, delivery times, safety and refunds.",
   path: "/faq",
 });
 
@@ -21,7 +21,7 @@ export default function FaqPage() {
       </div>
       <div className="space-y-10">
         {FAQ_GROUPS.map((g) => (
-          <div key={g.title}>
+          <div key={g.title} id={g.id} className="scroll-mt-24">
             <h2 className="mb-4 text-lg font-semibold">{g.title}</h2>
             <FaqList items={g.items} />
           </div>

@@ -1,5 +1,7 @@
 import { Logo } from "@/components/ui";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: "Admin verification", robots: { index: false } };
 
 export default function MfaLayout({ children }: { children: React.ReactNode }) {

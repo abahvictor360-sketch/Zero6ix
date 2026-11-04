@@ -120,6 +120,12 @@ export async function confirmPayment(reference: string): Promise<{ status: "paid
     return { status: "failed", payment };
   }
 
+  // Money already taken for this quote by another payment (e.g. two tabs)? Still record it, but alert ops to refund.
+  const { data: dup } = await db.from("payments").select("reference").eq("quote_id", payment.quote_id).eq("status", "success").neq("id", payment.id).limit(1);
+  if (dup?.length) {
+    await notifyStaff("Duplicate payment — refund required", `${reference} paid ${formatMoney(tx.amountNgn)} for a quote already settled by ${dup[0].reference}.`, `/admin/requests/${payment.request_id}`, ["operations", "super_admin"]);
+  }
+
   const { data: changed, error } = await db.rpc("mark_payment_successful", {
     p_reference: reference,
     p_amount_paid: tx.amountNgn,

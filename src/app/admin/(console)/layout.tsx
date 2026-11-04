@@ -4,6 +4,8 @@ import { can, ROLE_LABELS, type Permission } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signOut } from "@/app/(auth)/actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: { default: "Admin", template: "%s · Admin · Web Purchase" }, robots: { index: false } };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -28,7 +30,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: "/admin/team", label: "Team & roles", icon: "UserCog", perm: "team.manage" },
     { href: "/admin/audit", label: "Audit log", icon: "ScrollText", perm: "audit.view" },
   ];
-  const nav = items.filter((i) => !i.perm || can(staff.profile.role, i.perm)).map(({ perm: _perm, ...rest }) => rest);
+  const nav = items.filter((i) => !i.perm || can(staff.profile.role, i.perm)).map((i) => ({ href: i.href, label: i.label, icon: i.icon, mobile: i.mobile, badge: i.badge }));
 
   return (
     <AppShell

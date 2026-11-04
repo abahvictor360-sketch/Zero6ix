@@ -67,6 +67,13 @@ describe("whatsapp bot", () => {
     expect(last[0]).toContain("cancelled");
   });
 
+  it("explains when a draft is refused", async () => {
+    const c = ctx({ createDraft: vi.fn(async () => { throw new Error("This request appears to involve prohibited items"); }) });
+    const { last, state } = await run(["1", "2", "Pistol", "skip", "300 USD", "skip", "yes"], c);
+    expect(last[0]).toContain("prohibited");
+    expect(state.state).toBe("menu");
+  });
+
   it("looks up order status", async () => {
     const { last } = await run(["2", "wp-100002"]);
     expect(last[0]).toContain("Quote Sent");

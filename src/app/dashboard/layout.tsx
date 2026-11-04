@@ -5,6 +5,8 @@ import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/(auth)/actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = { title: { default: "Dashboard", template: "%s · Web Purchase" }, robots: { index: false } };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

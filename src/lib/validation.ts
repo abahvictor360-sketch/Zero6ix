@@ -11,14 +11,6 @@ const httpUrl = z
   .trim()
   .max(2000)
   .refine((v) => /^https?:\/\/[^\s]+\.[^\s]+/i.test(v), "Enter a valid web address starting with http(s)://");
-const optionalUrl = z
-  .string()
-  .trim()
-  .max(2000)
-  .optional()
-  .transform((v) => (v ? v : undefined))
-  .refine((v) => !v || /^https?:\/\/[^\s]+\.[^\s]+/i.test(v), "Enter a valid web address starting with http(s)://");
-
 export const phoneSchema = z
   .string()
   .trim()

@@ -178,14 +178,19 @@ export async function handleMessage(current: BotState, rawText: string, ctx: Bot
       if (no(text)) return { replies: ["Request cancelled. Reply *menu* to start again."], next: fresh() };
       if (!yes(text)) return { replies: ["Please reply *YES* to confirm or *NO* to cancel."], next: current };
       const d = current.data;
-      const draft = await ctx.createDraft({
+      let draft: { reference: string };
+      try {
+        draft = await ctx.createDraft({
         type: d.type as "service" | "item",
         name: String(d.name),
         url: d.url ? String(d.url) : undefined,
         amount: Number(d.amount),
         currency: String(d.currency),
         notes: d.notes ? String(d.notes) : undefined,
-      });
+        });
+      } catch (e) {
+        return { replies: [`⚠️ ${e instanceof Error ? e.message : "We couldn't create that request."}\n\nReply *menu* to start again or *5* to talk to a human.`], next: fresh() };
+      }
       return {
         replies: [
           `✅ Draft request *${draft.reference}* created!\n\nOur team will review it and send you a quote in Naira. To track it and pay securely, sign in or create an account with this WhatsApp number at ${ctx.siteUrl}/signup\n\nReply *menu* for more options.`,

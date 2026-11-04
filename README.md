@@ -183,7 +183,7 @@ Bot logic is a pure state machine in `src/lib/whatsapp/bot.ts` (unit-tested); `h
 
 1. Push this repo to GitHub and **Import** it in Vercel (framework: Next.js; defaults are fine).
 2. Add every variable from `.env.example` in *Settings → Environment Variables* (Production + Preview). Set `NEXT_PUBLIC_SITE_URL` to the production domain.
-3. Deploy. `vercel.json` registers two cron jobs: exchange-rate sync (every 6h) and quote expiry (hourly). Vercel calls them with `Authorization: Bearer $CRON_SECRET`. *Hobby plans only allow daily crons — change the schedules or upgrade to Pro.*
+3. Deploy. `vercel.json` registers two daily cron jobs (exchange-rate sync and quote expiry) so it deploys on the Hobby plan; Vercel calls them with `Authorization: Bearer $CRON_SECRET`. On Pro, tighten them (e.g. rates `0 */6 * * *`, quotes `15 * * * *`). Expired quotes are also caught at payment time, so the daily job only drives the "quote expired" notification.
 4. Point Paystack, Flutterwave and Meta webhooks at the production domain.
 5. In Supabase Auth URL configuration, set the production Site URL and callback URL.
 6. Configure a Resend sending domain (SPF/DKIM) and set `EMAIL_FROM`.

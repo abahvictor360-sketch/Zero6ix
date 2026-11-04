@@ -1,6 +1,6 @@
 {
   "crons": [
-    { "path": "/api/cron/rates", "schedule": "0 */6 * * *" },
-    { "path": "/api/cron/expire-quotes", "schedule": "15 * * * *" }
+    { "path": "/api/cron/rates", "schedule": "0 5 * * *" },
+    { "path": "/api/cron/expire-quotes", "schedule": "30 5 * * *" }
   ]
 }

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta, serviceSchema } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Box, ClipboardCheck, Home, Link2, Plane, ShoppingBag, Warehouse } from "lucide-react";
 import { getShippingRates } from "@/lib/settings";
@@ -6,10 +8,11 @@ import { ITEM_STORES } from "@/lib/content";
 import { formatNumber } from "@/lib/format";
 import { requestCta } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Shop & Ship",
-  description: "Buy from Amazon, eBay, AliExpress, Walmart and more. We purchase, receive and ship to your door in Nigeria with tracking.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Shop & Ship: Amazon & eBay to Nigeria",
+  description: "Buy from Amazon, eBay, AliExpress, Walmart and ASOS. We purchase, receive at our hubs abroad and ship to your door in Nigeria with tracking. Pay in Naira.",
+  path: "/shop-and-ship",
+});
 
 const FLOW = [
   { icon: Link2, t: "Send product links", d: "Paste one or more links with size, colour and quantity." },
@@ -95,6 +98,7 @@ export default async function ShopAndShipPage() {
           </div>
         </div>
       </section>
+      <JsonLd data={[breadcrumbSchema([{ name: "Shop & Ship", path: "/shop-and-ship" }]), serviceSchema({ name: "Shop & Ship to Nigeria", serviceType: "Personal shopping and international shipping", description: "We buy items from foreign online stores, receive them at our hubs abroad and ship them to Nigeria with tracking. You pay in Naira or your local African currency.", path: "/shop-and-ship", examples: ["Amazon", "eBay", "AliExpress", "Walmart", "Best Buy", "ASOS", "Etsy", "Shein"] })]} />
     </>
   );
 }

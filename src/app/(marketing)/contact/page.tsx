@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import { Building2, Clock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { ContactForm } from "./contact-form";
 import { site } from "@/lib/site";
 import { getFeeSettings } from "@/lib/settings";
 import { describeBusinessHours } from "@/lib/business-hours";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Contact us",
-  description: `Contact ${site.name} by phone, email or our contact form. ${site.address}.`,
-};
+  description: "Call or WhatsApp +234 803 617 7408, email zero6ixlimited@gmail.com or send our contact form. 28 Chief Charles Street, Trans Amadi, Port Harcourt.",
+  path: "/contact",
+});
 
 export default async function ContactPage() {
   const fees = await getFeeSettings();
@@ -51,6 +54,7 @@ export default async function ContactPage() {
         </aside>
         <ContactForm email={site.email} />
       </section>
+      <JsonLd data={breadcrumbSchema([{ name: "Contact", path: "/contact" }])} />
     </>
   );
 }

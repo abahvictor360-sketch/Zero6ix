@@ -4,9 +4,11 @@ import {
   Building2, Package, PlaneTakeoff, Plane, Scale, ShieldCheck, Sparkles, Timer, Users,
 } from "lucide-react";
 import { RateWidget } from "@/components/site/rate-widget";
-import { FaqList, faqJsonLd } from "@/components/site/faq-list";
+import type { Metadata } from "next";
+import { FaqList } from "@/components/site/faq-list";
+import { pageMeta } from "@/lib/seo";
 import { getFeeSettings, getPublicRates } from "@/lib/settings";
-import { FAQS, ITEM_STORES, SERVICE_CATEGORIES, STEPS } from "@/lib/content";
+import { HOME_FAQS, ITEM_STORES, SERVICE_CATEGORIES, STEPS } from "@/lib/content";
 import { formatMoney } from "@/lib/format";
 import { accountsEnabled, requestCta, site } from "@/lib/site";
 
@@ -18,6 +20,13 @@ const WHO = [
 ];
 
 const CATEGORY_ICONS = { software: Laptop, exams: GraduationCap, visa: PlaneTakeoff, web: Globe2, learning: BookOpen, ads: Megaphone } as const;
+
+export const metadata: Metadata = pageMeta({
+  title: "Web Purchase | Pay foreign websites in Naira",
+  description: "Pay subscriptions, IELTS, WES and visa fees, ads and Amazon orders from Nigeria or abroad. We pay in USD, GBP or EUR; you pay in Naira or local currency.",
+  path: "/",
+  absoluteTitle: true,
+});
 
 export default async function HomePage() {
   const [rates, fees] = await Promise.all([getPublicRates(), getFeeSettings()]);
@@ -81,6 +90,10 @@ export default async function HomePage() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">How it works</p>
           <h2 className="h2 mt-4">Four simple steps. Zero bank stress.</h2>
+          <p className="muted mt-4">
+            {site.name} is a pay-for-me and shop-and-ship service run by {site.company} in Port Harcourt, Nigeria. We pay foreign
+            websites in USD, GBP, EUR and more on your behalf, and you pay us in Naira or your local African currency.
+          </p>
         </div>
         <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
@@ -129,12 +142,12 @@ export default async function HomePage() {
             {SERVICE_CATEGORIES.map((c) => {
               const Icon = CATEGORY_ICONS[c.slug as keyof typeof CATEGORY_ICONS];
               return (
-                <div key={c.slug} className="card">
+                <Link key={c.slug} href={`/services/${c.slug}`} className="card block transition hover:-translate-y-0.5 hover:shadow-lg">
                   <span className="grid h-11 w-11 place-items-center rounded-full bg-lime-400/25 text-brand-700 ring-1 ring-lime-400 dark:text-lime-300"><Icon className="h-5 w-5" /></span>
                   <h3 className="mt-4 font-semibold">{c.title}</h3>
                   <p className="muted mt-2 text-sm">{c.examples.slice(0, 4).join(" · ")}</p>
-                  <p className="mt-4 text-xs font-medium text-brand-700 dark:text-lime-400">{c.turnaround}</p>
-                </div>
+                  <p className="mt-4 flex items-center justify-between text-xs font-medium text-brand-700 dark:text-lime-400">{c.turnaround} <ArrowRight className="h-3.5 w-3.5" /></p>
+                </Link>
               );
             })}
           </div>
@@ -195,8 +208,7 @@ export default async function HomePage() {
           <h2 className="h2 mt-4">Questions? Answers.</h2>
           <p className="muted mt-4">Can&apos;t find what you need? <Link href="/contact" className="font-semibold text-brand-700 underline dark:text-lime-400">Contact us</Link> or call us on {site.phone}.</p>
         </div>
-        <FaqList items={FAQS.slice(0, 6)} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }} />
+        <FaqList items={HOME_FAQS} />
       </section>
 
       {/* CTA */}

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Terms of Service" };
+export const metadata: Metadata = pageMeta({
+  title: "Terms of Service",
+  description: "Terms of Service for Web Purchase, operated by Zero6ix Limited (RC 8922251): quotes, exchange rates, payments, shipping, liability and governing law.",
+  path: "/legal/terms",
+});
 const UPDATED = "4 November 2026";
 
 export default function TermsPage() {
@@ -54,6 +60,7 @@ export default function TermsPage() {
 
       <h2>11. Contact</h2>
       <p>{site.company} (trading as {site.name}), {site.address}. Phone: <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      <JsonLd data={breadcrumbSchema([{ name: "Terms of Service", path: "/legal/terms" }])} />
     </>
   );
 }

@@ -5,11 +5,14 @@ import { SERVICE_CATEGORIES } from "@/lib/content";
 import { getFeeSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
 import { requestCta } from "@/lib/site";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta, serviceSchema } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description: "Pay for software subscriptions, exam and application fees, visa fees, domains, hosting, courses and ad credits from Nigeria.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Pay subscriptions, exam, visa & ad fees",
+  description: "We pay ChatGPT, Canva, Adobe, IELTS, WES, UCAS, UK visa/IHS, SEVIS, domains, hosting, courses and ads in USD, GBP or EUR. You pay in Naira or local currency.",
+  path: "/services",
+});
 
 const ICONS = { software: Laptop, exams: GraduationCap, visa: PlaneTakeoff, web: Globe2, learning: BookOpen, ads: Megaphone } as const;
 
@@ -34,7 +37,7 @@ export default async function ServicesPage() {
                 <div className="flex items-start gap-4">
                   <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-900 text-lime-400"><Icon className="h-6 w-6" /></span>
                   <div>
-                    <h2 className="text-xl font-semibold">{c.title}</h2>
+                    <h2 className="text-xl font-semibold"><Link href={`/services/${c.slug}`} className="hover:underline">{c.title}</Link></h2>
                     <p className="muted mt-1 text-sm">Typical fee: {c.typicalFee} · Turnaround: {c.turnaround}</p>
                   </div>
                 </div>
@@ -43,9 +46,12 @@ export default async function ServicesPage() {
                     <li key={e} className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-brand-600 dark:text-lime-400" /> {e}</li>
                   ))}
                 </ul>
-                <Link {...requestCta("service", c.title)} className="btn btn-outline btn-sm mt-6">
-                  Request this <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Link {...requestCta("service", c.title)} className="btn btn-dark btn-sm">
+                    Request this <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <Link href={`/services/${c.slug}`} className="btn btn-outline btn-sm">Learn more</Link>
+                </div>
               </article>
             );
           })}
@@ -75,6 +81,10 @@ export default async function ServicesPage() {
           that breaks a vendor&apos;s terms. <Link href="/legal/prohibited-items" className="inline-block py-1 font-semibold underline">See the full list</Link>.
         </div>
       </section>
+      <JsonLd data={[
+        breadcrumbSchema([{ name: "Services", path: "/services" }]),
+        ...SERVICE_CATEGORIES.map((c) => serviceSchema({ name: c.headline, serviceType: c.title, description: c.summary, path: `/services/${c.slug}`, examples: c.examples })),
+      ]} />
     </>
   );
 }

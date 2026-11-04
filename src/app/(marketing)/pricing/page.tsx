@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import { FeeCalculator } from "@/components/site/fee-calculator";
 import { getFeeSettings, getPublicRates, getShippingRates } from "@/lib/settings";
 import { formatDate, formatMoney } from "@/lib/format";
 
-export const metadata: Metadata = {
-  title: "Pricing & fee calculator",
-  description: "Transparent fees: a percentage plus a flat fee, with today's exchange rates. Calculate your total in Naira.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Pricing & fee calculator (5% + ₦1,000)",
+  description: "Web Purchase fees: 5% of the Naira amount + ₦1,000 (minimum ₦2,500), no hidden charges. See today's USD, GBP, EUR, CAD rates and calculate your total in Naira.",
+  path: "/pricing",
+});
 
 export default async function PricingPage() {
   const [rates, fees, shipping] = await Promise.all([getPublicRates(), getFeeSettings(), getShippingRates()]);
@@ -60,6 +63,7 @@ export default async function PricingPage() {
           <p className="hint mt-3">Last updated {formatDate(rates[0]?.updated_at, true)}</p>
         </div>
       </section>
+      <JsonLd data={breadcrumbSchema([{ name: "Pricing", path: "/pricing" }])} />
     </>
   );
 }

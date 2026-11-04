@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { Ban } from "lucide-react";
 import { PROHIBITED_CATEGORIES } from "@/lib/compliance";
 
-export const metadata: Metadata = { title: "Prohibited Items & Services", description: "What Web Purchase will not pay for or buy." };
+export const metadata: Metadata = pageMeta({
+  title: "Prohibited Items & Services",
+  description: "What Web Purchase will not pay for or buy: weapons, drugs, counterfeit goods, gambling, adult content, hazardous items and goods banned by Nigerian Customs.",
+  path: "/legal/prohibited-items",
+});
 
 export default function ProhibitedPage() {
   return (
@@ -29,6 +35,7 @@ export default function ProhibitedPage() {
       <p>Physical goods must comply with the Nigeria Customs Service import prohibition list, which changes from time to time. We check each item, but you remain responsible for ensuring your item can be legally imported.</p>
 
       <p>Not sure? <Link href="/contact">Ask us first</Link>. We&apos;re happy to check before you submit.</p>
+      <JsonLd data={breadcrumbSchema([{ name: "Legal", path: "/legal/terms" }, { name: "Prohibited Items", path: "/legal/prohibited-items" }])} />
     </>
   );
 }

@@ -41,6 +41,16 @@ Built with **Next.js 15 (App Router) · TypeScript · Tailwind CSS · Supabase (
 
 By default `NEXT_PUBLIC_ACCOUNTS_ENABLED` is unset/`false`: the marketing site is live, the header “Contact us” button and every “Request a Payment / Buy an Item / Get a quote” button go to the contact page (WhatsApp, email, call), the contact page shows WhatsApp / email / call buttons, and `/login`, `/signup`, `/dashboard`, `/admin`, `/track`, `/pay` and `/auth` redirect to the home page. To launch accounts, configure Supabase (and payments), set `NEXT_PUBLIC_ACCOUNTS_ENABLED=true` and redeploy.
 
+## SEO & AEO (search and AI answer engines)
+
+- **Per-page metadata** (`src/lib/seo.ts` → `pageMeta`): unique titles (≤60 chars) and descriptions (≤160), canonical URLs, Open Graph + Twitter cards, and a generated share image (`src/app/opengraph-image.tsx`).
+- **Structured data (JSON-LD)** on every public page: `Organization`/`FinancialService` (legal name Zero6ix Limited, RC number, address, phone, hours, area served), `WebSite`, `BreadcrumbList`, `Service` (+ offer catalog), and `FAQPage` on `/faq` and each service page.
+- **Service landing pages** at `/services/[slug]` (software, exams, visa, web, learning, ads), generated from `SERVICE_CATEGORIES` in `src/lib/content.ts`, each with an answer-first summary and its own FAQs.
+- **AEO**: answer-first FAQ copy grouped by topic, an "at a glance" facts block on `/about`, `/llms.txt` (plain-language summary for AI assistants, built from live fees and content), and `robots.txt` that explicitly allows AI crawlers (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended…) while blocking private areas.
+- **Sitemap** at `/sitemap.xml` (17 public URLs) and a web app manifest.
+
+After deploying: verify the domain in **Google Search Console** and **Bing Webmaster Tools** (set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_BING_SITE_VERIFICATION`, or use DNS verification), submit `https://webpurchase.app/sitemap.xml`, and create a **Google Business Profile** for the Port Harcourt office with the same name, address and phone.
+
 ## Architecture
 
 ```

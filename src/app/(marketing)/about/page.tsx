@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { Eye, HeartHandshake, Scale, ShieldCheck } from "lucide-react";
 import { accountsEnabled, requestCta, site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and Africans at home and abroad, and organisations, pay for online services and shop internationally: legally and transparently." };
+export const metadata: Metadata = pageMeta({
+  title: "About us: Zero6ix Limited, Port Harcourt",
+  description: "Web Purchase is a pay-for-me and shop-and-ship service by Zero6ix Limited (RC 8922251), Port Harcourt, helping Africans pay foreign websites in Naira.",
+  path: "/about",
+});
 
 const VALUES = [
   { icon: Eye, t: "Transparency", d: "Every quote shows the exchange rate, our fee and shipping. No surprises." },
@@ -49,6 +55,29 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
+      <section className="container pb-16">
+        <div className="card">
+          <h2 className="text-xl font-semibold">{site.name} at a glance</h2>
+          <dl className="mt-5 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
+            {[
+              ["Operated by", `${site.company}${site.rcNumber ? ` (${site.rcNumber})` : ""}`],
+              ["Head office", site.address],
+              ["What we do", "Pay foreign websites on your behalf (subscriptions, exam, visa and application fees, domains, ads) and buy and ship items from abroad"],
+              ["Who we serve", "Nigerians and Africans at home and in the diaspora, plus SMEs, schools, NGOs and startups"],
+              ["Currencies we pay in", "USD, GBP, EUR, CAD, AUD, AED, CNY and more"],
+              ["How you pay", "Naira or your local African currency, by card, bank transfer or USSD via Paystack or Flutterwave"],
+              ["Fees", "5% of the Naira amount + ₦1,000 (minimum ₦2,500); shipping extra for items"],
+              ["Contact", `${site.phone} · ${site.email}`],
+            ].map(([k, v]) => (
+              <div key={k} className="border-b border-slate-100 pb-3 dark:border-white/10">
+                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{k}</dt>
+                <dd className="mt-1 font-medium">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+      <JsonLd data={breadcrumbSchema([{ name: "About", path: "/about" }])} />
     </>
   );
 }

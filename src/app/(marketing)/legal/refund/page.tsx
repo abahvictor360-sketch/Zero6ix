@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Refund Policy" };
+export const metadata: Metadata = pageMeta({
+  title: "Refund Policy",
+  description: "When Web Purchase refunds orders in full or in part, what is not refundable, and how to request a refund within 14 days.",
+  path: "/legal/refund",
+});
 
 export default function RefundPage() {
   return (
@@ -35,6 +41,7 @@ export default function RefundPage() {
 
       <h2>Damaged or incorrect items</h2>
       <p>Report damaged or incorrect items within 48 hours of delivery with photos. Where the vendor is at fault, we&apos;ll manage the return or replacement with the vendor; return shipping may apply.</p>
+      <JsonLd data={breadcrumbSchema([{ name: "Legal", path: "/legal/terms" }, { name: "Refund Policy", path: "/legal/refund" }])} />
     </>
   );
 }

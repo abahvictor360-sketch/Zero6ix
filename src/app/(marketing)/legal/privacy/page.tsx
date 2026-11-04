@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Privacy Policy" };
+export const metadata: Metadata = pageMeta({
+  title: "Privacy Policy",
+  description: "How Zero6ix Limited (Web Purchase) collects, uses and protects your personal data under the Nigeria Data Protection Act 2023. We never store card details.",
+  path: "/legal/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -49,6 +55,7 @@ export default function PrivacyPage() {
 
       <h2>Cookies</h2>
       <p>We use essential cookies to keep you signed in and remember preferences such as dark mode. We do not use advertising cookies.</p>
+      <JsonLd data={breadcrumbSchema([{ name: "Legal", path: "/legal/terms" }, { name: "Privacy Policy", path: "/legal/privacy" }])} />
     </>
   );
 }

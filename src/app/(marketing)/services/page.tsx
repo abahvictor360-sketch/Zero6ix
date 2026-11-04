@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Check, Globe2, GraduationCap, Laptop, Megaphone, PlaneTakeoff } from "lucide-react";
 import { SERVICE_CATEGORIES } from "@/lib/content";
-import { getFeeSettings } from "@/lib/settings";
+import { getFeeSettings, getPublicRates } from "@/lib/settings";
+import { calculateServiceFee } from "@/lib/pricing";
 import { formatMoney } from "@/lib/format";
 import { requestCta } from "@/lib/site";
 import { JsonLd } from "@/components/json-ld";
@@ -17,7 +18,9 @@ export const metadata: Metadata = pageMeta({
 const ICONS = { software: Laptop, exams: GraduationCap, visa: PlaneTakeoff, web: Globe2, learning: BookOpen, ads: Megaphone } as const;
 
 export default async function ServicesPage() {
-  const fees = await getFeeSettings();
+  const [fees, rates] = await Promise.all([getFeeSettings(), getPublicRates()]);
+  const usd = rates.find((r) => r.currency === "USD")?.sell_rate ?? 0;
+  const exampleNgn = Math.round(20 * usd * 100) / 100;
   return (
     <>
       <section className="bg-brand-900 py-16 text-white dark:bg-[#06140f]">
@@ -71,7 +74,7 @@ export default async function ServicesPage() {
             <p className="mt-1 text-2xl font-bold">{fees.quote_validity_hours} hours</p>
           </div>
           <p className="muted text-sm md:col-span-3">
-            Example: a $20 subscription at ₦1,590/$ = ₦31,800 + fee {formatMoney(Math.max(31800 * fees.percentage_fee / 100 + fees.flat_fee_ngn, fees.minimum_fee_ngn))}.{" "}
+            Example: a $20 subscription at today&apos;s rate of {formatMoney(usd)}/$ = {formatMoney(exampleNgn)} + fee {formatMoney(calculateServiceFee(exampleNgn, fees).fee)}.{" "}
             <Link href="/pricing" className="font-semibold text-brand-700 underline dark:text-lime-400">Calculate yours</Link>.
           </p>
         </div>

@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightLeft, RefreshCw } from "lucide-react";
 import type { ExchangeRate } from "@/lib/types";
-import { timeAgo } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 
 /** Live exchange-rate widget with a quick converter. Polls /api/rates every 2 minutes. */
 export function RateWidget({ initial }: { initial: ExchangeRate[] }) {
@@ -29,16 +29,21 @@ export function RateWidget({ initial }: { initial: ExchangeRate[] }) {
   const rate = rates.find((r) => r.currency === currency);
   const converted = useMemo(() => (rate ? Number(amount || 0) * rate.sell_rate : 0), [amount, rate]);
   const updated = rates.reduce((a, r) => (r.updated_at > a ? r.updated_at : a), "");
+  const indicative = rates.some((r) => r.source === "fallback");
 
   return (
     <div className="rounded-3xl bg-white p-5 text-slate-900 shadow-2xl ring-1 ring-black/5 dark:bg-[#0b1f17] dark:text-white dark:ring-white/10">
       <div className="flex items-center justify-between">
         <p className="flex items-center gap-2 text-sm font-semibold">
-          <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>
-          Live rates
+          {indicative ? (
+            <span className="h-2 w-2 rounded-full bg-amber-400" />
+          ) : (
+            <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>
+          )}
+          {indicative ? "Indicative rates" : "Live rates"}
         </p>
         <button onClick={refresh} className="-my-2 inline-flex min-h-[32px] items-center gap-1 px-2 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Refresh rates">
-          <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} /> {updated ? timeAgo(updated) : ""}
+          <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} /> {updated && !indicative ? `Updated ${formatDate(updated, true)}` : "Refresh"}
         </button>
       </div>
 

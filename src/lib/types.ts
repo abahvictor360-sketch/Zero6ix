@@ -173,7 +173,7 @@ export interface ExchangeRate {
   symbol: string;
   sell_rate: number;
   buy_rate?: number;
-  source?: "manual" | "api";
+  source?: "manual" | "api" | "live" | "fallback";
   markup_percent?: number;
   api_rate?: number | null;
   is_active?: boolean;

@@ -60,7 +60,11 @@ export default async function PricingPage() {
               ))}
             </tbody>
           </table>
-          <p className="hint mt-3">Last updated {formatDate(rates[0]?.updated_at, true)}</p>
+          <p className="hint mt-3">
+            {rates[0]?.source === "fallback"
+              ? "Indicative rates. Live rates are temporarily unavailable; your quote will use the current rate."
+              : `Market rates, last updated ${formatDate(rates[0]?.updated_at, true)}. Your quote locks the exact rate.`}
+          </p>
         </div>
       </section>
       <JsonLd data={breadcrumbSchema([{ name: "Pricing", path: "/pricing" }])} />

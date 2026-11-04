@@ -22,7 +22,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold transition
       disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-sm { @apply px-3.5 py-1.5 text-xs; }

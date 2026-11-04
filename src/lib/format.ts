@@ -17,7 +17,7 @@ export function formatNumber(n: number, digits = 2) {
 }
 
 export function formatDate(d: string | Date | null | undefined, withTime = false) {
-  if (!d) return "—";
+  if (!d) return "-";
   return new Intl.DateTimeFormat("en-NG", {
     dateStyle: "medium",
     ...(withTime ? { timeStyle: "short" } : {}),

@@ -58,7 +58,7 @@ export function FeesForm({ fees }: { fees: FeeSettings }) {
       <Field label="ID (KYC) threshold (₦)" name="kyc_threshold_ngn" hint="Orders at or above this need a verified ID"><input id="kyc_threshold_ngn" name="kyc_threshold_ngn" defaultValue={fees.kyc_threshold_ngn} className="input" inputMode="decimal" /></Field>
       <Field label="Quote validity (hours)" name="quote_validity_hours"><input id="quote_validity_hours" name="quote_validity_hours" type="number" min={1} max={168} defaultValue={fees.quote_validity_hours} className="input" /></Field>
       <fieldset className="sm:col-span-2">
-        <legend className="label">Business hours (WAT) — used for WhatsApp human hand-off</legend>
+        <legend className="label">Business hours (WAT), used for WhatsApp human hand-off</legend>
         <div className="flex flex-wrap gap-3 text-sm">
           {DAYS.map((d, i) => (
             <label key={d} className="flex items-center gap-1"><input type="checkbox" name="bh_days" value={i} defaultChecked={fees.business_hours.days.includes(i)} className="rounded" /> {d}</label>

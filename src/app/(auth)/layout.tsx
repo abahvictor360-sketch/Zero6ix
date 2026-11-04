@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <ul className="mt-8 space-y-3 text-white/80">
             <li className="flex items-center gap-3"><Lock className="h-5 w-5 text-lime-400" /> Payments secured by Paystack & Flutterwave</li>
             <li className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-lime-400" /> Encrypted credentials & verified accounts</li>
-            <li className="flex items-center gap-3"><Scale className="h-5 w-5 text-lime-400" /> Legal requests only — every order reviewed</li>
+            <li className="flex items-center gap-3"><Scale className="h-5 w-5 text-lime-400" /> Legal requests only, every order reviewed</li>
           </ul>
         </div>
         <p className="relative text-xs text-white/50">© {new Date().getFullYear()} Web Purchase</p>

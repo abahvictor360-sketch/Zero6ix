@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Eye, HeartHandshake, Scale, ShieldCheck } from "lucide-react";
 import { accountsEnabled, requestCta, site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and Africans at home and abroad, and organisations, pay for online services and shop internationally — legally and transparently." };
+export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and Africans at home and abroad, and organisations, pay for online services and shop internationally: legally and transparently." };
 
 const VALUES = [
   { icon: Eye, t: "Transparency", d: "Every quote shows the exchange rate, our fee and shipping. No surprises." },
   { icon: Scale, t: "Compliance first", d: "Every request is reviewed by a person. We only handle legal goods and services." },
   { icon: ShieldCheck, t: "Security", d: "Payments via licensed gateways, encrypted credentials, verified accounts and audit trails." },
-  { icon: HeartHandshake, t: "Real support", d: "Talk to real people by phone, email or our contact form — not an endless bot loop." },
+  { icon: HeartHandshake, t: "Real support", d: "Talk to real people by phone, email or our contact form, not an endless bot loop." },
 ];
 
 export default function AboutPage() {
@@ -20,7 +20,7 @@ export default function AboutPage() {
           <p className="eyebrow !text-lime-300">About {site.name}</p>
           <h1 className="h1 mt-4">Opening the global internet to every African, wherever they are.</h1>
           <p className="mt-5 text-lg text-white/75">
-            Millions of Nigerians and Africans — at home and in the diaspora — can&apos;t pay for the tools, exams and products they need online — not because they
+            Millions of Nigerians and Africans, at home and in the diaspora, can&apos;t pay for the tools, exams and products they need online. Not because they
             can&apos;t afford them, but because cards get declined, FX limits bite, or their region isn&apos;t supported.
             We fix that.
           </p>
@@ -30,7 +30,7 @@ export default function AboutPage() {
         <div className="muted space-y-4 text-lg leading-8">
           <p>
             {site.name} is a Port Harcourt-based &quot;pay-for-me&quot; and shop-and-ship service. Students use us for exam and application fees,
-            freelancers for software and ad credits, and organisations — schools, NGOs and SMEs — to pay for team tools in bulk with
+            freelancers for software and ad credits, and organisations (schools, NGOs and SMEs) to pay for team tools in bulk with
             proper invoices and monthly statements.
           </p>
           <p>

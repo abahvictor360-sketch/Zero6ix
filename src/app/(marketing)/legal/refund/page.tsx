@@ -18,8 +18,8 @@ export default function RefundPage() {
 
       <h2>Partial refunds</h2>
       <ul>
-        <li>The final cost is lower than quoted (e.g. a vendor discount or lighter shipping weight) — we refund the difference.</li>
-        <li>An order is partially fulfilled — we refund the unfulfilled portion.</li>
+        <li>The final cost is lower than quoted (e.g. a vendor discount or lighter shipping weight): we refund the difference.</li>
+        <li>An order is partially fulfilled: we refund the unfulfilled portion.</li>
       </ul>
 
       <h2>Not refundable</h2>

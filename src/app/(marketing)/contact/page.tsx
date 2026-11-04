@@ -30,15 +30,15 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="container grid gap-8 py-14 lg:grid-cols-[1fr_1.5fr]">
+      <section className="container grid gap-8 py-10 sm:py-14 lg:grid-cols-[1fr_1.5fr] [&>*]:min-w-0">
         <aside className="space-y-4">
           <ul className="card divide-y divide-slate-100 p-0 dark:divide-white/10">
             {details.map(({ icon: Icon, label, value, href }) => (
-              <li key={label} className="flex gap-4 p-5">
+              <li key={label} className="flex gap-3 p-4 sm:gap-4 sm:p-5">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime-400/25 text-brand-700 ring-1 ring-lime-400 dark:text-lime-300"><Icon className="h-4 w-4" /></span>
                 <div className="min-w-0">
                   <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
-                  {href ? <a href={href} className="mt-0.5 block break-words font-medium hover:underline">{value}</a> : <p className="mt-0.5 font-medium">{value}</p>}
+                  {href ? <a href={href} className="mt-0.5 block font-medium [overflow-wrap:anywhere] hover:underline max-[359px]:text-[15px]">{value}</a> : <p className="mt-0.5 font-medium">{value}</p>}
                 </div>
               </li>
             ))}
@@ -46,7 +46,7 @@ export default async function ContactPage() {
           <div className="card-dark space-y-3 p-5 text-sm">
             <p className="flex items-center gap-2 font-semibold"><Building2 className="h-4 w-4 text-lime-400" /> {site.company}</p>
             <p className="text-white/75">{site.name} is a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}, registered in Nigeria.</p>
-            <p className="flex items-start gap-2 text-white/75"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-lime-400" /> Legal requests only. Payments are processed securely by licensed payment providers — we never see or store your card details.</p>
+            <p className="flex items-start gap-2 text-white/75"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-lime-400" /> Legal requests only. Payments are processed securely by licensed payment providers. We never see or store your card details.</p>
           </div>
         </aside>
         <ContactForm email={site.email} />

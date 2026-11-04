@@ -38,7 +38,7 @@ export async function processInbound(msg: InboundMessage) {
     .single();
   if (!conv) return;
 
-  // Idempotency: Meta retries webhooks — the unique wa_message_id drops duplicates.
+  // Idempotency: Meta retries webhooks: the unique wa_message_id drops duplicates.
   const { error: dupError } = await db.from("whatsapp_messages").insert({
     conversation_id: conv.id, direction: "inbound", body: msg.text ?? `[${msg.kind}]`, wa_message_id: msg.messageId,
   });

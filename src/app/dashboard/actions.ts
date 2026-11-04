@@ -136,7 +136,7 @@ export async function sendMessage(_: ActionState, form: FormData): Promise<Actio
   const user = await requireUser();
   const parsed = messageSchema.safeParse({ request_id: form.get("request_id"), body: form.get("body") });
   if (!parsed.success) return zodErrorState(parsed.error);
-  if (!(await rateLimit(`msg:${user.id}`, LIMITS.message.limit, LIMITS.message.window))) return { error: "Slow down a little — too many messages." };
+  if (!(await rateLimit(`msg:${user.id}`, LIMITS.message.limit, LIMITS.message.window))) return { error: "Slow down a little, too many messages." };
   let request: RequestRow;
   try {
     request = await getAccessibleRequest(parsed.data.request_id);

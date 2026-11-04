@@ -8,9 +8,9 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakart
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: { default: `${site.name} — ${site.tagline}`, template: `%s · ${site.name}` },
+  title: { default: `${site.name} | ${site.tagline}`, template: `%s · ${site.name}` },
   description:
-    "Web Purchase pays for online services and buys items from foreign websites for Nigerians and Africans at home and abroad — subscriptions, exam fees, visa fees, gadgets and more. Pay in Naira or your local African currency. Legal requests only.",
+    "Web Purchase pays for online services and buys items from foreign websites for Nigerians and Africans at home and abroad: subscriptions, exam fees, visa fees, gadgets and more. Pay in Naira or your local African currency. Legal requests only.",
   openGraph: { siteName: site.name, type: "website", locale: "en_NG" },
   icons: { icon: "/icon.svg" },
 };

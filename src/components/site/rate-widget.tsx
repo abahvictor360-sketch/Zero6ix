@@ -37,7 +37,7 @@ export function RateWidget({ initial }: { initial: ExchangeRate[] }) {
           <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>
           Live rates
         </p>
-        <button onClick={refresh} className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Refresh rates">
+        <button onClick={refresh} className="-my-2 inline-flex min-h-[32px] items-center gap-1 px-2 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Refresh rates">
           <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} /> {updated ? timeAgo(updated) : ""}
         </button>
       </div>

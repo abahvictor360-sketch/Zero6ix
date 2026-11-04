@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const FLOW = [
   { icon: Link2, t: "Send product links", d: "Paste one or more links with size, colour and quantity." },
-  { icon: ClipboardCheck, t: "Get an all-in quote", d: "Item price, our fee and estimated shipping — in Naira." },
+  { icon: ClipboardCheck, t: "Get an all-in quote", d: "Item price, our fee and estimated shipping, in Naira or your local currency." },
   { icon: ShoppingBag, t: "We buy it", d: "We order from the store using our foreign accounts." },
   { icon: Warehouse, t: "Received abroad", d: "Your item arrives at our hub, gets weighed and inspected." },
   { icon: Plane, t: "Shipped to Nigeria", d: "Air freight with tracking number and customs clearance." },
@@ -82,7 +82,7 @@ export default async function ShopAndShipPage() {
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[
-              ["Customs & duties", "Duties for regular personal items are included in the shipping rate. Commercial quantities may attract extra duty — we'll tell you before you pay."],
+              ["Customs & duties", "Duties for regular personal items are included in the shipping rate. Commercial quantities may attract extra duty. We'll tell you before you pay."],
               ["Inspection & photos", "We inspect items at our hub and can send photos on request before shipping."],
               ["Consolidation", "Multiple orders from the same country can be combined to save on shipping."],
             ].map(([t, d]) => (

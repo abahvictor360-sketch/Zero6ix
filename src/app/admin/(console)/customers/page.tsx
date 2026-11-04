@@ -93,9 +93,9 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
             <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>KYC</th><th>Joined</th></tr></thead>
             <tbody>{users.map((u) => (
               <tr key={u.id}>
-                <td className="font-medium">{u.full_name || "—"} {u.account_type === "organisation" && <Pill tone="blue">org</Pill>}</td>
+                <td className="font-medium">{u.full_name || "-"} {u.account_type === "organisation" && <Pill tone="blue">org</Pill>}</td>
                 <td>{u.email} {u.email_verified && <span className="text-emerald-600">✓</span>}</td>
-                <td>{u.phone ?? "—"} {u.phone_verified && <span className="text-emerald-600">✓</span>}</td>
+                <td>{u.phone ?? "-"} {u.phone_verified && <span className="text-emerald-600">✓</span>}</td>
                 <td className="capitalize">{u.role.replace("_", " ")}</td>
                 <td><Pill tone={KYC_TONE[u.kyc_status]}>{u.kyc_status}</Pill></td>
                 <td className="whitespace-nowrap text-slate-500">{formatDate(u.created_at)}</td>
@@ -107,7 +107,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
             <thead><tr><th>Organisation</th><th>RC number</th><th>Email</th><th>Members</th><th>KYC</th><th>Created</th></tr></thead>
             <tbody>{orgs.map((o) => (
               <tr key={o.id}>
-                <td className="font-medium">{o.name}</td><td>{o.rc_number ?? "—"}</td><td>{o.email ?? "—"}</td>
+                <td className="font-medium">{o.name}</td><td>{o.rc_number ?? "-"}</td><td>{o.email ?? "-"}</td>
                 <td>{o.organisation_members?.[0]?.count ?? 0}</td>
                 <td><Pill tone={KYC_TONE[o.kyc_status]}>{o.kyc_status}</Pill></td>
                 <td className="whitespace-nowrap text-slate-500">{formatDate(o.created_at)}</td>

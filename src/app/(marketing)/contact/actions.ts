@@ -59,7 +59,7 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
   }
 
   if (!dbReady && !emailReady) {
-    // Nothing server-side can deliver the message yet — let the browser open an email draft.
+    // Nothing server-side can deliver the message yet, so let the browser open an email draft.
     return { ok: false, data: { fallback: "mailto" } };
   }
 
@@ -83,7 +83,7 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
     to: process.env.CONTACT_FORM_TO ?? site.email,
     replyTo: d.email,
     subject: `Website enquiry: ${d.subject}`,
-    heading: `New enquiry — ${ENQUIRY[d.enquiry]}`,
+    heading: `New enquiry: ${ENQUIRY[d.enquiry]}`,
     paragraphs: [
       `From: ${d.name} <${d.email}>${d.phone ? ` · ${d.phone}` : ""}${d.country ? ` · ${d.country}` : ""}`,
       `Subject: ${d.subject}`,

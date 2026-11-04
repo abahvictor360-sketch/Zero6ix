@@ -93,7 +93,7 @@ function ServiceForm({ orgs, defaults }: Pick<Props, "orgs" | "defaults">) {
           <input id="deadline" name="deadline" type="date" className="input" min={new Date().toISOString().slice(0, 10)} />
         </Field>
       </div>
-      <Field label="Notes" name="notes" hint="Plan, billing period, exam centre, application ID… Don't paste passwords here — you can add them securely after submitting." error={fieldError(state, "notes")}>
+      <Field label="Notes" name="notes" hint="Plan, billing period, exam centre, application ID… Don't paste passwords here. You can add them securely after submitting." error={fieldError(state, "notes")}>
         <textarea id="notes" name="notes" rows={4} className="input" />
       </Field>
       <LegalCheckbox error={fieldError(state, "legal_confirmed")} />

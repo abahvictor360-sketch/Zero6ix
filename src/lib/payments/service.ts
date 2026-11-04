@@ -123,7 +123,7 @@ export async function confirmPayment(reference: string): Promise<{ status: "paid
   // Money already taken for this quote by another payment (e.g. two tabs)? Still record it, but alert ops to refund.
   const { data: dup } = await db.from("payments").select("reference").eq("quote_id", payment.quote_id).eq("status", "success").neq("id", payment.id).limit(1);
   if (dup?.length) {
-    await notifyStaff("Duplicate payment — refund required", `${reference} paid ${formatMoney(tx.amountNgn)} for a quote already settled by ${dup[0].reference}.`, `/admin/requests/${payment.request_id}`, ["operations", "super_admin"]);
+    await notifyStaff("Duplicate payment: refund required", `${reference} paid ${formatMoney(tx.amountNgn)} for a quote already settled by ${dup[0].reference}.`, `/admin/requests/${payment.request_id}`, ["operations", "super_admin"]);
   }
 
   const { data: changed, error } = await db.rpc("mark_payment_successful", {
@@ -179,7 +179,7 @@ async function afterPaymentSuccess(paymentId: string) {
 
   await Promise.allSettled([
     notifyRequestEvent(payment.request_id, "payment_confirmed", { attachments }),
-    notifyStaff("Payment received", `${payment.reference} — ${formatMoney(payment.amount_paid_ngn ?? payment.amount_ngn)} via ${payment.provider}`, `/admin/requests/${payment.request_id}`, ["operations", "super_admin"]),
+    notifyStaff("Payment received", `${payment.reference}: ${formatMoney(payment.amount_paid_ngn ?? payment.amount_ngn)} via ${payment.provider}`, `/admin/requests/${payment.request_id}`, ["operations", "super_admin"]),
     audit(null, "payment.confirmed", "payment", payment.id, { reference: payment.reference, amount: payment.amount_paid_ngn, provider: payment.provider }),
   ]);
 }

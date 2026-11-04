@@ -65,8 +65,8 @@ export default async function AdminRequests({ searchParams }: { searchParams: Pr
                       {r.requires_kyc && <Pill tone="amber">KYC</Pill>}
                     </div>
                   </td>
-                  <td className="text-sm">{r.users?.full_name ?? r.contact_phone ?? "—"}<p className="text-xs text-slate-500">{r.users?.email}</p></td>
-                  <td className="whitespace-nowrap">{r.amount ? formatMoney(r.amount, r.currency) : "—"}</td>
+                  <td className="text-sm">{r.users?.full_name ?? r.contact_phone ?? "-"}<p className="text-xs text-slate-500">{r.users?.email}</p></td>
+                  <td className="whitespace-nowrap">{r.amount ? formatMoney(r.amount, r.currency) : "-"}</td>
                   <td><StatusBadge status={r.status} /></td>
                   <td className="capitalize">{r.source}</td>
                   <td className="whitespace-nowrap text-slate-500">{formatDate(r.created_at, true)}</td>

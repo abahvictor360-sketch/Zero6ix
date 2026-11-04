@@ -5,7 +5,7 @@ import { confirmPayment } from "@/lib/payments/service";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Flutterwave webhook — authenticated via the `verif-hash` secret, then re-verified via API. */
+/** Flutterwave webhook: authenticated via the `verif-hash` secret, then re-verified via API. */
 export async function POST(request: Request) {
   if (!verifyFlutterwaveSignature(request.headers.get("verif-hash"))) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });

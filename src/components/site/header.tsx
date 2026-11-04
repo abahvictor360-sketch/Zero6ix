@@ -25,7 +25,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-900/95 text-white backdrop-blur dark:bg-[#06140f]/90">
-      <div className="container flex h-16 items-center justify-between gap-4">
+      <div className="container flex h-16 items-center justify-between gap-2 sm:gap-4">
         <Logo light />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
           {NAV.map((n) => (
@@ -38,7 +38,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
           {!accountsEnabled ? (
             <Link href="/contact" className="btn btn-primary btn-sm">Contact us</Link>
@@ -67,7 +67,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
         <nav className="border-t border-white/10 lg:hidden" aria-label="Mobile">
           <div className="container grid gap-1 py-3">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="rounded-xl px-3 py-2.5 text-white/90 hover:bg-white/10">
+              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-white/90 hover:bg-white/10">
                 {n.label}
               </Link>
             ))}

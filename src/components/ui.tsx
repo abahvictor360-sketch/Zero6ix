@@ -11,7 +11,7 @@ export function Logo({ light = false, className = "" }: { light?: boolean; class
           <path d="M14 20l7 24 11-18 11 18 7-24" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
-      <span className={cn("text-lg", light ? "text-white" : "text-brand-900 dark:text-white")}>
+      <span className={cn("text-base min-[360px]:text-lg", light ? "text-white" : "text-brand-900 dark:text-white")}>
         Web<span className={light ? "text-lime-400" : "text-brand-600 dark:text-lime-400"}>Purchase</span>
       </span>
     </Link>

@@ -13,13 +13,13 @@ export default function PrivacyPage() {
       <h2>Data we collect</h2>
       <ul>
         <li><strong>Account data:</strong> name, email, phone number, address, organisation details.</li>
-        <li><strong>Verification data:</strong> government ID and, for organisations, registration documents — only when required.</li>
+        <li><strong>Verification data:</strong> government ID and, for organisations, registration documents, only when required.</li>
         <li><strong>Order data:</strong> requests, product links, quotes, payment references, shipping details, messages and uploaded files.</li>
         <li><strong>Service credentials:</strong> only if you choose to share them for an order; stored encrypted (AES-256-GCM).</li>
         <li><strong>Messages you send us</strong> via our contact form, email, phone or WhatsApp.</li>
         <li><strong>Technical data:</strong> IP address, device and log data used for security and fraud prevention.</li>
       </ul>
-      <p>We do <strong>not</strong> collect or store your card details — these are handled by our PCI-DSS compliant payment providers.</p>
+      <p>We do <strong>not</strong> collect or store your card details. These are handled by our PCI-DSS compliant payment providers.</p>
 
       <h2>How we use your data</h2>
       <ul>

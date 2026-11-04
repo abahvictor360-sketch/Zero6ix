@@ -1,5 +1,5 @@
 -- =============================================================================
--- Web Purchase — seed data (local development / staging only)
+-- Web Purchase: seed data (local development / staging only)
 --
 -- Demo accounts (password for all: WebPurchase#2026):
 --   admin@webpurchase.ng   super_admin  (you will be asked to set up 2FA)
@@ -117,7 +117,7 @@ values
    'Kindle Paperwhite + 2 books', null, null, null, 189.98, 'USD',
    null, 'Ship to my Lekki address.', true, now(), now() - interval '9 days'),
   ('00000000-0000-4000-c000-000000000004', 'WP-100004', '00000000-0000-4000-a000-000000000011', '00000000-0000-4000-b000-000000000001', 'service', 'completed', 'bulk',
-   'Google Workspace — 12 seats', 'Google Workspace Business Starter', 'https://workspace.google.com', 'admin@brightpath.edu.ng', 86.40, 'USD',
+   'Google Workspace (12 seats)', 'Google Workspace Business Starter', 'https://workspace.google.com', 'admin@brightpath.edu.ng', 86.40, 'USD',
    null, 'Monthly billing for staff accounts.', true, now(), now() - interval '20 days'),
   ('00000000-0000-4000-c000-000000000005', 'WP-100005', '00000000-0000-4000-a000-000000000011', '00000000-0000-4000-b000-000000000001', 'service', 'under_review', 'web',
    'WES evaluation fee', 'World Education Services', 'https://www.wes.org', 'tunde@example.com', 248.00, 'USD',
@@ -181,7 +181,7 @@ insert into public.request_events (request_id, status, title, note, created_at) 
 
 insert into public.messages (request_id, sender_id, is_staff, body, created_at) values
   ('00000000-0000-4000-c000-000000000002', '00000000-0000-4000-a000-000000000010', false, 'Hi, please confirm the test date is 14 December.', now() - interval '6 hours'),
-  ('00000000-0000-4000-c000-000000000002', '00000000-0000-4000-a000-000000000002', true, 'Confirmed — 14 Dec, Lagos centre. Your quote is ready.', now() - interval '4 hours');
+  ('00000000-0000-4000-c000-000000000002', '00000000-0000-4000-a000-000000000002', true, 'Confirmed: 14 Dec, Lagos centre. Your quote is ready.', now() - interval '4 hours');
 
 insert into public.contact_submissions (name, email, phone, subject, message) values
   ('Chidi Eze', 'chidi@example.com', '+2348099998888', 'Bulk Adobe licences', 'We need 15 Adobe Creative Cloud seats for our agency. Do you offer business pricing?'),

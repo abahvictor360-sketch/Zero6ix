@@ -25,7 +25,7 @@ export default async function WhatsAppPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageHeader title="WhatsApp conversations" description={isWhatsAppConfigured() ? "Bot and agent conversations. Hand-off requests appear first." : "WhatsApp API is not configured — set WHATSAPP_* environment variables to go live."} />
+      <PageHeader title="WhatsApp conversations" description={isWhatsAppConfigured() ? "Bot and agent conversations. Hand-off requests appear first." : "WhatsApp API is not configured. Set WHATSAPP_* environment variables to go live."} />
       {!convs?.length ? <EmptyState title="No conversations yet" /> : (
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
           <ul className="card max-h-[70vh] divide-y divide-slate-100 overflow-y-auto p-0 dark:divide-white/5">

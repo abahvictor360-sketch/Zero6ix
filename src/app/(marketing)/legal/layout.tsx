@@ -14,7 +14,7 @@ const LINKS = [
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="container grid gap-10 py-14 lg:grid-cols-[220px_1fr]">
+    <div className="container grid gap-8 py-10 sm:py-14 lg:grid-cols-[220px_1fr] lg:gap-10 [&>*]:min-w-0">
       <nav aria-label="Legal" className="lg:sticky lg:top-24 lg:self-start">
         <ul className="flex gap-2 overflow-x-auto lg:flex-col">
           {LINKS.map(([href, label]) => (

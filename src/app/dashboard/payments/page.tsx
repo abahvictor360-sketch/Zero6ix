@@ -45,7 +45,7 @@ export default async function PaymentsPage() {
                         <a href={`/api/invoices/${p.id}?kind=invoice`} className="btn btn-outline btn-sm"><Download className="h-3.5 w-3.5" /> Invoice</a>
                         <a href={`/api/invoices/${p.id}?kind=receipt`} className="btn btn-outline btn-sm"><Download className="h-3.5 w-3.5" /> Receipt</a>
                       </div>
-                    ) : "—"}
+                    ) : "-"}
                   </td>
                 </tr>
               ))}

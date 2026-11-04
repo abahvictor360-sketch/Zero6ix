@@ -14,7 +14,7 @@ export default function TermsPage() {
       <p>These Terms govern your use of {site.name}, a service operated by {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""} (&quot;we&quot;, &quot;us&quot;), including our website, phone, email and WhatsApp channels and related services. By contacting us with a request, creating an account or making a payment you agree to these Terms.</p>
 
       <h2>1. What we do</h2>
-      <p>We act as your agent to pay for online services and purchase goods from vendors that you choose, using foreign currency, and — for physical goods — to receive and ship them to you in Nigeria. We are not the seller of the goods or services and are not responsible for the vendor&apos;s products, except as described in our Refund Policy.</p>
+      <p>We act as your agent to pay for online services and purchase goods from vendors that you choose, using foreign currency, and, for physical goods, to receive and ship them to you in Nigeria. We are not the seller of the goods or services and are not responsible for the vendor&apos;s products, except as described in our Refund Policy.</p>
 
       <h2>2. Eligibility & accounts</h2>
       <ul>

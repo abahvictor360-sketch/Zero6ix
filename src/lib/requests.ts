@@ -135,7 +135,7 @@ export async function createRequest(user: CurrentUser | null, input: NewRequestI
   const { data: fresh } = await db.from("requests").select("flagged, flag_reasons").eq("id", request.id).single();
   await notifyStaff(
     `${fresh?.flagged ? "⚠️ Flagged " : "New "}${request.status === "draft" ? "draft" : "request"} ${request.reference}`,
-    `${request.title}${fresh?.flagged ? ` — ${fresh.flag_reasons.join(", ")}` : ""}`,
+    `${request.title}${fresh?.flagged ? `: ${fresh.flag_reasons.join(", ")}` : ""}`,
     `/admin/requests/${request.id}`,
   );
   return { ...request, flagged: fresh?.flagged ?? request.flagged, flag_reasons: fresh?.flag_reasons ?? request.flag_reasons };

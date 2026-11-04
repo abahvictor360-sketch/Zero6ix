@@ -11,7 +11,7 @@ export const toWaId = (phone: string) => phone.replace(/\D/g, "");
 
 async function post(payload: Record<string, unknown>) {
   if (!isWhatsAppConfigured()) {
-    console.info("[whatsapp] not configured — skipping message", JSON.stringify(payload).slice(0, 200));
+    console.info("[whatsapp] not configured: skipping message", JSON.stringify(payload).slice(0, 200));
     return null;
   }
   const res = await fetch(`${GRAPH}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
@@ -48,7 +48,7 @@ async function log(waId: string, body: string, messageId: string | null, sentBy:
   }
 }
 
-/** Free-form text — only deliverable inside the 24h customer-service window. */
+/** Free-form text: only deliverable inside the 24h customer-service window. */
 export async function sendWhatsAppText(to: string, body: string, opts: { sentBy?: string | null; log?: boolean } = {}) {
   const waId = toWaId(to);
   const id = await post({ to: waId, type: "text", text: { preview_url: true, body: body.slice(0, 4096) } });

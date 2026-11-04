@@ -48,7 +48,7 @@ export function ContactForm({ email }: { email: string }) {
     return (
       <div className="card flex flex-col items-center justify-center gap-3 py-14 text-center">
         <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400/25 text-brand-700 dark:text-lime-400"><CheckCircle2 className="h-7 w-7" /></span>
-        <h2 className="text-xl font-semibold">Thank you — we&apos;ve got it</h2>
+        <h2 className="text-xl font-semibold">Thank you, we&apos;ve got it</h2>
         <p className="muted max-w-sm text-sm">
           {state.ok ? state.message : `Your email app should have opened with your message. If it didn't, email us at ${email}.`}
         </p>
@@ -58,10 +58,10 @@ export function ContactForm({ email }: { email: string }) {
   }
 
   return (
-    <ActionForm ref={ref} action={action} pending={actionPending} className="card space-y-5 p-6 sm:p-8" encType="multipart/form-data">
+    <ActionForm ref={ref} action={action} pending={actionPending} className="card space-y-5 p-5 sm:p-8" encType="multipart/form-data">
       <div>
         <h2 className="text-xl font-semibold">Send us a message</h2>
-        <p className="muted mt-1 text-sm">Tell us what you need — include links, amounts and currency — and we&apos;ll reply with a clear quote, usually within a few hours on business days.</p>
+        <p className="muted mt-1 text-sm">Tell us what you need (include links, amounts and currency) and we&apos;ll reply with a clear quote, usually within a few hours on business days.</p>
       </div>
       {state.error && <FormMessage state={state} />}
 

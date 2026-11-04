@@ -26,14 +26,14 @@ Built with **Next.js 15 (App Router) · TypeScript · Tailwind CSS · Supabase (
 
 | Area | What's included |
 |---|---|
-| **Public site** | Home (hero, how it works, categories, live rate widget, who we serve, FAQs, CTAs), Services, Shop & Ship (shipping fee table), Pricing with fee calculator, Track Order, About, Contact (enquiry form with attachment — saved to the database and/or emailed to the team), FAQ, Terms, Privacy, Refund, Prohibited Items. Floating “Contact us” button on every page. Light/dark mode. |
+| **Public site** | Home (hero, how it works, categories, live rate widget, who we serve, FAQs, CTAs), Services, Shop & Ship (shipping fee table), Pricing with fee calculator, Track Order, About, Contact (enquiry form with attachment: saved to the database and/or emailed to the team), FAQ, Terms, Privacy, Refund, Prohibited Items. Floating “Contact us” button on every page. Light/dark mode. |
 | **Auth** | Email + password sign-up with email confirmation, phone verification by SMS OTP, phone-OTP login, password reset. Organisation sign-up creates the org automatically. |
 | **Client dashboard** | Service or item requests (multi-item, variants, delivery address), mandatory legal-confirmation checkbox, status badges and timeline, quote breakdown + pay button, messages with attachments, proof/receipts, shipment tracking, encrypted credential sharing (deletable), payment history with invoice/receipt PDFs, profile & KYC uploads, notifications. |
 | **Organisations** | Team members (owner/admin/member) with email invites, bulk requests (up to 50 per batch), monthly PDF statements, organisation KYC (CAC). |
 | **Compliance** | Prohibited-keyword screening (block or flag) in app *and* DB trigger, admin approval before any payment link, KYC threshold enforced at payment, audit log of all admin actions. |
 | **Payments** | Unique, unguessable, expiring payment link per quote; rate locked for N hours; Paystack & Flutterwave checkout; webhooks with signature verification + server-side re-verification; idempotent “mark paid”; underpayment and duplicate-payment detection; invoice & receipt auto-generated and emailed. |
 | **Admin console** | Overview with charts, request review (approve/reject with reason), quote builder with live preview & FX margin, status updates, proof uploads, shipments & tracking, client messaging + internal notes, audited credential reveal, exchange rates (manual or API + markup), fees/minimums/KYC threshold/business hours, shipping rates, customers & organisations with KYC review, contact submissions, WhatsApp inbox with human hand-off, prohibited keywords, team roles, audit log. **2FA (TOTP) required.** |
-| **Roles** | Super Admin, Operations, Support — see the permission matrix in `src/lib/permissions.ts`. |
+| **Roles** | Super Admin, Operations, Support: see the permission matrix in `src/lib/permissions.ts`. |
 | **WhatsApp bot** | Menu (make a request / check status / quote estimate / prohibited items / human), order lookup (only for the owner's number), fee estimates from live rates, draft-request creation with legal confirmation, business-hours-aware hand-off, full conversation log. |
 | **Notifications** | In-app + email + WhatsApp on: request received, quote ready, quote expired, payment confirmed, processing, completed, shipped, delivered, rejected, refunded, new message. |
 
@@ -97,7 +97,7 @@ npm install
 cp .env.example .env.local      # fill in at least the Supabase keys + CREDENTIALS_ENCRYPTION_KEY
 ```
 
-### Option A — local Supabase (CLI + Docker)
+### Option A: local Supabase (CLI + Docker)
 
 ```bash
 npx supabase init                # once; creates supabase/config.toml (keep the existing migrations/ and seed.sql)
@@ -123,14 +123,14 @@ enroll_enabled = true
 verify_enabled = true
 ```
 
-### Option B — hosted Supabase project
+### Option B: hosted Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com) (region close to Nigeria, e.g. `eu-west-2`).
 2. Link and push the schema:
    ```bash
    npx supabase link --project-ref <your-ref>
    npx supabase db push                       # applies supabase/migrations/*
-   psql "$SUPABASE_DB_URL" -f supabase/seed.sql   # optional demo data — staging only!
+   psql "$SUPABASE_DB_URL" -f supabase/seed.sql   # optional demo data: staging only!
    ```
    (Or paste each migration file into the SQL editor in order.)
 3. **Auth → Providers:** enable Email (with confirmations) and Phone. Configure an SMS provider (Twilio, MessageBird, Vonage or Textlocal; for Nigeria, Twilio with an alphanumeric sender works well).

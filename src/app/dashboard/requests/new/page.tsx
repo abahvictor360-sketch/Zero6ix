@@ -23,7 +23,7 @@ export default async function NewRequestPage({ searchParams }: { searchParams: P
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageHeader title="New request" description="Tell us what you need. We'll review it and send a Naira quote — usually within an hour during business hours." />
+      <PageHeader title="New request" description="Tell us what you need. We'll review it and send a Naira quote, usually within an hour during business hours." />
       {needsPhone && (
         <Alert tone="warning" className="mb-6">
           You need to <Link href="/dashboard/verify" className="font-semibold underline">verify your phone number</Link> before submitting a request.

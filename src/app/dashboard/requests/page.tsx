@@ -63,7 +63,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
                     <td><Link href={`/dashboard/requests/${r.id}`} className="font-semibold text-brand-700 hover:underline dark:text-lime-400">{r.reference}</Link></td>
                     <td className="max-w-xs truncate">{r.title}</td>
                     <td className="capitalize">{r.type}</td>
-                    <td className="whitespace-nowrap">{r.amount ? formatMoney(r.amount, r.currency) : "—"}</td>
+                    <td className="whitespace-nowrap">{r.amount ? formatMoney(r.amount, r.currency) : "-"}</td>
                     <td><StatusBadge status={r.status} /></td>
                     <td className="whitespace-nowrap text-slate-500">{formatDate(r.created_at)}</td>
                   </tr>

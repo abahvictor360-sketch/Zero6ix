@@ -59,7 +59,7 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
             <p className="mb-6 mt-2 text-sm text-slate-600 dark:text-slate-400">Rate locked for <Countdown until={quote.expires_at} /></p>
             {kycRequired ? (
               <Alert tone="warning">
-                Orders of this size need a verified ID before payment. <Link href="/dashboard/profile#kyc" className="font-semibold underline">Upload your ID</Link> — we usually review within a few hours.
+                Orders of this size need a verified ID before payment. <Link href="/dashboard/profile#kyc" className="font-semibold underline">Upload your ID</Link>. We usually review within a few hours.
               </Alert>
             ) : (
               <PayForm token={token} total={formatMoney(quote.total_ngn)} />

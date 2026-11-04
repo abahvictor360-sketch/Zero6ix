@@ -60,7 +60,7 @@ export default async function AdminOverview() {
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
         <section className="card">
-          <h2 className="mb-4 font-semibold">Revenue — last 30 days</h2>
+          <h2 className="mb-4 font-semibold">Revenue, last 30 days</h2>
           <RevenueChart data={days} />
         </section>
         <section className="card">

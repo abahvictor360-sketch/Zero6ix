@@ -56,7 +56,7 @@ export function QuoteBuilder({
             {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
           </select>
         </Field>
-        <Field label="Rate override (₦)" name="exchange_rate" hint={`Current sell: ₦${rate?.sell_rate.toLocaleString("en-NG") ?? "—"}`}>
+        <Field label="Rate override (₦)" name="exchange_rate" hint={`Current sell: ₦${rate?.sell_rate.toLocaleString("en-NG") ?? "-"}`}>
           <input id="exchange_rate" name="exchange_rate" className="input" inputMode="decimal" value={rateOverride} onChange={(e) => setRateOverride(e.target.value)} placeholder="Leave blank" />
         </Field>
         <Field label="Other fees (₦)" name="other_fees_ngn" hint="e.g. vendor tax, special handling">

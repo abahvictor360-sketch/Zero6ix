@@ -1,5 +1,5 @@
 -- =============================================================================
--- Web Purchase — row level security
+-- Web Purchase: row level security
 --
 -- Model:
 --  * Clients read their own rows (and rows of organisations they belong to).

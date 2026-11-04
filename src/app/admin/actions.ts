@@ -87,7 +87,7 @@ export async function updateStatus(_: ActionState, form: FormData): Promise<Acti
     if (status === "refunded") await db.from("payments").update({ status: "refunded" }).eq("request_id", id).eq("status", "success");
     if (status === "delivered") await db.from("shipments").update({ status: "delivered", delivered_at: new Date().toISOString() }).eq("request_id", id);
     if (status === "cancelled") await db.from("quotes").update({ status: "cancelled" }).eq("request_id", id).eq("status", "active");
-    const titles: Partial<Record<RequestStatus, string>> = { processing: "Processing — paying the vendor", completed: "Completed", shipped: "Shipped", delivered: "Delivered", refunded: "Refunded", under_review: "Under review", cancelled: "Cancelled" };
+    const titles: Partial<Record<RequestStatus, string>> = { processing: "Processing: paying the vendor", completed: "Completed", shipped: "Shipped", delivered: "Delivered", refunded: "Refunded", under_review: "Under review", cancelled: "Cancelled" };
     await addEvent(id, status, titles[status] ?? status, note ?? null, staff.id);
     await audit(staff, "request.status", "request", id, { from: r.status, to: status, note });
     const event = STATUS_EVENT[status];
@@ -154,7 +154,7 @@ export async function sendQuote(_: ActionState, form: FormData): Promise<ActionS
     if (r.type === "item" && d.weight_kg > 0) {
       await db.from("shipments").upsert({ request_id: r.id, weight_kg: d.weight_kg }, { onConflict: "request_id" });
     }
-    await addEvent(r.id, "quote_sent", r.status === "quote_sent" ? "Quote re-issued" : "Quote sent", `Total ₦${q.totalNgn.toLocaleString("en-NG")} — rate locked for ${fees.quote_validity_hours} hours.`, staff.id);
+    await addEvent(r.id, "quote_sent", r.status === "quote_sent" ? "Quote re-issued" : "Quote sent", `Total ₦${q.totalNgn.toLocaleString("en-NG")}. Rate locked for ${fees.quote_validity_hours} hours.`, staff.id);
     await audit(staff, r.status === "quote_sent" ? "quote.reissue" : "quote.send", "quote", quote.id, { request: r.reference, total: q.totalNgn, rate: q.exchangeRate, flaggedOverride: r.flagged });
     await notifyRequestEvent(r.id, "quote_ready", { quote });
     revalidatePath(`/admin/requests/${r.id}`);
@@ -263,7 +263,7 @@ export async function saveRate(_: ActionState, form: FormData): Promise<ActionSt
     }).safeParse(formToObject(form));
     if (!parsed.success) return zodErrorState(parsed.error);
     const d = parsed.data;
-    if (d.sell_rate < d.buy_rate) return { error: `Sell rate is below buy rate for ${d.currency} — this would lose money on every order.` };
+    if (d.sell_rate < d.buy_rate) return { error: `Sell rate is below buy rate for ${d.currency}. This would lose money on every order.` };
     const db = createAdminClient();
     const { data: before } = await db.from("exchange_rates").select("buy_rate, sell_rate, source, markup_percent").eq("currency", d.currency).maybeSingle();
     await db.from("exchange_rates").upsert({ ...d, symbol: d.symbol ?? "", is_active: d.is_active === "on", updated_by: staff.id, updated_at: new Date().toISOString() });

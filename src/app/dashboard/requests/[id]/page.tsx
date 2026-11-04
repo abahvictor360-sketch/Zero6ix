@@ -31,7 +31,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
     supabase.from("attachments").select("*").eq("request_id", id).order("created_at"),
     supabase.from("shipments").select("*").eq("request_id", id).maybeSingle(),
     supabase.from("messages").select("*").eq("request_id", id).order("created_at"),
-    // Existence check only — ciphertext is never sent to the browser.
+    // Existence check only: ciphertext is never sent to the browser.
     createAdminClient().from("request_credentials").select("request_id, created_at").eq("request_id", id).maybeSingle(),
   ]);
   const quote = (quotes.data?.[0] ?? null) as Quote | null;
@@ -91,7 +91,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
                         <a href={it.product_url} target="_blank" rel="noopener noreferrer nofollow" className="font-medium underline">{it.name || "Product link"}</a>
                         <p className="text-xs text-slate-500">{it.variant ? `${it.variant} · ` : ""}Qty {it.quantity}</p>
                       </div>
-                      <span className="whitespace-nowrap">{it.estimated_price ? formatMoney(it.estimated_price, it.currency) : "—"}</span>
+                      <span className="whitespace-nowrap">{it.estimated_price ? formatMoney(it.estimated_price, it.currency) : "-"}</span>
                     </li>
                   ))}
                 </ul>
@@ -118,7 +118,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
           ) : !closed && (
             <section className="card-dark">
               <h2 className="font-semibold">Quote</h2>
-              <p className="mt-2 text-sm text-white/70">We&apos;re reviewing your request. Your Naira quote will appear here — usually within an hour during business hours.</p>
+              <p className="mt-2 text-sm text-white/70">We&apos;re reviewing your request. Your Naira quote will appear here, usually within an hour during business hours.</p>
             </section>
           )}
 
@@ -163,7 +163,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
                     <input type="hidden" name="request_id" value={request.id} />
                     <button className="btn btn-outline btn-sm text-red-600">Delete credentials</button>
                   </form>
-                  {closed && <p className="text-xs text-amber-600">Your order is complete — we recommend deleting these and changing your password.</p>}
+                  {closed && <p className="text-xs text-amber-600">Your order is complete. We recommend deleting these and changing your password.</p>}
                 </div>
               ) : closed ? <p className="muted text-sm">No credentials stored.</p> : <CredentialsForm requestId={request.id} />}
             </section>
@@ -178,7 +178,7 @@ function Detail({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
       <dt className="text-xs text-slate-500">{label}</dt>
-      <dd className="mt-0.5 font-medium">{value || "—"}</dd>
+      <dd className="mt-0.5 font-medium">{value || "-"}</dd>
     </div>
   );
 }

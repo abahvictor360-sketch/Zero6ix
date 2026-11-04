@@ -34,7 +34,7 @@ export async function sendEmail(input: EmailInput): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM ?? `${site.name} <onboarding@resend.dev>`;
   if (!key) {
-    console.info(`[email] RESEND_API_KEY not set — skipping "${input.subject}" to ${input.to}`);
+    console.info(`[email] RESEND_API_KEY not set: skipping "${input.subject}" to ${input.to}`);
     return false;
   }
   const res = await fetch("https://api.resend.com/emails", {

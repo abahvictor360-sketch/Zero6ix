@@ -97,7 +97,7 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
                 <tbody>{itemRows.map((i) => (
                   <tr key={i.id}>
                     <td className="max-w-[260px]"><a href={i.product_url} target="_blank" rel="noopener noreferrer nofollow" className="break-all underline">{i.name || i.product_url}</a></td>
-                    <td>{i.variant ?? "—"}</td><td>{i.quantity}</td><td>{i.estimated_price ? formatMoney(i.estimated_price, i.currency) : "—"}</td>
+                    <td>{i.variant ?? "-"}</td><td>{i.quantity}</td><td>{i.estimated_price ? formatMoney(i.estimated_price, i.currency) : "-"}</td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -150,7 +150,7 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
             ) : (
               <dl className="space-y-1.5">
                 <D k="WhatsApp" v={r.contact_phone} />
-                <p className="text-xs text-slate-500">Guest/WhatsApp draft — no account linked yet. Ask the client to sign up with this number.</p>
+                <p className="text-xs text-slate-500">Guest/WhatsApp draft: no account linked yet. Ask the client to sign up with this number.</p>
               </dl>
             )}
           </section>
@@ -160,7 +160,7 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
               <h2 className="font-semibold">Review</h2>
               <form action={approveForReview}>
                 <input type="hidden" name="request_id" value={r.id} />
-                <button className="btn btn-dark w-full" disabled={r.status === "draft" && !r.legal_confirmed}>Approve — legal, start review</button>
+                <button className="btn btn-dark w-full" disabled={r.status === "draft" && !r.legal_confirmed}>Approve: legal, start review</button>
               </form>
               <RejectForm requestId={r.id} />
             </section>
@@ -174,7 +174,7 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
           {can(role, "quotes.send") && ["under_review", "quote_sent"].includes(r.status) && (
             <section className="card">
               <h2 className="mb-4 font-semibold">{latest ? "Re-issue quote" : "Build quote"}</h2>
-              {r.requires_kyc && !kycOk && <Alert tone="warning" className="mb-4">Client KYC not verified — they won&apos;t be able to pay until their ID is approved.</Alert>}
+              {r.requires_kyc && !kycOk && <Alert tone="warning" className="mb-4">Client KYC not verified. They won&apos;t be able to pay until their ID is approved.</Alert>}
               <QuoteBuilder
                 requestId={r.id}
                 type={r.type}
@@ -232,5 +232,5 @@ export default async function AdminRequestDetail({ params }: { params: Promise<{
 }
 
 function D({ k, v }: { k: string; v: React.ReactNode }) {
-  return <div><dt className="text-xs text-slate-500">{k}</dt><dd className="font-medium">{v || "—"}</dd></div>;
+  return <div><dt className="text-xs text-slate-500">{k}</dt><dd className="font-medium">{v || "-"}</dd></div>;
 }

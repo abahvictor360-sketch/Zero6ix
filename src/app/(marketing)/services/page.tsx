@@ -21,7 +21,7 @@ export default async function ServicesPage() {
         <div className="container max-w-3xl text-center">
           <p className="eyebrow !text-lime-300">Services</p>
           <h1 className="h1 mt-4">We pay for it. You pay us in Naira or your local currency.</h1>
-          <p className="mt-4 text-lg text-white/75">If it&apos;s legal and sold online, we can pay for it — usually the same day.</p>
+          <p className="mt-4 text-lg text-white/75">If it&apos;s legal and sold online, we can pay for it, usually the same day.</p>
         </div>
       </section>
 
@@ -72,7 +72,7 @@ export default async function ServicesPage() {
 
         <div className="mt-10 rounded-3xl border border-amber-300 bg-amber-50 p-6 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
           <strong>Legal requests only.</strong> We decline gambling, adult content, counterfeit or pirated products, and anything
-          that breaks a vendor&apos;s terms. <Link href="/legal/prohibited-items" className="underline">See the full list</Link>.
+          that breaks a vendor&apos;s terms. <Link href="/legal/prohibited-items" className="inline-block py-1 font-semibold underline">See the full list</Link>.
         </div>
       </section>
     </>

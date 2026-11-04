@@ -1,5 +1,5 @@
 /**
- * WhatsApp chatbot — pure conversation state machine.
+ * WhatsApp chatbot: pure conversation state machine.
  * All side effects (DB lookups, draft creation, handoff) are injected via
  * BotContext so the flow is deterministic and unit-testable.
  */
@@ -63,7 +63,7 @@ export interface BotResult {
 
 const MENU = (name: string) =>
   [
-    `Hello${name ? ` ${name}` : ""} 👋 Welcome to *Web Purchase* — we pay for anything online, in any currency. Legal requests only.`,
+    `Hello${name ? ` ${name}` : ""} 👋 Welcome to *Web Purchase*. We pay for anything online, in any currency. Legal requests only.`,
     "",
     "Reply with a number:",
     "1️⃣ Make a request",
@@ -210,7 +210,7 @@ export async function handleMessage(current: BotState, rawText: string, ctx: Bot
         };
       return {
         replies: [
-          `📦 *${order.reference}* — ${order.title}\nStatus: *${STATUS_LABELS[order.status]}*${order.tracking ? `\nTracking: ${order.tracking}` : ""}\n\nDetails: ${ctx.siteUrl}/track?ref=${order.reference}\n\nReply *menu* for more options.`,
+          `📦 *${order.reference}*: ${order.title}\nStatus: *${STATUS_LABELS[order.status]}*${order.tracking ? `\nTracking: ${order.tracking}` : ""}\n\nDetails: ${ctx.siteUrl}/track?ref=${order.reference}\n\nReply *menu* for more options.`,
         ],
         next: fresh(),
       };
@@ -248,7 +248,7 @@ async function handoff(ctx: BotContext): Promise<BotResult> {
   return {
     replies: [
       ctx.isBusinessHours
-        ? "👩🏽‍💼 Connecting you to a team member now. Please describe how we can help — an agent will reply shortly.\n\n(Type *menu* to return to the bot.)"
+        ? "👩🏽‍💼 Connecting you to a team member now. Please describe how we can help. An agent will reply shortly.\n\n(Type *menu* to return to the bot.)"
         : `Our team is offline right now (hours: ${ctx.hoursText}). Leave your message here and an agent will reply first thing when we're back.\n\n(Type *menu* to return to the bot.)`,
     ],
     next: fresh("human"),

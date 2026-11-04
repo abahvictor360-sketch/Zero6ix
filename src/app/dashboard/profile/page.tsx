@@ -33,12 +33,12 @@ export default async function ProfilePage() {
           <ul className="space-y-3 text-sm">
             <li className="flex items-center justify-between"><span>Email ({p.email})</span><Pill tone={p.email_verified ? "green" : "amber"}>{p.email_verified ? "Verified" : "Pending"}</Pill></li>
             <li className="flex items-center justify-between">
-              <span>Phone ({p.phone ?? "—"})</span>
+              <span>Phone ({p.phone ?? "-"})</span>
               {p.phone_verified ? <Pill tone="green">Verified</Pill> : <Link href="/dashboard/verify" className="btn btn-dark btn-sm">Verify</Link>}
             </li>
             <li className="flex items-center justify-between"><span>Government ID</span><Pill tone={KYC_TONE[p.kyc_status]}>{p.kyc_status}</Pill></li>
           </ul>
-          {p.kyc_status === "verified" && <p className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400"><BadgeCheck className="h-4 w-4" /> Fully verified — no order limits.</p>}
+          {p.kyc_status === "verified" && <p className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400"><BadgeCheck className="h-4 w-4" /> Fully verified, no order limits.</p>}
         </section>
       </div>
 
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
                   <td className="capitalize">{d.doc_type.replace(/_/g, " ")}</td>
                   <td>{formatDate(d.created_at)}</td>
                   <td><Pill tone={d.status === "approved" ? "green" : d.status === "rejected" ? "red" : "amber"}>{d.status}</Pill></td>
-                  <td className="text-sm text-slate-500">{d.review_notes ?? "—"}</td>
+                  <td className="text-sm text-slate-500">{d.review_notes ?? "-"}</td>
                 </tr>
               ))}
             </tbody>

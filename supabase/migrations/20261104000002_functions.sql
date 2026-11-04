@@ -1,5 +1,5 @@
 -- =============================================================================
--- Web Purchase — functions & triggers
+-- Web Purchase: functions & triggers
 -- =============================================================================
 
 alter table public.requests
@@ -74,7 +74,7 @@ language sql immutable as $$
               else '+' || p_phone end
 $$;
 
--- Attach pending organisation invitations — only for CONFIRMED emails, so an
+-- Attach pending organisation invitations: only for CONFIRMED emails, so an
 -- unverified sign-up can never claim someone else's invitation.
 create or replace function public.attach_org_invites(p_user uuid, p_email text) returns void
 language sql security definer set search_path = public as $$

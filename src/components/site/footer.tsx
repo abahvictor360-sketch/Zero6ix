@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div>
           <Logo light />
           <p className="mt-4 max-w-xs text-sm text-white/70">
-            Pay for online services and shop from foreign stores — in Naira or any African currency, at home or abroad.
+            Pay for online services and shop from foreign stores in Naira or any African currency, at home or abroad.
           </p>
           <ul className="mt-6 space-y-2 text-sm text-white/70">
             <li className="flex items-center gap-2"><Lock className="h-4 w-4 text-lime-400" /> Secured by Paystack & Flutterwave</li>
@@ -37,7 +37,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="container flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:justify-between">
-          <p className="max-w-3xl">© {new Date().getFullYear()} {site.name} — a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}. {site.address}. {site.phone} · {site.email}</p>
+          <p className="max-w-3xl">© {new Date().getFullYear()} {site.name}, a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}. {site.address}. {site.phone} · {site.email}</p>
           <p className="shrink-0">We never store your card details.</p>
         </div>
       </div>

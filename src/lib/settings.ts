@@ -33,7 +33,7 @@ export const DEFAULT_SHIPPING: ShippingRate[] = [
   { id: "ae", origin_region: "AE", label: "UAE (Dubai) → Nigeria", rate_per_kg_usd: 7.5, min_charge_usd: 15, delivery_days_min: 5, delivery_days_max: 10 },
 ];
 
-/** Anonymous (public) client — RLS limits it to public reference data. */
+/** Anonymous (public) client: RLS limits it to public reference data. */
 function publicClient() {
   return createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     auth: { persistSession: false },

@@ -44,7 +44,7 @@ export default async function PaymentCallback({
 
   const view = {
     paid: { Icon: CheckCircle2, color: "text-emerald-500", title: "Payment successful", body: `We've received ${amount ? formatMoney(amount) : "your payment"}. Your invoice and receipt are on their way by email, and we're starting on your order now.` },
-    pending: { Icon: Clock, color: "text-amber-500", title: "Payment processing", body: "Your bank is still confirming the payment. This usually takes a minute or two — we'll notify you as soon as it's confirmed. No need to pay again." },
+    pending: { Icon: Clock, color: "text-amber-500", title: "Payment processing", body: "Your bank is still confirming the payment. This usually takes a minute or two. We'll notify you as soon as it's confirmed. No need to pay again." },
     failed: { Icon: XCircle, color: "text-red-500", title: "Payment not completed", body: "The payment was cancelled or didn't go through. You haven't been charged. You can try again while your quote is valid." },
   }[outcome];
 

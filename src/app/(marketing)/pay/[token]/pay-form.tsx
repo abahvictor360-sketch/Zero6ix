@@ -11,7 +11,7 @@ export function Countdown({ until }: { until: string }) {
     const t = setInterval(() => setLeft(new Date(until).getTime() - Date.now()), 1000);
     return () => clearInterval(t);
   }, [until]);
-  if (left <= 0) return <span className="font-semibold text-red-600">expired — refresh the page</span>;
+  if (left <= 0) return <span className="font-semibold text-red-600">expired. Refresh the page</span>;
   const h = Math.floor(left / 3600_000);
   const m = Math.floor((left % 3600_000) / 60_000);
   const s = Math.floor((left % 60_000) / 1000);

@@ -5,7 +5,7 @@ import { requireEnv } from "@/lib/env";
 let cached: SupabaseClient | null = null;
 
 /**
- * Service-role client. Bypasses RLS — only use AFTER an explicit authorization
+ * Service-role client. Bypasses RLS: only use AFTER an explicit authorization
  * check (requireUser / requireStaff / ownership check) in server code.
  */
 export function createAdminClient(): SupabaseClient {

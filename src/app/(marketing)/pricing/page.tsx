@@ -34,8 +34,8 @@ export default async function PricingPage() {
               ["Service fee", `${fees.percentage_fee}% of the Naira amount`],
               ["Flat fee", formatMoney(fees.flat_fee_ngn)],
               ["Minimum fee", formatMoney(fees.minimum_fee_ngn)],
-              ["Shipping (items only)", "Per kg by origin — see Shop & Ship"],
-              ["Payment processing", "Included — no card surcharge"],
+              ["Shipping (items only)", "Per kg by origin (see Shop & Ship)"],
+              ["Payment processing", "Included, no card surcharge"],
               ["Quote validity", `${fees.quote_validity_hours} hours (rate locked)`],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4 py-3"><dt className="muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>

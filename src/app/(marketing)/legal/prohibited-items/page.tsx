@@ -28,7 +28,7 @@ export default function ProhibitedPage() {
       <h2>Nigerian Customs</h2>
       <p>Physical goods must comply with the Nigeria Customs Service import prohibition list, which changes from time to time. We check each item, but you remain responsible for ensuring your item can be legally imported.</p>
 
-      <p>Not sure? <Link href="/contact">Ask us first</Link> — we&apos;re happy to check before you submit.</p>
+      <p>Not sure? <Link href="/contact">Ask us first</Link>. We&apos;re happy to check before you submit.</p>
     </>
   );
 }

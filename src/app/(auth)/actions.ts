@@ -27,7 +27,7 @@ export async function signIn(_: ActionState, form: FormData): Promise<ActionStat
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
-    return { error: error.message.includes("Email not confirmed") ? "Please confirm your email first — check your inbox." : "Incorrect email or password." };
+    return { error: error.message.includes("Email not confirmed") ? "Please confirm your email first. Check your inbox." : "Incorrect email or password." };
   }
   const { data: profile } = await supabase.from("users").select("role").eq("id", data.user.id).single();
   redirect(isStaffRole(profile?.role) ? "/admin" : safeNext(form.get("next")));

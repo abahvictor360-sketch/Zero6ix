@@ -11,7 +11,7 @@ import { formatMoney } from "@/lib/format";
 import { accountsEnabled, requestCta, site } from "@/lib/site";
 
 const WHO = [
-  { icon: GraduationCap, t: "Students & applicants", d: "Exam, application, evaluation and visa fees — IELTS, TOEFL, WES, UCAS, SEVIS and more." },
+  { icon: GraduationCap, t: "Students & applicants", d: "Exam, application, evaluation and visa fees: IELTS, TOEFL, WES, UCAS, SEVIS and more." },
   { icon: Users, t: "Freelancers & creatives", d: "Software, subscriptions, ad credits and tools when your card is declined or your region isn't supported." },
   { icon: Plane, t: "Africans in the diaspora", d: "Living abroad but paying with Naira or another African currency? We bridge the gap for you and your family." },
   { icon: Building2, t: "Businesses & organisations", d: "SMEs, schools, NGOs and startups paying for team tools in bulk, with proper invoices and statements." },
@@ -30,7 +30,7 @@ export default async function HomePage() {
         <div className="container relative grid items-center gap-12 pb-20 pt-14 lg:grid-cols-[1.15fr_1fr] lg:pb-28 lg:pt-20">
           <div>
             <Link href="/legal/prohibited-items" className="inline-flex items-center gap-2 rounded-full border border-lime-400/40 bg-lime-400/10 px-3 py-1 text-xs font-medium text-lime-300">
-              <span className="rounded-full bg-lime-400 px-2 py-0.5 text-[10px] font-bold uppercase text-brand-950">Legal only</span>
+              <span className="shrink-0 whitespace-nowrap rounded-full bg-lime-400 px-2 py-0.5 text-[11px] font-bold uppercase text-brand-950">Legal only</span>
               Every request reviewed by a human <ArrowRight className="h-3 w-3" />
             </Link>
             <h1 className="h1 mt-6 max-w-2xl">
@@ -38,7 +38,7 @@ export default async function HomePage() {
             </h1>
             <p className="mt-5 max-w-xl text-lg text-white/75">
               Card declined? Currency limits? Region not supported? Whether you&apos;re in Nigeria or abroad, we pay for your
-              subscriptions, exam and visa fees and buy from foreign stores in USD, GBP, EUR and more — you pay us in Naira
+              subscriptions, exam and visa fees and buy from foreign stores in USD, GBP, EUR and more. You pay us in Naira
               or your local African currency.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -97,7 +97,7 @@ export default async function HomePage() {
       <section className="container grid gap-5 pb-20 md:grid-cols-2">
         <div className="card-dark flex flex-col p-8">
           <h3 className="text-center text-2xl font-semibold text-lime-400">For services</h3>
-          <p className="mx-auto mt-3 max-w-sm text-center text-white/75">Subscriptions, exam fees, visa fees, domains, courses and ad credits — paid the same day.</p>
+          <p className="mx-auto mt-3 max-w-sm text-center text-white/75">Subscriptions, exam fees, visa fees, domains, courses and ad credits, paid the same day.</p>
           <Link href="/services" className="btn btn-primary btn-sm mx-auto mt-5">Explore services <ArrowRight className="h-3.5 w-3.5" /></Link>
           <div className="mt-8 grid grid-cols-2 gap-2 text-sm">
             {["ChatGPT Plus", "IELTS fee", "Adobe CC", "UK visa IHS", "Figma", "Coursera"].map((s) => (
@@ -155,7 +155,7 @@ export default async function HomePage() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {[
             { icon: Timer, t: "Fast, reliable payments", d: "Most service payments done the same day." },
-            { icon: Globe2, t: "Global coverage", d: "We pay vendors in USD, GBP, EUR, CAD, AED, CNY and more — you pay in Naira or another African currency." },
+            { icon: Globe2, t: "Global coverage", d: "We pay vendors in USD, GBP, EUR, CAD, AED, CNY and more. You pay in Naira or another African currency." },
             { icon: Sparkles, t: "Human support", d: "Real people by phone, email and our contact form." },
             { icon: ShieldCheck, t: "Secure & compliant", d: "KYC, encrypted data, audited operations." },
           ].map(({ icon: Icon, t, d }) => (

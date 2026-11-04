@@ -315,3 +315,15 @@ revoke execute on function public.expire_stale_quotes() from public, anon, authe
 revoke execute on function public.next_document_number(text) from public, anon, authenticated;
 revoke execute on function public.purge_rate_limits() from public, anon, authenticated;
 revoke execute on function public.attach_org_invites(uuid, text) from public, anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Audit log is append-only (applies to every role, including service_role).
+-- ---------------------------------------------------------------------------
+create or replace function public.prevent_audit_mutation() returns trigger
+language plpgsql as $$
+begin
+  raise exception 'audit_logs is append-only';
+end $$;
+
+create trigger audit_logs_append_only before update or delete on public.audit_logs
+  for each row execute function public.prevent_audit_mutation();

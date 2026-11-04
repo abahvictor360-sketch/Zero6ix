@@ -61,6 +61,7 @@ export interface RequestRow {
   contact_phone: string | null;
   contact_email: string | null;
   legal_confirmed: boolean;
+  legal_confirmed_at: string | null;
   flagged: boolean;
   flag_reasons: string[];
   rejection_reason: string | null;

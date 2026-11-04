@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CURRENCIES, EXCHANGE_RATE, ITEMS } from "@/lib/payfx/catalog";
+import { CURRENCIES, EXCHANGE_RATE } from "@/lib/payfx/catalog";
+import { getProducts } from "@/lib/payfx/products";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { gatewayStatus } from "@/lib/payfx/gateways";
 import { storeConfigured } from "@/lib/payfx/store";
@@ -16,7 +17,8 @@ export const dynamic = "force-dynamic";
 
 export default async function PayfxPage({ searchParams }: { searchParams: Promise<{ item?: string }> }) {
   const { item } = await searchParams;
-  const items = ITEMS.map((i) => ({ ...i, logoSvg: logoSvg(i.logo), logoTitle: LOGOS[i.logo].title }));
+  const { items: products } = await getProducts();
+  const items = products.map((i) => ({ ...i, logoSvg: logoSvg(i.logo), logoTitle: LOGOS[i.logo].title }));
   const single = items.find((i) => i.id === item) ?? null;
 
   return (

@@ -28,10 +28,8 @@ export interface PayfxItem {
   test?: boolean;
 }
 
+/** Built-in fallback list. The live list comes from the leadloop table public.payfx_products. */
 export const ITEMS: PayfxItem[] = [
-  { id: "supabase-pro", name: "Supabase Pro", period: "12 months", purpose: "Central database and secure sign-in used by the website, Xpel POS and Xtend.", amount: 409500, logo: "supabase" },
-  { id: "vps-hosting", name: "VPS hosting", subtitle: "Hostinger", period: "24 months", purpose: "Private server that runs the website, Xpel POS, Xtend and any new apps added later.", amount: 327600, logo: "hostinger" },
-  { id: "domain-name", name: "Domain name", subtitle: "Hostinger", period: "12 months", purpose: "Annual registration of the web address where staff open and download Xtend.", amount: 27300, logo: "hostinger" },
   { id: "anthropic-api-claude", name: "Anthropic API", subtitle: "Claude", period: "12 months", purpose: "AI that verifies clock-in selfies and shelf photos, and answers staff questions through Ask Xtend.", amount: 477750, logo: "claude" },
   { id: "google-maps-api", name: "Google Maps API", period: "12 months", purpose: "Location service that confirms which shop staff clock in from and looks up stores during bulk uploads.", amount: 641550, logo: "googlemaps" },
   { id: "apple-developer", name: "Apple Developer account", period: "12 months", purpose: "Yearly membership that lets Xtend be listed on the App Store for iPhone users.", amount: 155000, logo: "apple" },

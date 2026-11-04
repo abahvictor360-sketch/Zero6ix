@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
-import { CURRENCIES, ITEMS_BY_ID, EXCHANGE_RATE, convert, gatewayName, round2, type CurrencyCode } from "@/lib/payfx/catalog";
+import { CURRENCIES, EXCHANGE_RATE, convert, gatewayName, round2, type CurrencyCode } from "@/lib/payfx/catalog";
+import { getProductsById } from "@/lib/payfx/products";
 import { GATEWAYS, type GatewayId } from "@/lib/payfx/gateways";
 import { createOrder, storeConfigured } from "@/lib/payfx/store";
 import { siteBase } from "@/lib/payfx/orders";
@@ -38,7 +39,8 @@ export async function POST(request: Request) {
   }
   if (!storeConfigured()) return NextResponse.json({ error: "Checkout is not set up yet. Please contact us." }, { status: 503 });
 
-  // Prices always come from the server catalog, never from the browser.
+  // Prices always come from the server (database or built-in list), never from the browser.
+  const ITEMS_BY_ID = await getProductsById();
   const ids = [...new Set(Array.isArray(body.items) ? body.items.map(String) : [])].filter((id) => ITEMS_BY_ID.has(id));
   if (!ids.length) return NextResponse.json({ error: "Select at least one item." }, { status: 400 });
   const lines = ids.map((id) => {

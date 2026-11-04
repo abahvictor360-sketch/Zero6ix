@@ -8,6 +8,8 @@ import { gatewayName, money } from "@/lib/payfx/catalog";
 import { logoSvg } from "@/lib/payfx/icons";
 import { site } from "@/lib/site";
 import { PrintButton } from "./print-button";
+import { documentNumber } from "@/lib/payfx/pdf";
+import { FileText, Receipt } from "lucide-react";
 
 export const metadata: Metadata = { title: "Invoice", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -30,7 +32,8 @@ export default async function PayfxInvoicePage({ params }: { params: Promise<{ r
         <div className="flex flex-wrap gap-2">
           {!paid && <a href={`/payfx/pay/${order.ref}`} className="btn btn-dark btn-sm">Pay now</a>}
           <PrintButton />
-          <a href={`/payfx/invoice/${order.ref}/pdf`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Download PDF</a>
+          <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Invoice PDF</a>
+          {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Receipt PDF</a>}
         </div>
       </div>
 
@@ -119,6 +122,43 @@ export default async function PayfxInvoicePage({ params }: { params: Promise<{ r
           {site.name}, a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}. {site.address}. {site.email} · {site.phone}
         </footer>
       </article>
+
+      <section className="card mt-6 print:hidden" aria-labelledby="docs-heading">
+        <h2 id="docs-heading" className="font-semibold">Documents</h2>
+        <p className="muted mt-1 text-sm">Download the invoice{paid ? " and receipt" : ""} with the {site.name} logo for the whole order, or one per item with that item&apos;s logo.{!paid && " Receipts become available once payment is confirmed."}</p>
+
+        <div className="mt-5 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 p-3 dark:border-white/10">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-lime-400 font-bold text-brand-950">W</span>
+              <div>
+                <p className="text-sm font-semibold">{site.name}: whole order</p>
+                <p className="text-xs text-slate-500">{documentNumber(order, "invoice")}{paid ? ` · ${documentNumber(order, "receipt")}` : ""} · {money(order.total, order.currency)}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice&brand=webpurchase`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
+              {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt&brand=webpurchase`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
+            </div>
+          </div>
+
+          {order.items.map((l, i) => (
+            <div key={l.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 p-3 dark:border-white/10">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-50 text-slate-900 ring-1 ring-slate-200 dark:bg-white" dangerouslySetInnerHTML={{ __html: logoSvg(l.logo, { size: 22 }) }} />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{l.name}{l.subtitle ? ` (${l.subtitle})` : ""}</p>
+                  <p className="text-xs text-slate-500">{documentNumber(order, "invoice", i)}{paid ? ` · ${documentNumber(order, "receipt", i)}` : ""} · {money(l.amount, order.currency)}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
+                {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </section>
   );
 }

@@ -39,8 +39,6 @@ export const ITEMS: PayfxItem[] = [
   { id: "vps-upgrade", name: "VPS upgrade", subtitle: "Hostinger", period: "24 months", purpose: "More memory and disk space on the server to handle X Metrics reports and data exports.", amount: 163800, logo: "hostinger" },
   { id: "daily-backup", name: "Daily online backup", period: "12 months", purpose: "Encrypted daily copy of all company data, kept off the main server for quick recovery.", amount: 123800, logo: "backup" },
   { id: "monitoring", name: "Error and uptime monitoring", period: "6 months", purpose: "24/7 checks on every app, with instant alerts to the admin when something fails or goes down.", amount: 110150, logo: "monitor" },
-  { id: "test", name: "Test", period: "One time", purpose: "Small payment used to check that checkout and receipts work.", amount: 1000, logo: "test", test: true },
-  { id: "test-500", name: "Test 500", period: "One time", purpose: "Smaller payment used to check that checkout and receipts work.", amount: 500, logo: "test", test: true },
 ];
 
 export const ITEMS_BY_ID = new Map(ITEMS.map((i) => [i.id, i]));

@@ -11,6 +11,13 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   experimental: { serverActions: { bodySizeLimit: "10mb" } },
+  async redirects() {
+    // PayFX was renamed to Checkout; keep old links (and gateway callbacks) working.
+    return [
+      { source: "/payfx", destination: "/checkout", permanent: true },
+      { source: "/payfx/:path*", destination: "/checkout/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

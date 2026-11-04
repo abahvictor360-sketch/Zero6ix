@@ -96,8 +96,8 @@ export function PayfxCheckout({
         <div className="container">
           <div className="flex flex-wrap items-center justify-between gap-3">
             {single ? (
-              <Link href="/payfx" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white"><ArrowLeft className="h-4 w-4" /> All services</Link>
-            ) : <span className="eyebrow !text-lime-300">PayFX</span>}
+              <Link href="/checkout" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white"><ArrowLeft className="h-4 w-4" /> All services</Link>
+            ) : <span className="eyebrow !text-lime-300">Checkout</span>}
             <button type="button" onClick={() => findRef.current?.showModal()} className="btn btn-ghost-light btn-sm"><FileSearch className="h-4 w-4" /> Find my invoice</button>
           </div>
           <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -145,7 +145,7 @@ export function PayfxCheckout({
                   </label>
                   {!single && (
                     <div className="border-t border-slate-100 px-5 py-2 text-right dark:border-white/10">
-                      <Link href={`/payfx?item=${encodeURIComponent(i.id)}`} className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline dark:text-lime-400">
+                      <Link href={`/checkout?item=${encodeURIComponent(i.id)}`} className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline dark:text-lime-400">
                         Pay for this only <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </div>

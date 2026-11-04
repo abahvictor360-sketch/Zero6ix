@@ -28,12 +28,12 @@ export default async function PayfxInvoicePage({ params }: { params: Promise<{ r
   return (
     <section className="container max-w-4xl py-10">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <Link href="/payfx" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white"><ArrowLeft className="h-4 w-4" /> PayFX</Link>
+        <Link href="/checkout" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white"><ArrowLeft className="h-4 w-4" /> Checkout</Link>
         <div className="flex flex-wrap gap-2">
-          {!paid && <a href={`/payfx/pay/${order.ref}`} className="btn btn-dark btn-sm">Pay now</a>}
+          {!paid && <a href={`/checkout/pay/${order.ref}`} className="btn btn-dark btn-sm">Pay now</a>}
           <PrintButton />
-          <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Invoice PDF</a>
-          {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Receipt PDF</a>}
+          <a href={`/checkout/invoice/${order.ref}/pdf?doc=invoice`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Invoice PDF</a>
+          {paid && <a href={`/checkout/invoice/${order.ref}/pdf?doc=receipt`} className="btn btn-outline btn-sm"><Download className="h-4 w-4" /> Receipt PDF</a>}
         </div>
       </div>
 
@@ -137,8 +137,8 @@ export default async function PayfxInvoicePage({ params }: { params: Promise<{ r
               </div>
             </div>
             <div className="flex gap-2">
-              <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice&brand=webpurchase`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
-              {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt&brand=webpurchase`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
+              <a href={`/checkout/invoice/${order.ref}/pdf?doc=invoice&brand=webpurchase`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
+              {paid && <a href={`/checkout/invoice/${order.ref}/pdf?doc=receipt&brand=webpurchase`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
             </div>
           </div>
 
@@ -152,8 +152,8 @@ export default async function PayfxInvoicePage({ params }: { params: Promise<{ r
                 </div>
               </div>
               <div className="flex gap-2">
-                <a href={`/payfx/invoice/${order.ref}/pdf?doc=invoice&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
-                {paid && <a href={`/payfx/invoice/${order.ref}/pdf?doc=receipt&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
+                <a href={`/checkout/invoice/${order.ref}/pdf?doc=invoice&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-outline btn-sm"><FileText className="h-4 w-4" /> Invoice</a>
+                {paid && <a href={`/checkout/invoice/${order.ref}/pdf?doc=receipt&brand=item&item=${encodeURIComponent(l.id)}`} className="btn btn-dark btn-sm"><Receipt className="h-4 w-4" /> Receipt</a>}
               </div>
             </div>
           ))}

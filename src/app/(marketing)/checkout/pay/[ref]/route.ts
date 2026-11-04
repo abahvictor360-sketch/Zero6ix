@@ -12,7 +12,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ ref:
   const base = siteBase(request);
   let order = await getOrder(ref).catch(() => null);
   if (!order) return new NextResponse("Invoice not found", { status: 404 });
-  const invoice = `${base}/payfx/invoice/${order.ref}`;
+  const invoice = `${base}/checkout/invoice/${order.ref}`;
   if (order.status === "paid") return NextResponse.redirect(invoice);
   try {
     // The previous attempt may have gone through after all.
@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ ref:
     if (order.status === "paid") return NextResponse.redirect(invoice);
     const attempts = (order.attempts ?? 0) + 1;
     order = (await updateOrder(order.ref, { attempts, payRef: `${order.ref}-R${attempts}` }))!;
-    const callback = `${base}/payfx/callback/${order.payRef}`;
+    const callback = `${base}/checkout/callback/${order.payRef}`;
     const url = order.gateway === "paystack"
       ? await GATEWAYS.paystack.initialize(order, callback)
       : await GATEWAYS.flutterwave.initialize(order, callback, site.name);

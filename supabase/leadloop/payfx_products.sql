@@ -32,10 +32,11 @@ insert into public.payfx_products (id, name, subtitle, period, purpose, amount_n
   ('supabase-addon', 'Supabase add-on', null, '12 months', 'Extra database capacity for X Metrics records: supply, stock, sales, expiry dates and photos.', 163800, 'supabase', false, 60),
   ('vps-upgrade', 'VPS upgrade', 'Hostinger', '24 months', 'More memory and disk space on the server to handle X Metrics reports and data exports.', 163800, 'hostinger', false, 70),
   ('daily-backup', 'Daily online backup', null, '12 months', 'Encrypted daily copy of all company data, kept off the main server for quick recovery.', 123800, 'backup', false, 80),
-  ('monitoring', 'Error and uptime monitoring', null, '6 months', '24/7 checks on every app, with instant alerts to the admin when something fails or goes down.', 110150, 'monitor', false, 90),
-  ('test', 'Test', null, 'One time', 'Small payment used to check that checkout and receipts work.', 1000, 'test', true, 900),
-  ('test-500', 'Test 500', null, 'One time', 'Smaller payment used to check that checkout and receipts work.', 500, 'test', true, 910)
+  ('monitoring', 'Error and uptime monitoring', null, '6 months', '24/7 checks on every app, with instant alerts to the admin when something fails or goes down.', 110150, 'monitor', false, 90)
 on conflict (id) do update set
   name = excluded.name, subtitle = excluded.subtitle, period = excluded.period, purpose = excluded.purpose,
   amount_ngn = excluded.amount_ngn, logo = excluded.logo, is_test = excluded.is_test, sort_order = excluded.sort_order,
   active = true, updated_at = now();
+
+-- Test items are not offered.
+delete from public.payfx_products where is_test;

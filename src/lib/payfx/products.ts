@@ -20,7 +20,7 @@ const anonKey = () => envValue("PAYFX_SUPABASE_ANON_KEY");
 export async function getProducts(): Promise<{ items: PayfxItem[]; source: "database" | "built-in" }> {
   if (!base() || !anonKey()) return { items: ITEMS, source: "built-in" };
   try {
-    const res = await fetch(`${base()}/rest/v1/payfx_products?select=*&active=eq.true&order=sort_order.asc`, {
+    const res = await fetch(`${base()}/rest/v1/payfx_products?select=*&active=eq.true&is_test=eq.false&order=sort_order.asc`, {
       headers: supabaseAuthHeaders(anonKey()),
       next: { revalidate: 60 },
       signal: AbortSignal.timeout(8000),

@@ -12,5 +12,5 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (request.nextUrl.searchParams.get("status") !== "cancelled") {
     await confirmPayment(payRef, request.nextUrl.searchParams.get("transaction_id") ?? undefined).catch((e) => console.error("[payfx] confirm", e));
   }
-  return NextResponse.redirect(`${siteBase(request)}/payfx/invoice/${order.ref}`);
+  return NextResponse.redirect(`${siteBase(request)}/checkout/invoice/${order.ref}`);
 }

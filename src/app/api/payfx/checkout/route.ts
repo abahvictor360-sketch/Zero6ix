@@ -68,16 +68,16 @@ export async function POST(request: Request) {
       total: round2(lines.reduce((s, l) => s + l.amount, 0)),
       ngnTotal: lines.reduce((s, l) => s + l.ngnAmount, 0),
       createdAt: new Date().toISOString(),
-      source: "webpurchase.app/payfx",
+      source: "webpurchase.app/checkout",
     });
   } catch (e) {
     console.error("[payfx] create order failed", e);
     return NextResponse.json({ error: "Could not create your invoice. Please try again." }, { status: 500 });
   }
 
-  const invoiceUrl = `/payfx/invoice/${order.ref}`;
+  const invoiceUrl = `/checkout/invoice/${order.ref}`;
   try {
-    const callback = `${siteBase(request)}/payfx/callback/${order.payRef}`;
+    const callback = `${siteBase(request)}/checkout/callback/${order.payRef}`;
     const url = gateway === "paystack"
       ? await GATEWAYS.paystack.initialize(order, callback)
       : await GATEWAYS.flutterwave.initialize(order, callback, site.name);

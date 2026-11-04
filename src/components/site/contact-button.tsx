@@ -6,7 +6,7 @@ import { MessageCircle } from "lucide-react";
 /** Floating "Contact us" button on every page (hidden on the contact page itself). */
 export function ContactButton() {
   const pathname = usePathname();
-  if (pathname === "/contact" || pathname.startsWith("/payfx")) return null;
+  if (pathname === "/contact" || pathname.startsWith("/checkout") || pathname.startsWith("/payfx")) return null;
   return (
     <Link
       href="/contact"

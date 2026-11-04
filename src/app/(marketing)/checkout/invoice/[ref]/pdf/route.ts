@@ -5,7 +5,7 @@ import { renderPayfxDocument, type DocBrand, type DocKind } from "@/lib/payfx/pd
 export const dynamic = "force-dynamic";
 
 /**
- * /payfx/invoice/<ref>/pdf?doc=invoice|receipt&brand=webpurchase|item&item=<id>
+ * /checkout/invoice/<ref>/pdf?doc=invoice|receipt&brand=webpurchase|item&item=<id>
  * Receipts are only issued once the payment has been confirmed.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ ref: string }> }) {

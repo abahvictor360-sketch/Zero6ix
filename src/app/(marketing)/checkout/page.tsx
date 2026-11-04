@@ -8,7 +8,7 @@ import { PayfxCheckout } from "./payfx-checkout";
 
 // Private payment page: not in the menu, sitemap or search results.
 export const metadata: Metadata = {
-  title: "PayFX: items and funding required",
+  title: "Checkout",
   description: "Select the services you are paying for, then pay with Flutterwave or Paystack.",
   robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
   alternates: { canonical: null },

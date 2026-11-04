@@ -67,26 +67,51 @@ $$;
 -- ---------------------------------------------------------------------------
 -- auth.users → public.users sync
 -- ---------------------------------------------------------------------------
+create or replace function public.e164(p_phone text) returns text
+language sql immutable as $$
+  select case when coalesce(p_phone, '') = '' then null
+              when p_phone like '+%' then p_phone
+              else '+' || p_phone end
+$$;
+
+-- Attach pending organisation invitations — only for CONFIRMED emails, so an
+-- unverified sign-up can never claim someone else's invitation.
+create or replace function public.attach_org_invites(p_user uuid, p_email text) returns void
+language sql security definer set search_path = public as $$
+  update public.organisation_members
+     set user_id = p_user, status = 'active'
+   where user_id is null and lower(invited_email) = lower(p_email)
+$$;
+
 create or replace function public.handle_new_auth_user() returns trigger
 language plpgsql security definer set search_path = public as $$
+declare
+  v_org uuid;
+  v_type public.account_type := coalesce((new.raw_user_meta_data ->> 'account_type')::public.account_type, 'individual');
 begin
   insert into public.users (id, email, phone, full_name, account_type, email_verified, phone_verified)
   values (
     new.id,
     lower(new.email),
-    nullif(new.phone, ''),
+    public.e164(coalesce(nullif(new.phone, ''), new.raw_user_meta_data ->> 'phone')),
     coalesce(new.raw_user_meta_data ->> 'full_name', ''),
-    coalesce((new.raw_user_meta_data ->> 'account_type')::public.account_type, 'individual'),
+    v_type,
     new.email_confirmed_at is not null,
     new.phone_confirmed_at is not null
   )
   on conflict (id) do nothing;
 
-  -- Attach pending organisation invitations addressed to this email.
-  if new.email is not null then
-    update public.organisation_members
-       set user_id = new.id, status = 'active'
-     where user_id is null and lower(invited_email) = lower(new.email);
+  -- Organisation sign-up: create the organisation with the user as owner.
+  if v_type = 'organisation' and coalesce(new.raw_user_meta_data ->> 'organisation_name', '') <> '' then
+    insert into public.organisations (name, email, created_by)
+    values (left(new.raw_user_meta_data ->> 'organisation_name', 160), lower(new.email), new.id)
+    returning id into v_org;
+    insert into public.organisation_members (organisation_id, user_id, role, status)
+    values (v_org, new.id, 'owner', 'active');
+  end if;
+
+  if new.email is not null and new.email_confirmed_at is not null then
+    perform public.attach_org_invites(new.id, new.email);
   end if;
   return new;
 end $$;
@@ -100,10 +125,14 @@ language plpgsql security definer set search_path = public as $$
 begin
   update public.users set
     email = lower(new.email),
-    phone = coalesce(nullif(new.phone, ''), phone),
+    phone = coalesce(public.e164(nullif(new.phone, '')), phone),
     email_verified = new.email_confirmed_at is not null,
     phone_verified = new.phone_confirmed_at is not null
   where id = new.id;
+
+  if new.email_confirmed_at is not null and (old.email_confirmed_at is null or old.email is distinct from new.email) then
+    perform public.attach_org_invites(new.id, new.email);
+  end if;
   return new;
 end $$;
 
@@ -285,3 +314,4 @@ revoke execute on function public.check_rate_limit(text, integer, integer) from 
 revoke execute on function public.expire_stale_quotes() from public, anon, authenticated;
 revoke execute on function public.next_document_number(text) from public, anon, authenticated;
 revoke execute on function public.purge_rate_limits() from public, anon, authenticated;
+revoke execute on function public.attach_org_invites(uuid, text) from public, anon, authenticated;

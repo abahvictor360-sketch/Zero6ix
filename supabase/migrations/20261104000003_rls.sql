@@ -36,6 +36,18 @@ alter table public.rate_limits enable row level security;
 -- users ----------------------------------------------------------------------
 create policy users_select_self on public.users for select to authenticated
   using (id = auth.uid() or public.is_staff());
+-- Members of the same organisation can see each other's basic profile.
+create or replace function public.shares_org_with(p_user uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from public.organisation_members a
+    join public.organisation_members b on a.organisation_id = b.organisation_id
+    where a.user_id = auth.uid() and a.status = 'active'
+      and b.user_id = p_user and b.status in ('active', 'invited')
+  )
+$$;
+create policy users_select_org_peers on public.users for select to authenticated
+  using (public.shares_org_with(id));
 create policy users_update_self on public.users for update to authenticated
   using (id = auth.uid()) with check (id = auth.uid());
 

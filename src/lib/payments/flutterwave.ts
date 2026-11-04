@@ -2,10 +2,11 @@ import "server-only";
 import { safeEqual } from "@/lib/crypto";
 import { site } from "@/lib/site";
 import type { InitArgs, VerifiedTx } from "./paystack";
+import { envValue } from "@/lib/env";
 
 const BASE = "https://api.flutterwave.com/v3";
 const secret = () => {
-  const s = process.env.FLUTTERWAVE_SECRET_KEY;
+  const s = envValue("FLUTTERWAVE_SECRET_KEY");
   if (!s) throw new Error("FLUTTERWAVE_SECRET_KEY is not set");
   return s;
 };
@@ -52,6 +53,6 @@ export async function flutterwaveVerify(txRef: string): Promise<VerifiedTx> {
 
 /** Flutterwave sends the dashboard-configured secret hash in the `verif-hash` header. */
 export function verifyFlutterwaveSignature(header: string | null) {
-  const expected = process.env.FLUTTERWAVE_WEBHOOK_HASH;
+  const expected = envValue("FLUTTERWAVE_WEBHOOK_HASH");
   return Boolean(expected && header && safeEqual(header, expected));
 }

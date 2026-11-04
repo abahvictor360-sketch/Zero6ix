@@ -1,6 +1,7 @@
 import "server-only";
 import { ITEMS, type LogoKey, type PayfxItem } from "./catalog";
 import { LOGOS } from "./icons";
+import { envValue } from "@/lib/env";
 
 /**
  * Products come from the leadloop Supabase table public.payfx_products
@@ -12,8 +13,8 @@ interface Row {
   amount_ngn: number | string; logo: string; is_test: boolean; sort_order: number;
 }
 
-const base = () => (process.env.PAYFX_SUPABASE_URL || process.env.SUPABASE_URL || "").replace(/\/$/, "");
-const anonKey = () => (process.env.PAYFX_SUPABASE_ANON_KEY || "").trim();
+const base = () => (envValue("PAYFX_SUPABASE_URL") || envValue("SUPABASE_URL")).replace(/\/$/, "");
+const anonKey = () => envValue("PAYFX_SUPABASE_ANON_KEY");
 
 export async function getProducts(): Promise<{ items: PayfxItem[]; source: "database" | "built-in" }> {
   if (!base() || !anonKey()) return { items: ITEMS, source: "built-in" };

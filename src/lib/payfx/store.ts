@@ -1,5 +1,6 @@
 import "server-only";
 import type { CurrencyCode, LogoKey } from "./catalog";
+import { envValue } from "@/lib/env";
 
 /**
  * PayFX orders live in the Supabase table public.payfx_orders, shared with
@@ -43,8 +44,8 @@ export interface PayfxOrder {
   source?: string;
 }
 
-const base = () => (process.env.PAYFX_SUPABASE_URL || process.env.SUPABASE_URL || "").replace(/\/$/, "");
-const key = () => (process.env.PAYFX_SUPABASE_SERVICE_ROLE_KEY || "").trim();
+const base = () => (envValue("PAYFX_SUPABASE_URL") || envValue("SUPABASE_URL")).replace(/\/$/, "");
+const key = () => envValue("PAYFX_SUPABASE_SERVICE_ROLE_KEY");
 export const storeConfigured = () => Boolean(base() && key());
 
 async function rest<T>(query: string, init: RequestInit = {}): Promise<T> {

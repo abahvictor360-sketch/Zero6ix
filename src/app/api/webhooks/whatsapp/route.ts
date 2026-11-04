@@ -1,6 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 import { hmacHex, safeEqual } from "@/lib/crypto";
 import { parseWebhook, processInbound } from "@/lib/whatsapp/handler";
+import { envValue } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 /** Meta webhook verification handshake. */
 export async function GET(request: NextRequest) {
   const p = request.nextUrl.searchParams;
-  const token = process.env.WHATSAPP_VERIFY_TOKEN;
+  const token = envValue("WHATSAPP_VERIFY_TOKEN");
   if (p.get("hub.mode") === "subscribe" && token && p.get("hub.verify_token") === token) {
     return new NextResponse(p.get("hub.challenge") ?? "", { status: 200 });
   }
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: Request) {
   const raw = await request.text();
-  const secret = process.env.WHATSAPP_APP_SECRET;
+  const secret = envValue("WHATSAPP_APP_SECRET");
   const signature = request.headers.get("x-hub-signature-256") ?? "";
   if (!secret || !safeEqual(signature, `sha256=${hmacHex("sha256", secret, raw)}`)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });

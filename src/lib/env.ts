@@ -10,3 +10,12 @@ export const isSupabaseConfigured = () =>
 
 export const isServiceRoleConfigured = () =>
   isSupabaseConfigured() && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+/**
+ * Read an env var, treating Vercel placeholders ("REPLACE_ME", "CHANGE_ME", "TODO")
+ * as unset, so half-configured settings never get used as real keys.
+ */
+export function envValue(name: string): string {
+  const v = (process.env[name] ?? "").trim();
+  return /^(replace[_-]?me|change[_-]?me|todo|xxx+)$/i.test(v) ? "" : v;
+}

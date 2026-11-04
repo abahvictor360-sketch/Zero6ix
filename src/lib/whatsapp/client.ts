@@ -1,10 +1,11 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { envValue } from "@/lib/env";
 
 const GRAPH = "https://graph.facebook.com/v21.0";
 
 export const isWhatsAppConfigured = () =>
-  Boolean(process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID);
+  Boolean(envValue("WHATSAPP_ACCESS_TOKEN") && envValue("WHATSAPP_PHONE_NUMBER_ID"));
 
 /** WhatsApp IDs are E.164 digits without '+'. */
 export const toWaId = (phone: string) => phone.replace(/\D/g, "");
@@ -14,10 +15,10 @@ async function post(payload: Record<string, unknown>) {
     console.info("[whatsapp] not configured: skipping message", JSON.stringify(payload).slice(0, 200));
     return null;
   }
-  const res = await fetch(`${GRAPH}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+  const res = await fetch(`${GRAPH}/${envValue("WHATSAPP_PHONE_NUMBER_ID")}/messages`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${envValue("WHATSAPP_ACCESS_TOKEN")}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ messaging_product: "whatsapp", ...payload }),
@@ -62,7 +63,7 @@ export async function sendWhatsAppText(to: string, body: string, opts: { sentBy?
  * which is required outside the 24h window; otherwise falls back to text.
  */
 export async function sendWhatsAppNotification(to: string, name: string, message: string) {
-  const template = process.env.WHATSAPP_STATUS_TEMPLATE;
+  const template = envValue("WHATSAPP_STATUS_TEMPLATE");
   if (!template) return sendWhatsAppText(to, message);
   const waId = toWaId(to);
   const id = await post({

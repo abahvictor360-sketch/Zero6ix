@@ -1,6 +1,6 @@
 "use server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isServiceRoleConfigured } from "@/lib/env";
+import { envValue, isServiceRoleConfigured } from "@/lib/env";
 import { rateLimit, LIMITS } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/audit";
 import { fileFrom, uploadFile, validateFile, UploadError } from "@/lib/storage";
@@ -69,7 +69,7 @@ async function sendViaFormSubmit(d: { name: string; email: string; phone?: strin
 
 /** Whether uploaded attachments can be delivered (FormSubmit's JSON API can't carry files). */
 export async function contactAttachmentsSupported() {
-  return isServiceRoleConfigured() || Boolean(process.env.RESEND_API_KEY);
+  return isServiceRoleConfigured() || Boolean(envValue("RESEND_API_KEY"));
 }
 
 /**
@@ -87,7 +87,7 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
   const d = parsed.data;
   const ip = await clientIp();
   const dbReady = isServiceRoleConfigured();
-  const emailReady = Boolean(process.env.RESEND_API_KEY);
+  const emailReady = Boolean(envValue("RESEND_API_KEY"));
 
   if (!(await rateLimit(`contact:${ip}`, LIMITS.contact.limit, LIMITS.contact.window)) || !memoryLimit(ip, LIMITS.contact.limit, LIMITS.contact.window * 1000)) {
     return { error: `You've sent several messages recently. Please try again later or email ${site.email}.` };

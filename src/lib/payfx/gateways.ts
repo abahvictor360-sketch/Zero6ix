@@ -1,5 +1,6 @@
 import "server-only";
 import type { CurrencyCode } from "./catalog";
+import { envValue } from "@/lib/env";
 import type { PayfxOrder } from "./store";
 
 /**
@@ -18,8 +19,8 @@ const list = (v: string | undefined, d: string) => (v || d).split(",").map((c) =
 const FLW = () => process.env.PAYFX_FLW_API_BASE || "https://api.flutterwave.com/v3";
 const PS = () => process.env.PAYFX_PAYSTACK_API_BASE || "https://api.paystack.co";
 
-const flwSecret = () => (process.env.FLUTTERWAVE_SECRET_KEY || process.env.FLW_SECRET_KEY || "").trim();
-const psSecret = () => (process.env.PAYSTACK_SECRET_KEY || "").trim();
+const flwSecret = () => envValue("FLUTTERWAVE_SECRET_KEY") || envValue("FLW_SECRET_KEY");
+const psSecret = () => envValue("PAYSTACK_SECRET_KEY");
 
 async function call<T>(url: string, secret: string, init: RequestInit, ok: (json: Record<string, unknown>) => boolean, name: string): Promise<T> {
   const res = await fetch(url, {
@@ -35,7 +36,7 @@ async function call<T>(url: string, secret: string, init: RequestInit, ok: (json
 
 const flutterwave = {
   configured: () => Boolean(flwSecret()),
-  currencies: () => list(process.env.PAYFX_FLW_CURRENCIES, "NGN,USD"),
+  currencies: () => list(envValue("PAYFX_FLW_CURRENCIES"), "NGN,USD"),
   async initialize(order: PayfxOrder, redirectUrl: string, businessName: string) {
     const data = await call<{ link: string }>(`${FLW()}/payments`, flwSecret(), {
       method: "POST",
@@ -64,7 +65,7 @@ const flutterwave = {
 
 const paystack = {
   configured: () => Boolean(psSecret()),
-  currencies: () => list(process.env.PAYFX_PAYSTACK_CURRENCIES, "NGN"),
+  currencies: () => list(envValue("PAYFX_PAYSTACK_CURRENCIES"), "NGN"),
   async initialize(order: PayfxOrder, callbackUrl: string) {
     const data = await call<{ authorization_url: string }>(`${PS()}/transaction/initialize`, psSecret(), {
       method: "POST",

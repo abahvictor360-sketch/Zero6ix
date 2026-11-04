@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme";
 import { site } from "@/lib/site";
 import { SITE_DESCRIPTION } from "@/lib/seo";
 import "./globals.css";
+import { envValue } from "@/lib/env";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" });
 
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
   formatDetection: { telephone: true, email: true, address: true },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
-    other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } : undefined,
+    google: envValue("NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION") || undefined,
+    other: envValue("NEXT_PUBLIC_BING_SITE_VERIFICATION") ? { "msvalidate.01": envValue("NEXT_PUBLIC_BING_SITE_VERIFICATION") } : undefined,
   },
 };
 

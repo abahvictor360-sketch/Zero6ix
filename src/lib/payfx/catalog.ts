@@ -3,7 +3,7 @@
  * Mirrors https://payfx.vercel.app (github.com/abahvictor360-sketch/payfx, src/catalog.js).
  * Exchange rate for USD checkout: US$1 = ₦1,365 (override with PAYFX_USD_RATE).
  */
-export const EXCHANGE_RATE = Number(process.env.PAYFX_USD_RATE) || 1365;
+export const EXCHANGE_RATE = Number(process.env.PAYFX_USD_RATE?.trim()) || 1365;
 
 export type CurrencyCode = "NGN" | "USD";
 export const CURRENCIES: Record<CurrencyCode, { code: CurrencyCode; symbol: string; perNgn: number }> = {

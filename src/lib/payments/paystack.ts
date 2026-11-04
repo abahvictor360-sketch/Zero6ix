@@ -1,9 +1,10 @@
 import "server-only";
 import { hmacHex, safeEqual } from "@/lib/crypto";
+import { envValue } from "@/lib/env";
 
 const BASE = "https://api.paystack.co";
 const secret = () => {
-  const s = process.env.PAYSTACK_SECRET_KEY;
+  const s = envValue("PAYSTACK_SECRET_KEY");
   if (!s) throw new Error("PAYSTACK_SECRET_KEY is not set");
   return s;
 };

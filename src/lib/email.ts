@@ -1,5 +1,6 @@
 import "server-only";
 import { site } from "@/lib/site";
+import { envValue } from "@/lib/env";
 
 interface EmailInput {
   to: string | string[];
@@ -31,7 +32,7 @@ Legal requests only. ${esc(site.name)} · ${esc(site.address)}<br/>Need help? Re
 
 /** Send an email through Resend's HTTP API. No-ops (with a log) when not configured. */
 export async function sendEmail(input: EmailInput): Promise<boolean> {
-  const key = process.env.RESEND_API_KEY;
+  const key = envValue("RESEND_API_KEY");
   const from = process.env.EMAIL_FROM ?? `${site.name} <onboarding@resend.dev>`;
   if (!key) {
     console.info(`[email] RESEND_API_KEY not set: skipping "${input.subject}" to ${input.to}`);

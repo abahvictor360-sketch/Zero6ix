@@ -39,7 +39,7 @@ Built with **Next.js 15 (App Router) · TypeScript · Tailwind CSS · Supabase (
 
 ## Launch mode (public site only)
 
-By default `NEXT_PUBLIC_ACCOUNTS_ENABLED` is unset/`false`: the marketing site is live, every “Request a Payment / Buy an Item / Get a quote” button opens WhatsApp with a pre-filled message, the contact page shows WhatsApp / email / call buttons, and `/login`, `/signup`, `/dashboard`, `/admin`, `/track`, `/pay` and `/auth` redirect to the home page. To launch accounts, configure Supabase (and payments), set `NEXT_PUBLIC_ACCOUNTS_ENABLED=true` and redeploy.
+By default `NEXT_PUBLIC_ACCOUNTS_ENABLED` is unset/`false`: the marketing site is live, the header “Contact us” button and every “Request a Payment / Buy an Item / Get a quote” button go to the contact page (WhatsApp, email, call), the contact page shows WhatsApp / email / call buttons, and `/login`, `/signup`, `/dashboard`, `/admin`, `/track`, `/pay` and `/auth` redirect to the home page. To launch accounts, configure Supabase (and payments), set `NEXT_PUBLIC_ACCOUNTS_ENABLED=true` and redeploy.
 
 ## Architecture
 

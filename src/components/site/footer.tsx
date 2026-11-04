@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div>
           <Logo light />
           <p className="mt-4 max-w-xs text-sm text-white/70">
-            Pay for online services and shop from foreign stores — in Naira, with transparent fees.
+            Pay for online services and shop from foreign stores — in Naira or any African currency, at home or abroad.
           </p>
           <ul className="mt-6 space-y-2 text-sm text-white/70">
             <li className="flex items-center gap-2"><Lock className="h-4 w-4 text-lime-400" /> Secured by Paystack & Flutterwave</li>

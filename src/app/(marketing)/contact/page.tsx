@@ -30,7 +30,7 @@ export default async function ContactPage() {
       {isServiceRoleConfigured() ? <ContactForm /> : (
         <div className="card grid content-start gap-4">
           <h2 className="text-xl font-semibold">Send us a message</h2>
-          <p className="muted text-sm">Tell us what you need to pay for or buy — include links, amounts and currency — and we&apos;ll reply with a Naira quote.</p>
+          <p className="muted text-sm">Tell us what you need to pay for or buy — include links, amounts and currency — and we&apos;ll reply with a quote in Naira or your local African currency.</p>
           <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-[#25D366] text-white hover:bg-[#1ebe5b]"><WhatsAppIcon /> WhatsApp {site.phone}</a>
           <a href={`mailto:${site.email}?subject=${encodeURIComponent("Request for Web Purchase")}`} className="btn btn-outline btn-lg"><Mail className="h-4 w-4" /> Email {site.email}</a>
           <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="btn btn-outline btn-lg"><Phone className="h-4 w-4" /> Call {site.phone}</a>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Eye, HeartHandshake, Scale, ShieldCheck } from "lucide-react";
 import { accountsEnabled, requestCta, site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and organisations pay for online services and shop internationally — legally and transparently." };
+export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and Africans at home and abroad, and organisations, pay for online services and shop internationally — legally and transparently." };
 
 const VALUES = [
   { icon: Eye, t: "Transparency", d: "Every quote shows the exchange rate, our fee and shipping. No surprises." },
@@ -18,9 +18,9 @@ export default function AboutPage() {
       <section className="bg-brand-900 py-16 text-white dark:bg-[#06140f]">
         <div className="container max-w-3xl">
           <p className="eyebrow !text-lime-300">About {site.name}</p>
-          <h1 className="h1 mt-4">Opening the global internet to every Nigerian.</h1>
+          <h1 className="h1 mt-4">Opening the global internet to every African, wherever they are.</h1>
           <p className="mt-5 text-lg text-white/75">
-            Millions of Nigerians can&apos;t pay for the tools, exams and products they need online — not because they
+            Millions of Nigerians and Africans — at home and in the diaspora — can&apos;t pay for the tools, exams and products they need online — not because they
             can&apos;t afford them, but because cards get declined, FX limits bite, or their region isn&apos;t supported.
             We fix that.
           </p>
@@ -34,7 +34,7 @@ export default function AboutPage() {
             proper invoices and monthly statements.
           </p>
           <p>
-            You tell us what you need, we send you a clear quote in Naira, you pay securely, and we pay the vendor in their currency.
+            You tell us what you need, we send you a clear quote in Naira or your local African currency, you pay securely, and we pay the vendor in their currency.
             For physical items, we buy, receive at our hubs abroad and ship to your door with tracking.
           </p>
           <Link {...requestCta("service")} className="btn btn-dark">{accountsEnabled ? "Create a free account" : "Chat with us on WhatsApp"}</Link>

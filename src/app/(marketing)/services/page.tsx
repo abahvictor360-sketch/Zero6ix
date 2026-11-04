@@ -20,7 +20,7 @@ export default async function ServicesPage() {
       <section className="bg-brand-900 py-16 text-white dark:bg-[#06140f]">
         <div className="container max-w-3xl text-center">
           <p className="eyebrow !text-lime-300">Services</p>
-          <h1 className="h1 mt-4">We pay for it. You pay us in Naira.</h1>
+          <h1 className="h1 mt-4">We pay for it. You pay us in Naira or your local currency.</h1>
           <p className="mt-4 text-lg text-white/75">If it&apos;s legal and sold online, we can pay for it — usually the same day.</p>
         </div>
       </section>

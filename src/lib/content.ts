@@ -4,7 +4,7 @@
  */
 export const STEPS = [
   { title: "Submit a request", body: "Tell us the service to pay for or paste the product link. Takes about 2 minutes." },
-  { title: "Get a Naira quote", body: "We confirm it's legal and send a clear quote: exchange rate, fee and shipping. Rate locked for 24 hours." },
+  { title: "Get a local-currency quote", body: "We confirm it's legal and send a clear quote: exchange rate, fee and shipping. Rate locked for 24 hours." },
   { title: "Pay securely", body: "Pay by card, bank transfer or USSD through Paystack or Flutterwave. We never see your card details." },
   { title: "We pay & deliver", body: "We pay the vendor in USD, GBP, EUR and more, then send you proof, access details or ship your item with tracking." },
 ];
@@ -65,7 +65,8 @@ export const TESTIMONIALS = [
 
 export const FAQS = [
   { q: "What can I pay for with Web Purchase?", a: "Any legal online service or item: software subscriptions, exam and application fees, visa fees, domains and hosting, courses, conference tickets, ad credits, and physical goods from stores like Amazon, eBay and AliExpress." },
-  { q: "How is the Naira price calculated?", a: "Total = (foreign amount × our exchange rate) + service fee (+ shipping for physical items). The quote shows each line and locks the exchange rate for 24 hours." },
+  { q: "Can I pay from outside Nigeria?", a: "Yes. We serve Nigerians and Africans at home and abroad. Pay in Naira, or tell us your country and we'll quote you in your local African currency (e.g. Cedi, Shilling, Rand, CFA franc) where our payment partners support it." },
+  { q: "How is the price calculated?", a: "Total = (foreign amount × our exchange rate) + service fee (+ shipping for physical items). The quote shows each line and locks the exchange rate for 24 hours." },
   { q: "How do I pay?", a: "Through a secure payment link powered by Paystack or Flutterwave. You can pay by card, bank transfer or USSD. We never see or store your card details." },
   { q: "How long does it take?", a: "Most service payments are completed the same day once paid. Physical items typically arrive in 5–28 days depending on the origin country." },
   { q: "What if my quote expires?", a: "Quotes lock the exchange rate for 24 hours. If it expires, just tell us and we'll re-issue it at the current rate." },

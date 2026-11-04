@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Logo, WhatsAppIcon } from "@/components/ui";
-import { accountsEnabled, whatsappLink } from "@/lib/site";
+import { Logo } from "@/components/ui";
+import { accountsEnabled } from "@/lib/site";
 import { ThemeToggle } from "@/components/theme";
 import { cn } from "@/lib/format";
 
@@ -41,9 +41,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
         <div className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
           {!accountsEnabled ? (
-            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
-              <WhatsAppIcon className="h-4 w-4" /> <span className="hidden sm:inline">Chat on WhatsApp</span><span className="sm:hidden">Chat</span>
-            </a>
+            <Link href="/contact" className="btn btn-primary btn-sm">Contact us</Link>
           ) : signedIn ? (
             <Link href={isStaff ? "/admin" : "/dashboard"} className="btn btn-primary btn-sm">
               {isStaff ? "Admin" : "Dashboard"}

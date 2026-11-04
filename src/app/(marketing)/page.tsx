@@ -30,8 +30,9 @@ export default async function HomePage() {
               Pay for anything online, <span className="text-lime-400">in any currency.</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-white/75">
-              Card declined? Currency limits? Region not supported? We pay for your subscriptions, exam and visa fees,
-              and buy items from foreign stores — you pay us in Naira.
+              Card declined? Currency limits? Region not supported? Whether you&apos;re in Nigeria or abroad, we pay for your
+              subscriptions, exam and visa fees and buy from foreign stores in USD, GBP, EUR and more — you pay us in Naira
+              or your local African currency.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link {...requestCta("service")} className="btn btn-primary btn-lg">
@@ -41,9 +42,10 @@ export default async function HomePage() {
                 Buy an Item <Package className="h-4 w-4" />
               </Link>
             </div>
-            <ul className="mt-10 grid max-w-lg grid-cols-2 gap-4 text-sm text-white/75 sm:grid-cols-3">
+            <ul className="mt-10 grid max-w-xl grid-cols-2 gap-4 text-sm text-white/75 sm:grid-cols-4">
               <li className="flex items-center gap-2"><Lock className="h-4 w-4 text-lime-400" /> Secure checkout</li>
               <li className="flex items-center gap-2"><Timer className="h-4 w-4 text-lime-400" /> Same-day service</li>
+              <li className="flex items-center gap-2"><Globe2 className="h-4 w-4 text-lime-400" /> Pay in ₦ or African currency</li>
               <li className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-lime-400" /> No hidden fees</li>
             </ul>
           </div>
@@ -146,7 +148,7 @@ export default async function HomePage() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {[
             { icon: Timer, t: "Fast, reliable payments", d: "Most service payments done the same day." },
-            { icon: Globe2, t: "Global coverage", d: "USD, GBP, EUR, CAD, AED, CNY and more." },
+            { icon: Globe2, t: "Global coverage", d: "We pay vendors in USD, GBP, EUR, CAD, AED, CNY and more — you pay in Naira or another African currency." },
             { icon: Sparkles, t: "Human support", d: "Real people on WhatsApp, email and chat." },
             { icon: ShieldCheck, t: "Secure & compliant", d: "KYC, encrypted data, audited operations." },
           ].map(({ icon: Icon, t, d }) => (
@@ -196,7 +198,7 @@ export default async function HomePage() {
       <section className="container pb-20">
         <div className="relative overflow-hidden rounded-4xl bg-lime-400 px-6 py-14 text-center text-brand-950 sm:px-12">
           <h2 className="h2">Ready when you are.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brand-900/80">{accountsEnabled ? "Create a free account in a minute. Submit your first request and get a Naira quote today." : "Message us on WhatsApp with what you need and get a Naira quote today."}</p>
+          <p className="mx-auto mt-3 max-w-xl text-brand-900/80">{accountsEnabled ? "Create a free account in a minute. Submit your first request and get a Naira quote today." : "Tell us what you need and get a quote in Naira or your local African currency today."}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link {...requestCta("service")} className="btn btn-dark btn-lg">Request a Payment</Link>
             <Link {...requestCta("item")} className="btn btn-lg border border-brand-900/30 hover:bg-brand-900/10">Buy an Item</Link>

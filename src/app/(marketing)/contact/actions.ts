@@ -31,7 +31,7 @@ function memoryLimit(key: string, limit: number, windowMs: number) {
  */
 async function sendViaFormSubmit(d: { name: string; email: string; phone?: string; country?: string; subject: string; message: string }, enquiry: string) {
   if (process.env.CONTACT_FORMSUBMIT === "false") return false;
-  const to = process.env.CONTACT_FORM_TO ?? site.email;
+  const to = process.env.CONTACT_FORM_TO ?? process.env.OPS_NOTIFICATION_EMAIL?.split(",")[0]?.trim() ?? site.email;
   try {
     const endpoint = process.env.FORMSUBMIT_ENDPOINT ?? "https://formsubmit.co/ajax"; // override for testing only
     const res = await fetch(`${endpoint}/${encodeURIComponent(to)}`, {
@@ -131,7 +131,7 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
   }
 
   const delivered = await sendEmail({
-    to: process.env.CONTACT_FORM_TO ?? site.email,
+    to: process.env.CONTACT_FORM_TO ?? process.env.OPS_NOTIFICATION_EMAIL?.split(",")[0]?.trim() ?? site.email,
     replyTo: d.email,
     subject: `Website enquiry: ${d.subject}`,
     heading: `New enquiry: ${ENQUIRY[d.enquiry]}`,

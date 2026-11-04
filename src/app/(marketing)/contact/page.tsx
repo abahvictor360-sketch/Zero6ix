@@ -10,7 +10,7 @@ import { describeBusinessHours } from "@/lib/business-hours";
 
 export const metadata: Metadata = pageMeta({
   title: "Contact us",
-  description: "Call or WhatsApp +234 803 617 7408, email zero6ixlimited@gmail.com or send our contact form. 28 Chief Charles Street, Trans Amadi, Port Harcourt.",
+  description: "Call or WhatsApp +234 803 617 7408, email hello@webpurchase.app or send our contact form. 28 Chief Charles Street, Trans Amadi, Port Harcourt.",
   path: "/contact",
 });
 

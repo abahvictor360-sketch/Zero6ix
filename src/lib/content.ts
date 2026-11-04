@@ -70,8 +70,8 @@ export const FAQS = [
   { q: "How long does it take?", a: "Most service payments are completed the same day once paid. Physical items typically arrive in 5–28 days depending on the origin country." },
   { q: "What if my quote expires?", a: "Quotes lock the exchange rate for 24 hours. If it expires, just tell us and we'll re-issue it at the current rate." },
   { q: "Do I need to verify my identity?", a: "All users verify their email and phone number. For orders above ₦500,000 we also need a valid government ID — this protects you and keeps us compliant." },
-  { q: "Is it safe to share my account login?", a: "Only if the service requires it. Credentials are encrypted, visible only to the operations staff processing your order, and you can delete them once the order is complete." },
+  { q: "Is it safe to share my account login?", a: "Only if the service requires it. Credentials are encrypted, visible only to the operations staff processing your order, and deleted once your order is complete." },
   { q: "What can't you buy?", a: "Anything illegal or restricted: weapons, drugs, counterfeit goods, gambling, adult content, hazardous materials, items banned by Nigerian Customs, or anything that breaks a vendor's terms. See our Prohibited Items page." },
   { q: "What if something goes wrong?", a: "If we can't complete your order, you get a full refund. See our Refund Policy for details on partial refunds and vendor-side issues." },
-  { q: "Do you support organisations?", a: "Yes. Organisation accounts can add team members, submit bulk requests, and download monthly statements and invoices for accounting." },
+  { q: "Do you support organisations?", a: "Yes. Schools, NGOs, startups and SMEs can pay for many tools at once, with proper invoices and monthly statements for accounting." },
 ];

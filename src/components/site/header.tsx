@@ -3,7 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Logo } from "@/components/ui";
+import { Logo, WhatsAppIcon } from "@/components/ui";
+import { accountsEnabled, whatsappLink } from "@/lib/site";
 import { ThemeToggle } from "@/components/theme";
 import { cn } from "@/lib/format";
 
@@ -11,7 +12,7 @@ const NAV = [
   { href: "/services", label: "Services" },
   { href: "/shop-and-ship", label: "Shop & Ship" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/track", label: "Track Order" },
+  ...(accountsEnabled ? [{ href: "/track", label: "Track Order" }] : []),
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
@@ -39,7 +40,11 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
         </nav>
         <div className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
-          {signedIn ? (
+          {!accountsEnabled ? (
+            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
+              <WhatsAppIcon className="h-4 w-4" /> <span className="hidden sm:inline">Chat on WhatsApp</span><span className="sm:hidden">Chat</span>
+            </a>
+          ) : signedIn ? (
             <Link href={isStaff ? "/admin" : "/dashboard"} className="btn btn-primary btn-sm">
               {isStaff ? "Admin" : "Dashboard"}
             </Link>
@@ -69,7 +74,7 @@ export function SiteHeader({ signedIn, isStaff }: { signedIn: boolean; isStaff: 
               </Link>
             ))}
             <div className="mt-2 flex items-center gap-2 px-1">
-              {!signedIn && <Link href="/login" className="btn btn-ghost-light btn-sm flex-1">Log in</Link>}
+              {accountsEnabled && !signedIn && <Link href="/login" className="btn btn-ghost-light btn-sm flex-1">Log in</Link>}
               <ThemeToggle />
             </div>
           </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Eye, HeartHandshake, Scale, ShieldCheck } from "lucide-react";
-import { site } from "@/lib/site";
+import { accountsEnabled, requestCta, site } from "@/lib/site";
 
 export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and organisations pay for online services and shop internationally — legally and transparently." };
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
             You tell us what you need, we send you a clear quote in Naira, you pay securely, and we pay the vendor in their currency.
             For physical items, we buy, receive at our hubs abroad and ship to your door with tracking.
           </p>
-          <Link href="/signup" className="btn btn-dark">Create a free account</Link>
+          <Link {...requestCta("service")} className="btn btn-dark">{accountsEnabled ? "Create a free account" : "Chat with us on WhatsApp"}</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {VALUES.map(({ icon: Icon, t, d }) => (

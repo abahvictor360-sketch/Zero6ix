@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Check, Globe2, GraduationCap, Laptop, Megaphone, 
 import { SERVICE_CATEGORIES } from "@/lib/content";
 import { getFeeSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
+import { requestCta } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -42,7 +43,7 @@ export default async function ServicesPage() {
                     <li key={e} className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-brand-600 dark:text-lime-400" /> {e}</li>
                   ))}
                 </ul>
-                <Link href={`/dashboard/requests/new?type=service&category=${c.slug}`} className="btn btn-outline btn-sm mt-6">
+                <Link {...requestCta("service", c.title)} className="btn btn-outline btn-sm mt-6">
                   Request this <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </article>

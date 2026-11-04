@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Lock, ShieldCheck, Scale } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { site, whatsappLink } from "@/lib/site";
+import { accountsEnabled, site, whatsappLink } from "@/lib/site";
 
 const COLS = [
-  { title: "Product", links: [["Services", "/services"], ["Shop & Ship", "/shop-and-ship"], ["Pricing & calculator", "/pricing"], ["Track an order", "/track"]] },
+  { title: "Product", links: [["Services", "/services"], ["Shop & Ship", "/shop-and-ship"], ["Pricing & calculator", "/pricing"], ...(accountsEnabled ? [["Track an order", "/track"]] : [])] },
   { title: "Company", links: [["About us", "/about"], ["Contact", "/contact"], ["FAQ", "/faq"], ["WhatsApp us", whatsappLink()]] },
   { title: "Legal", links: [["Terms of Service", "/legal/terms"], ["Privacy Policy", "/legal/privacy"], ["Refund Policy", "/legal/refund"], ["Prohibited Items", "/legal/prohibited-items"]] },
 ];

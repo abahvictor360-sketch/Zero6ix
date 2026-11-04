@@ -4,6 +4,7 @@ import { ArrowRight, Box, ClipboardCheck, Home, Link2, Plane, ShoppingBag, Wareh
 import { getShippingRates } from "@/lib/settings";
 import { ITEM_STORES } from "@/lib/content";
 import { formatNumber } from "@/lib/format";
+import { requestCta } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shop & Ship",
@@ -29,7 +30,7 @@ export default async function ShopAndShipPage() {
             <p className="eyebrow !text-lime-300">Shop & Ship</p>
             <h1 className="h1 mt-4">Shop the world. Delivered to Nigeria.</h1>
             <p className="mt-4 text-lg text-white/75">Electronics, books, fashion, spare parts and gadgets from stores that don&apos;t ship to Nigeria or won&apos;t take your card.</p>
-            <Link href="/dashboard/requests/new?type=item" className="btn btn-primary btn-lg mt-8">Buy an Item <ArrowRight className="h-4 w-4" /></Link>
+            <Link {...requestCta("item")} className="btn btn-primary btn-lg mt-8">Buy an Item <ArrowRight className="h-4 w-4" /></Link>
           </div>
           <div className="flex flex-wrap gap-2">
             {ITEM_STORES.map((s) => <span key={s} className="rounded-full bg-white/10 px-4 py-2 text-sm">{s}</span>)}

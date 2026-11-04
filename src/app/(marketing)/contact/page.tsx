@@ -3,6 +3,7 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "./contact-form";
 import { WhatsAppIcon } from "@/components/ui";
 import { site, whatsappLink } from "@/lib/site";
+import { isServiceRoleConfigured } from "@/lib/env";
 import { getFeeSettings } from "@/lib/settings";
 import { describeBusinessHours } from "@/lib/business-hours";
 
@@ -26,7 +27,15 @@ export default async function ContactPage() {
           <li className="flex gap-3"><Clock className="h-5 w-5 text-brand-600 dark:text-lime-400" /><span>{describeBusinessHours(fees.business_hours)}</span></li>
         </ul>
       </div>
-      <ContactForm />
+      {isServiceRoleConfigured() ? <ContactForm /> : (
+        <div className="card grid content-start gap-4">
+          <h2 className="text-xl font-semibold">Send us a message</h2>
+          <p className="muted text-sm">Tell us what you need to pay for or buy — include links, amounts and currency — and we&apos;ll reply with a Naira quote.</p>
+          <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-[#25D366] text-white hover:bg-[#1ebe5b]"><WhatsAppIcon /> WhatsApp {site.phone}</a>
+          <a href={`mailto:${site.email}?subject=${encodeURIComponent("Request for Web Purchase")}`} className="btn btn-outline btn-lg"><Mail className="h-4 w-4" /> Email {site.email}</a>
+          <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="btn btn-outline btn-lg"><Phone className="h-4 w-4" /> Call {site.phone}</a>
+        </div>
+      )}
     </section>
   );
 }

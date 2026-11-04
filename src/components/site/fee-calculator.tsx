@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { computeQuote } from "@/lib/pricing";
 import { formatMoney } from "@/lib/format";
+import { requestCta } from "@/lib/site";
 import type { ExchangeRate, FeeSettings, ShippingRate } from "@/lib/types";
 
 export function FeeCalculator({ rates, fees, shipping }: { rates: ExchangeRate[]; fees: FeeSettings; shipping: ShippingRate[] }) {
@@ -86,7 +87,7 @@ export function FeeCalculator({ rates, fees, shipping }: { rates: ExchangeRate[]
         ) : (
           <p className="text-white/70">Enter an amount to see your estimate.</p>
         )}
-        <Link href={`/dashboard/requests/new?type=${isItem ? "item" : "service"}`} className="btn btn-primary mt-6 w-full">
+        <Link {...requestCta("quote", result ? `${amount} ${currency}${isItem ? `, ${weight}kg from ${origin}` : ""}` : undefined)} className="btn btn-primary mt-6 w-full">
           Get an exact quote
         </Link>
       </div>

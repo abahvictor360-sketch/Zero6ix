@@ -2,8 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED = ["/dashboard", "/admin"];
+/** Hidden until NEXT_PUBLIC_ACCOUNTS_ENABLED=true (see src/lib/site.ts). */
+const ACCOUNT_ROUTES = ["/dashboard", "/admin", "/login", "/signup", "/forgot-password", "/reset-password", "/track", "/pay", "/auth"];
 
 export async function updateSession(request: NextRequest) {
+  const path0 = request.nextUrl.pathname;
+  if (process.env.NEXT_PUBLIC_ACCOUNTS_ENABLED !== "true" && ACCOUNT_ROUTES.some((p) => path0 === p || path0.startsWith(`${p}/`))) {
+    const home = request.nextUrl.clone();
+    home.pathname = "/";
+    home.search = "";
+    return NextResponse.redirect(home);
+  }
+
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

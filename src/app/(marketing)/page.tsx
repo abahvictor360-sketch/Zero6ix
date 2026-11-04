@@ -8,6 +8,7 @@ import { FaqList, faqJsonLd } from "@/components/site/faq-list";
 import { getFeeSettings, getPublicRates } from "@/lib/settings";
 import { FAQS, ITEM_STORES, SERVICE_CATEGORIES, STEPS, TESTIMONIALS } from "@/lib/content";
 import { formatMoney } from "@/lib/format";
+import { accountsEnabled, requestCta } from "@/lib/site";
 
 const CATEGORY_ICONS = { software: Laptop, exams: GraduationCap, visa: PlaneTakeoff, web: Globe2, learning: BookOpen, ads: Megaphone } as const;
 
@@ -33,10 +34,10 @@ export default async function HomePage() {
               and buy items from foreign stores — you pay us in Naira.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/dashboard/requests/new?type=service" className="btn btn-primary btn-lg">
+              <Link {...requestCta("service")} className="btn btn-primary btn-lg">
                 Request a Payment <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/dashboard/requests/new?type=item" className="btn btn-ghost-light btn-lg">
+              <Link {...requestCta("item")} className="btn btn-ghost-light btn-lg">
                 Buy an Item <Package className="h-4 w-4" />
               </Link>
             </div>
@@ -195,10 +196,10 @@ export default async function HomePage() {
       <section className="container pb-20">
         <div className="relative overflow-hidden rounded-4xl bg-lime-400 px-6 py-14 text-center text-brand-950 sm:px-12">
           <h2 className="h2">Ready when you are.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brand-900/80">Create a free account in a minute. Submit your first request and get a Naira quote today.</p>
+          <p className="mx-auto mt-3 max-w-xl text-brand-900/80">{accountsEnabled ? "Create a free account in a minute. Submit your first request and get a Naira quote today." : "Message us on WhatsApp with what you need and get a Naira quote today."}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/dashboard/requests/new?type=service" className="btn btn-dark btn-lg">Request a Payment</Link>
-            <Link href="/dashboard/requests/new?type=item" className="btn btn-lg border border-brand-900/30 hover:bg-brand-900/10">Buy an Item</Link>
+            <Link {...requestCta("service")} className="btn btn-dark btn-lg">Request a Payment</Link>
+            <Link {...requestCta("item")} className="btn btn-lg border border-brand-900/30 hover:bg-brand-900/10">Buy an Item</Link>
           </div>
         </div>
       </section>

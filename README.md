@@ -37,6 +37,10 @@ Built with **Next.js 15 (App Router) · TypeScript · Tailwind CSS · Supabase (
 | **WhatsApp bot** | Menu (make a request / check status / quote estimate / prohibited items / human), order lookup (only for the owner's number), fee estimates from live rates, draft-request creation with legal confirmation, business-hours-aware hand-off, full conversation log. |
 | **Notifications** | In-app + email + WhatsApp on: request received, quote ready, quote expired, payment confirmed, processing, completed, shipped, delivered, rejected, refunded, new message. |
 
+## Launch mode (public site only)
+
+By default `NEXT_PUBLIC_ACCOUNTS_ENABLED` is unset/`false`: the marketing site is live, every “Request a Payment / Buy an Item / Get a quote” button opens WhatsApp with a pre-filled message, the contact page shows WhatsApp / email / call buttons, and `/login`, `/signup`, `/dashboard`, `/admin`, `/track`, `/pay` and `/auth` redirect to the home page. To launch accounts, configure Supabase (and payments), set `NEXT_PUBLIC_ACCOUNTS_ENABLED=true` and redeploy.
+
 ## Architecture
 
 ```

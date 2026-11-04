@@ -28,12 +28,14 @@ const CURRENCY_INFO = [
  * rate service is unreachable and nothing is cached. Shown as "indicative".
  */
 const FALLBACK_NGN: Record<string, number> = { USD: 1345, GBP: 1772, EUR: 1533, CAD: 976, AUD: 880, AED: 366, CNY: 187 };
-export const DEFAULT_RATES: ExchangeRate[] = CURRENCY_INFO.map((c) => ({
-  ...c, sell_rate: FALLBACK_NGN[c.currency], source: "fallback", updated_at: "2026-11-03T00:00:00Z",
-}));
-
-/** Markup added on top of the market rate to get our sell rate (e.g. "2" = 2%). */
+/** Markup added on top of the market rate to get our sell rate (e.g. "7" = 7%). */
 const markup = () => Math.max(0, Number(process.env.FX_MARKUP_PERCENT ?? 0) || 0);
+
+const withMarkup = (marketNgn: number) => Math.round(marketNgn * (1 + markup() / 100) * 100) / 100;
+
+export const DEFAULT_RATES: ExchangeRate[] = CURRENCY_INFO.map((c) => ({
+  ...c, sell_rate: withMarkup(FALLBACK_NGN[c.currency]), source: "fallback", updated_at: "2026-11-03T00:00:00Z",
+}));
 
 /**
  * Live market rates (NGN per unit), fetched from an ExchangeRate-API compatible
@@ -49,10 +51,9 @@ async function getLiveRates(): Promise<ExchangeRate[] | null> {
     const ngnPerUsd = rates?.NGN;
     if (!rates || !ngnPerUsd || ngnPerUsd < 100) return null;
     const updated = json.time_last_update_unix ? new Date(json.time_last_update_unix * 1000).toISOString() : new Date().toISOString();
-    const m = 1 + markup() / 100;
     const out = CURRENCY_INFO.filter((c) => rates[c.currency] > 0).map((c) => ({
       ...c,
-      sell_rate: Math.round((ngnPerUsd / rates[c.currency]) * m * 100) / 100,
+      sell_rate: withMarkup(ngnPerUsd / rates[c.currency]),
       source: "live" as const,
       updated_at: updated,
     }));

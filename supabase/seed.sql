@@ -19,13 +19,13 @@ on conflict (id) do update set
 
 insert into public.exchange_rates (currency, name, symbol, buy_rate, sell_rate, source, markup_percent, api_rate) values
   -- Approx. mid-market early Nov 2026; source 'api' so the rates cron refreshes them.
-  ('USD', 'US Dollar',          '$',   1345.0000, 1345.0000, 'api', 0, 1345.0000),
-  ('GBP', 'British Pound',      '£',   1772.0000, 1772.0000, 'api', 0, 1772.0000),
-  ('EUR', 'Euro',               '€',   1533.0000, 1533.0000, 'api', 0, 1533.0000),
-  ('CAD', 'Canadian Dollar',    'C$',   976.0000,  976.0000, 'api', 0,  976.0000),
-  ('AUD', 'Australian Dollar',  'A$',   880.0000,  880.0000, 'api', 0,  880.0000),
-  ('AED', 'UAE Dirham',         'AED',  366.0000,  366.0000, 'api', 0,  366.0000),
-  ('CNY', 'Chinese Yuan',       '¥',    187.0000,  187.0000, 'api', 0,  187.0000)
+  ('USD', 'US Dollar',          '$', 1345.0000, 1439.1500, 'api', 7, 1345.0000),
+  ('GBP', 'British Pound',      '£', 1772.0000, 1896.0400, 'api', 7, 1772.0000),
+  ('EUR', 'Euro',               '€', 1533.0000, 1640.3100, 'api', 7, 1533.0000),
+  ('CAD', 'Canadian Dollar',    'C$', 976.0000, 1044.3200, 'api', 7,  976.0000),
+  ('AUD', 'Australian Dollar',  'A$', 880.0000, 941.6000, 'api', 7,  880.0000),
+  ('AED', 'UAE Dirham',         'AED', 366.0000, 391.6200, 'api', 7,  366.0000),
+  ('CNY', 'Chinese Yuan',       '¥', 187.0000, 200.0900, 'api', 7,  187.0000)
 on conflict (currency) do nothing;
 
 insert into public.shipping_rates (origin_region, label, rate_per_kg_usd, min_charge_usd, delivery_days_min, delivery_days_max, sort_order) values

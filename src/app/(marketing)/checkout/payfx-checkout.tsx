@@ -11,8 +11,8 @@ type Gateways = Record<"flutterwave" | "paystack", { on: boolean; currencies: st
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 const GATEWAY_INFO = {
-  paystack: { name: "Paystack", sub: "Card, bank, transfer, USSD", mark: "P", cls: "bg-[#0BA4DB] text-white" },
-  flutterwave: { name: "Flutterwave", sub: "Card, bank transfer, USSD", mark: "F", cls: "bg-[#F5A623] text-white" },
+  paystack: { name: "Paystack", sub: "Card, bank, transfer, USSD", mark: "P", cls: "bg-white ring-1 ring-slate-200", logo: "/logos/paystack.svg" },
+  flutterwave: { name: "Flutterwave", sub: "Card, bank transfer, USSD", mark: "F", cls: "bg-[#F5A623] text-white", logo: undefined as string | undefined },
 } as const;
 
 export function PayfxCheckout({
@@ -175,7 +175,10 @@ export function PayfxCheckout({
                 return (
                   <label key={g} className={`flex items-center gap-3 rounded-2xl border p-3 transition ${!ok ? "cursor-not-allowed opacity-50" : "cursor-pointer"} ${gateway === g && ok ? "border-brand-700 bg-brand-50 dark:border-lime-400 dark:bg-lime-400/10" : "border-slate-200 dark:border-white/10"}`}>
                     <input type="radio" name="gateway" value={g} checked={gateway === g} disabled={!ok} onChange={() => setGateway(g)} className="sr-only" />
-                    <span className={`grid h-9 w-9 place-items-center rounded-lg text-sm font-bold ${info.cls}`}>{info.mark}</span>
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg text-sm font-bold ${info.cls}`}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {info.logo ? <img src={info.logo} alt="" width={20} height={20} className="h-5 w-5" /> : info.mark}
+                    </span>
                     <span><strong className="block text-sm">{info.name}</strong><span className="text-xs text-slate-500">{note}</span></span>
                   </label>
                 );

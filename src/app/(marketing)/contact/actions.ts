@@ -23,9 +23,59 @@ function memoryLimit(key: string, limit: number, windowMs: number) {
 }
 
 /**
- * Contact form. Stores the message when the database is connected; always
- * emails it to the team when an email provider (Resend) is configured. If
- * neither is available, the client falls back to opening the visitor's email app.
+ * No-account fallback delivery via FormSubmit (https://formsubmit.co), used when
+ * neither the database nor Resend is configured. The first message triggers a
+ * one-time activation email to the inbox; until it's clicked, FormSubmit
+ * replies success=false and we fall back to the visitor's email app.
+ * Disable with CONTACT_FORMSUBMIT=false.
+ */
+async function sendViaFormSubmit(d: { name: string; email: string; phone?: string; country?: string; subject: string; message: string }, enquiry: string) {
+  if (process.env.CONTACT_FORMSUBMIT === "false") return false;
+  const to = process.env.CONTACT_FORM_TO ?? site.email;
+  try {
+    const endpoint = process.env.FORMSUBMIT_ENDPOINT ?? "https://formsubmit.co/ajax"; // override for testing only
+    const res = await fetch(`${endpoint}/${encodeURIComponent(to)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        // FormSubmit ties the form to the website it's submitted from.
+        Origin: site.url.replace(/\/$/, ""),
+        Referer: `${site.url.replace(/\/$/, "")}/contact`,
+      },
+      body: JSON.stringify({
+        _subject: `Website enquiry: ${d.subject}`,
+        _template: "table",
+        _captcha: "false",
+        Enquiry: enquiry,
+        name: d.name,
+        email: d.email,
+        Phone: d.phone ?? "",
+        Country: d.country ?? "",
+        Subject: d.subject,
+        message: d.message,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    const json = (await res.json().catch(() => ({}))) as { success?: string | boolean; message?: string };
+    if (String(json.success) === "true") return true;
+    console.warn("[contact] FormSubmit not delivered:", res.status, json.message);
+    return false;
+  } catch (e) {
+    console.error("[contact] FormSubmit failed", e);
+    return false;
+  }
+}
+
+/** Whether uploaded attachments can be delivered (FormSubmit's JSON API can't carry files). */
+export async function contactAttachmentsSupported() {
+  return isServiceRoleConfigured() || Boolean(process.env.RESEND_API_KEY);
+}
+
+/**
+ * Contact form. Stores the message when the database is connected and emails
+ * it via Resend when configured. Without either, it is delivered through
+ * FormSubmit; failing that, the client opens the visitor's email app.
  */
 export async function submitContact(_: ActionState, form: FormData): Promise<ActionState> {
   const parsed = contactSchema.safeParse(formToObject(form));
@@ -59,7 +109,8 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
   }
 
   if (!dbReady && !emailReady) {
-    // Nothing server-side can deliver the message yet, so let the browser open an email draft.
+    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry])) return { ok: true, message: SENT };
+    // Nothing server-side could deliver the message, so let the browser open an email draft.
     return { ok: false, data: { fallback: "mailto" } };
   }
 

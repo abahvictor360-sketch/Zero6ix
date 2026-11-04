@@ -3,6 +3,7 @@ import { JsonLd } from "@/components/json-ld";
 import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 import { Building2, Clock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { ContactForm } from "./contact-form";
+import { contactAttachmentsSupported } from "./actions";
 import { site } from "@/lib/site";
 import { getFeeSettings } from "@/lib/settings";
 import { describeBusinessHours } from "@/lib/business-hours";
@@ -14,7 +15,7 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default async function ContactPage() {
-  const fees = await getFeeSettings();
+  const [fees, allowAttachment] = await Promise.all([getFeeSettings(), contactAttachmentsSupported()]);
   const details = [
     { icon: Phone, label: "Phone & WhatsApp", value: site.phone, href: `tel:${site.phone.replace(/\s/g, "")}` },
     { icon: Mail, label: "Email", value: site.email, href: `mailto:${site.email}` },
@@ -52,7 +53,7 @@ export default async function ContactPage() {
             <p className="flex items-start gap-2 text-white/75"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-lime-400" /> Legal requests only. Payments are processed securely by licensed payment providers. We never see or store your card details.</p>
           </div>
         </aside>
-        <ContactForm email={site.email} />
+        <ContactForm email={site.email} allowAttachment={allowAttachment} />
       </section>
       <JsonLd data={breadcrumbSchema([{ name: "Contact", path: "/contact" }])} />
     </>

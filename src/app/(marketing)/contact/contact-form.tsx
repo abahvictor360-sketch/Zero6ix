@@ -13,7 +13,7 @@ const ENQUIRIES = [
   { value: "other", label: "Something else", hint: "Questions, partnerships, support" },
 ] as const;
 
-export function ContactForm({ email }: { email: string }) {
+export function ContactForm({ email, allowAttachment = true }: { email: string; allowAttachment?: boolean }) {
   const [state, action, actionPending] = useActionState<ActionState, FormData>(submitContact, {});
   const [enquiry, setEnquiry] = useState<string>("service");
   const [fileName, setFileName] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export function ContactForm({ email }: { email: string }) {
           placeholder="Paste the website or product link, the amount and currency, and any deadline." />
       </Field>
 
-      <div>
+      {allowAttachment && <div>
         <label htmlFor="attachment" className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-slate-300 px-4 py-3 text-sm hover:bg-slate-50 dark:border-white/15 dark:hover:bg-white/5">
           <Paperclip className="h-4 w-4 text-slate-500" />
           <span className="flex-1 truncate">{fileName ?? "Attach a screenshot or invoice (optional)"}</span>
@@ -110,7 +110,7 @@ export function ContactForm({ email }: { email: string }) {
         <input id="attachment" name="attachment" type="file" className="sr-only" accept="image/jpeg,image/png,image/webp,application/pdf"
           onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)} />
         {fieldError(state, "attachment") && <p className="field-error">{fieldError(state, "attachment")?.[0]}</p>}
-      </div>
+      </div>}
 
       {/* Honeypot: hidden from humans */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />

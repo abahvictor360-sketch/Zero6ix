@@ -1,0 +1,77 @@
+/**
+ * Marketing copy. Testimonials below are SAMPLE content for launch — replace
+ * them with real, consented customer quotes before going live.
+ */
+export const STEPS = [
+  { title: "Submit a request", body: "Tell us the service to pay for or paste the product link. Takes about 2 minutes." },
+  { title: "Get a Naira quote", body: "We confirm it's legal and send a clear quote: exchange rate, fee and shipping. Rate locked for 24 hours." },
+  { title: "Pay securely", body: "Pay by card, bank transfer or USSD through Paystack or Flutterwave. We never see your card details." },
+  { title: "We pay & deliver", body: "We pay the vendor in USD, GBP, EUR and more, then send you proof, access details or ship your item with tracking." },
+];
+
+export const SERVICE_CATEGORIES = [
+  {
+    slug: "software",
+    title: "Software & subscriptions",
+    examples: ["ChatGPT Plus", "Canva Pro", "Adobe Creative Cloud", "Figma", "Microsoft 365", "Notion", "Google Workspace"],
+    typicalFee: "5% + ₦1,000 (min ₦2,500)",
+    turnaround: "Same day",
+  },
+  {
+    slug: "exams",
+    title: "Exam & application fees",
+    examples: ["IELTS", "TOEFL", "GRE / GMAT", "WES evaluation", "University application fees", "UCAS", "Common App"],
+    typicalFee: "5% + ₦1,000",
+    turnaround: "Same day – 24 hrs",
+  },
+  {
+    slug: "visa",
+    title: "Visa & immigration fees",
+    examples: ["US visa (MRV) support fees", "UK visa & IHS", "Canada study permit / biometrics", "Schengen appointment fees", "SEVIS I-901"],
+    typicalFee: "5% + ₦1,000",
+    turnaround: "Same day",
+  },
+  {
+    slug: "web",
+    title: "Domains & hosting",
+    examples: ["Namecheap / GoDaddy domains", "AWS, Google Cloud, Vercel", "Shopify plans", "WordPress hosting", "Cloudflare"],
+    typicalFee: "5% + ₦1,000",
+    turnaround: "Within hours",
+  },
+  {
+    slug: "learning",
+    title: "Courses & conferences",
+    examples: ["Coursera, Udemy, edX", "Professional certifications (PMI, CFA, ACCA)", "Conference tickets", "Membership dues"],
+    typicalFee: "5% + ₦1,000",
+    turnaround: "Same day",
+  },
+  {
+    slug: "ads",
+    title: "Ad credits & creator tools",
+    examples: ["Meta / Instagram ads", "Google Ads", "LinkedIn Premium", "TikTok Promote", "YouTube Premium", "Upwork Connects"],
+    typicalFee: "5% + ₦1,000",
+    turnaround: "Within hours",
+  },
+];
+
+export const ITEM_STORES = ["Amazon", "eBay", "AliExpress", "Walmart", "Best Buy", "ASOS", "Etsy", "Apple Store", "Shein", "Target"];
+
+export const TESTIMONIALS = [
+  { name: "Chiamaka O.", role: "Graduate student, Enugu", quote: "Paid my WES and two university application fees in one afternoon. The quote showed every naira — no surprises." },
+  { name: "Seyi A.", role: "Freelance designer, Lagos", quote: "My card kept getting declined for Figma and Adobe. Web Purchase sorted both within hours and sent the receipts." },
+  { name: "Ibrahim M.", role: "Operations lead, Kaduna NGO", quote: "We pay for 14 software seats monthly through our organisation account. One statement, one invoice — our auditors love it." },
+  { name: "Ngozi E.", role: "Small business owner, Abuja", quote: "Ordered spare parts from eBay that no Nigerian store had. Tracking updates all the way to my door." },
+];
+
+export const FAQS = [
+  { q: "What can I pay for with Web Purchase?", a: "Any legal online service or item: software subscriptions, exam and application fees, visa fees, domains and hosting, courses, conference tickets, ad credits, and physical goods from stores like Amazon, eBay and AliExpress." },
+  { q: "How is the Naira price calculated?", a: "Total = (foreign amount × our exchange rate) + service fee (+ shipping for physical items). The quote shows each line and locks the exchange rate for 24 hours." },
+  { q: "How do I pay?", a: "Through a secure payment link powered by Paystack or Flutterwave. You can pay by card, bank transfer or USSD. We never see or store your card details." },
+  { q: "How long does it take?", a: "Most service payments are completed the same day once paid. Physical items typically arrive in 5–28 days depending on the origin country." },
+  { q: "What if my quote expires?", a: "Quotes lock the exchange rate for 24 hours. If it expires, just tell us and we'll re-issue it at the current rate." },
+  { q: "Do I need to verify my identity?", a: "All users verify their email and phone number. For orders above ₦500,000 we also need a valid government ID — this protects you and keeps us compliant." },
+  { q: "Is it safe to share my account login?", a: "Only if the service requires it. Credentials are encrypted, visible only to the operations staff processing your order, and you can delete them once the order is complete." },
+  { q: "What can't you buy?", a: "Anything illegal or restricted: weapons, drugs, counterfeit goods, gambling, adult content, hazardous materials, items banned by Nigerian Customs, or anything that breaks a vendor's terms. See our Prohibited Items page." },
+  { q: "What if something goes wrong?", a: "If we can't complete your order, you get a full refund. See our Refund Policy for details on partial refunds and vendor-side issues." },
+  { q: "Do you support organisations?", a: "Yes. Organisation accounts can add team members, submit bulk requests, and download monthly statements and invoices for accounting." },
+];

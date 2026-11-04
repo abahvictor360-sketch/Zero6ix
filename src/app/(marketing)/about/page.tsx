@@ -1,0 +1,54 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Eye, HeartHandshake, Scale, ShieldCheck } from "lucide-react";
+import { site } from "@/lib/site";
+
+export const metadata: Metadata = { title: "About us", description: "Web Purchase helps Nigerians and organisations pay for online services and shop internationally — legally and transparently." };
+
+const VALUES = [
+  { icon: Eye, t: "Transparency", d: "Every quote shows the exchange rate, our fee and shipping. No surprises." },
+  { icon: Scale, t: "Compliance first", d: "Every request is reviewed by a person. We only handle legal goods and services." },
+  { icon: ShieldCheck, t: "Security", d: "Payments via licensed gateways, encrypted credentials, verified accounts and audit trails." },
+  { icon: HeartHandshake, t: "Real support", d: "Talk to humans on WhatsApp, email or chat — not an endless bot loop." },
+];
+
+export default function AboutPage() {
+  return (
+    <>
+      <section className="bg-brand-900 py-16 text-white dark:bg-[#06140f]">
+        <div className="container max-w-3xl">
+          <p className="eyebrow !text-lime-300">About {site.name}</p>
+          <h1 className="h1 mt-4">Opening the global internet to every Nigerian.</h1>
+          <p className="mt-5 text-lg text-white/75">
+            Millions of Nigerians can&apos;t pay for the tools, exams and products they need online — not because they
+            can&apos;t afford them, but because cards get declined, FX limits bite, or their region isn&apos;t supported.
+            We fix that.
+          </p>
+        </div>
+      </section>
+      <section className="container grid gap-10 py-16 lg:grid-cols-2">
+        <div className="muted space-y-4 text-lg leading-8">
+          <p>
+            {site.name} is a Lagos-based &quot;pay-for-me&quot; and shop-and-ship service. Students use us for exam and application fees,
+            freelancers for software and ad credits, and organisations — schools, NGOs and SMEs — to pay for team tools in bulk with
+            proper invoices and monthly statements.
+          </p>
+          <p>
+            You tell us what you need, we send you a clear quote in Naira, you pay securely, and we pay the vendor in their currency.
+            For physical items, we buy, receive at our hubs abroad and ship to your door with tracking.
+          </p>
+          <Link href="/signup" className="btn btn-dark">Create a free account</Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {VALUES.map(({ icon: Icon, t, d }) => (
+            <div key={t} className="card p-5">
+              <Icon className="h-6 w-6 text-brand-600 dark:text-lime-400" />
+              <p className="mt-3 font-semibold">{t}</p>
+              <p className="muted mt-1 text-sm">{d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}

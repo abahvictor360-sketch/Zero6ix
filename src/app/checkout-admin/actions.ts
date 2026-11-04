@@ -67,7 +67,10 @@ export async function loginAction(_: ActionState | null, form: FormData): Promis
       ],
       cta: { label: "Sign in", url },
     });
+    console.info(`[checkout-admin] sign-in link for ${email}: ${sent ? "handed to Resend" : "SEND FAILED"}`);
     if (!sent) return { error: "We could not send the email right now. Please try again in a minute." };
+  } else {
+    console.warn(`[checkout-admin] sign-in link requested for a non-admin email: ${email.replace(/^(.).*(@.*)$/, "$1***$2")}`);
   }
   return { ok: true, message: LINK_SENT };
 }

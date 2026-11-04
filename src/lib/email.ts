@@ -55,5 +55,7 @@ export async function sendEmail(input: EmailInput): Promise<boolean> {
     console.error("[email] send failed", res.status, await res.text().catch(() => ""));
     return false;
   }
+  const { id } = (await res.json().catch(() => ({}))) as { id?: string };
+  console.info(`[email] sent "${input.subject}" via Resend (id ${id ?? "?"}) from ${from}`);
   return true;
 }

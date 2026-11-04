@@ -15,7 +15,7 @@ import { GATEWAYS } from "@/lib/payfx/gateways";
 import { confirmPayment } from "@/lib/payfx/orders";
 import { convert, gatewayName, money, round2 } from "@/lib/payfx/catalog";
 import { getProductsById, PRODUCTS_TAG } from "@/lib/payfx/products";
-import { getUsdRate, SETTINGS_TAG } from "@/lib/payfx/settings";
+import { getRateInfo, getUsdRate, MARKET_TAG, SETTINGS_TAG } from "@/lib/payfx/settings";
 import { LOGOS } from "@/lib/payfx/icons";
 import { sendEmail } from "@/lib/email";
 import { publicSiteUrl as siteUrl } from "@/lib/payfx/site-url";
@@ -361,18 +361,42 @@ export async function deleteMessageAction(form: FormData) {
 
 export async function saveRateAction(_: ActionState | null, form: FormData): Promise<ActionState> {
   const admin = await requireAdmin();
-  const raw = String(form.get("usd_rate") ?? "").replace(/[₦,\s]/g, "");
-  const rate = Number(raw);
-  if (!Number.isFinite(rate) || rate < 100 || rate > 100000) return { error: "Enter a rate between ₦100 and ₦100,000 per US$1.", fieldErrors: { usd_rate: ["Invalid rate"] } };
+  const mode = form.get("rate_mode") === "live" ? "live" : "fixed";
+  const num = (k: string) => Number(String(form.get(k) ?? "").replace(/[₦,%\s]/g, ""));
+  const rate = num("usd_rate");
+  const markup = num("rate_markup");
+  if (!Number.isFinite(rate) || rate < 100 || rate > 100000) return { error: "Enter a fixed rate between ₦100 and ₦100,000 per US$1. It's also the backup if live rates are unavailable.", fieldErrors: { usd_rate: ["Invalid rate"] } };
+  if (!Number.isFinite(markup) || markup < 0 || markup > 50) return { error: "Markup must be between 0% and 50%.", fieldErrors: { rate_markup: ["Invalid markup"] } };
   try {
+    await setSetting("rate_mode", mode, admin);
     await setSetting("usd_rate", Math.round(rate * 100) / 100, admin);
-    await logAdmin(admin, "usd_rate_changed", "usd_rate", { to: rate });
+    await setSetting("rate_markup", Math.round(markup * 100) / 100, admin);
+    await logAdmin(admin, "usd_rate_changed", "usd_rate", { mode, to: rate, markup });
   } catch (e) {
     return { error: errText(e) };
   }
   revalidateTag(SETTINGS_TAG);
   revalidatePath("/checkout");
-  return { ok: true, message: `Saved. Checkout now uses US$1 = ₦${rate.toLocaleString("en-US")}. Existing invoices keep their rate.` };
+  revalidatePath(ADMIN_BASE, "layout");
+  const info = await getRateInfo();
+  return {
+    ok: true,
+    message: mode === "live"
+      ? info.fallback
+        ? `Saved. Live mode is on, but the market rate can't be reached right now, so checkout is using your fixed rate of ₦${rate.toLocaleString("en-US")} until it can.`
+        : `Saved. Checkout now uses the live rate: ₦${info.rate.toLocaleString("en-US")} per US$1 (market ₦${info.market?.toLocaleString("en-US")} + ${markup}%). It updates every 15 minutes.`
+      : `Saved. Checkout now uses a fixed rate of ₦${rate.toLocaleString("en-US")} per US$1. Existing invoices keep their rate.`,
+  };
+}
+
+export async function refreshRateAction(): Promise<ActionState> {
+  const admin = await requireAdmin();
+  revalidateTag(MARKET_TAG);
+  revalidatePath("/checkout");
+  const info = await getRateInfo();
+  await logAdmin(admin, "rate_refreshed", "usd_rate", { market: info.market, rate: info.rate });
+  if (!info.market) return { error: "Couldn't reach the exchange-rate service. Try again in a minute." };
+  return { ok: true, message: `Market rate refreshed: ₦${info.market.toLocaleString("en-US")} per US$1. Checkout charges ₦${info.rate.toLocaleString("en-US")}.` };
 }
 
 export async function testEmailAction(): Promise<ActionState> {

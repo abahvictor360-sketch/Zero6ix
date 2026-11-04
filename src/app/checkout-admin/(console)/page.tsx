@@ -3,6 +3,7 @@ import { CheckCircle2, Circle, Clock, Mail, Package, Wallet } from "lucide-react
 import { adminStoreConfigured, countNewMessages, getSettings, listOrders, listProducts, StoreError } from "@/lib/payfx/admin-store";
 import { money } from "@/lib/payfx/catalog";
 import { gatewayStatus } from "@/lib/payfx/gateways";
+import { getRateInfo } from "@/lib/payfx/settings";
 import { envValue } from "@/lib/env";
 import { Alert, PageHeader, StatCard } from "@/components/ui";
 import { OrdersTable } from "./orders/orders-table";
@@ -14,11 +15,12 @@ const lagosDay = (d: Date) => new Date(d.getTime() + 3_600_000).toISOString().sl
 
 export default async function AdminOverview() {
   let error = "";
-  const [orders, products, newMessages, tablesReady] = await Promise.all([
+  const [orders, products, newMessages, tablesReady, rate] = await Promise.all([
     listOrders({ limit: 2000 }).catch((e) => { error = e instanceof StoreError ? e.message : "Could not load orders."; return []; }),
     listProducts().catch(() => null),
     countNewMessages(),
     getSettings().then(() => true).catch(() => false),
+    getRateInfo(),
   ]);
   const paid = orders.filter((o) => o.status === "paid");
   const pending = orders.filter((o) => o.status === "pending");
@@ -77,6 +79,16 @@ export default async function AdminOverview() {
           </ul>
         </section>
       )}
+
+      <Link href="/checkout-admin/settings" className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm hover:border-brand-700 dark:border-white/10 dark:bg-white/[0.03]">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${rate.mode === "live" && !rate.fallback ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" : "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300"}`}>
+          {rate.mode === "live" && !rate.fallback && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden />}
+          {rate.mode === "live" ? (rate.fallback ? "Live (backup)" : "Live rate") : "Fixed rate"}
+        </span>
+        <span>Checkout charges <strong>₦{rate.rate.toLocaleString("en-US")}</strong> per US$1</span>
+        {rate.market && <span className="text-slate-500">Market ₦{rate.market.toLocaleString("en-US")}</span>}
+        <span className="ml-auto text-xs font-medium text-brand-700 dark:text-lime-400">Change →</span>
+      </Link>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Paid this month" value={money(sum(thisMonth))} hint={`${thisMonth.length} order${thisMonth.length === 1 ? "" : "s"} · All time ${money(sum(paid))}`} icon={<Wallet className="h-5 w-5" />} />

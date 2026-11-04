@@ -1,12 +1,13 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 import { adminEmails, emailLoginEnabled, passwordLoginEnabled, requireAdmin } from "@/lib/payfx/admin-auth";
 import { adminStoreConfigured, getSettings, StoreError } from "@/lib/payfx/admin-store";
-import { EXCHANGE_RATE, gatewayName } from "@/lib/payfx/catalog";
+import { gatewayName } from "@/lib/payfx/catalog";
+import { getRateInfo } from "@/lib/payfx/settings";
 import { gatewayStatus } from "@/lib/payfx/gateways";
 import { envValue } from "@/lib/env";
 import { site } from "@/lib/site";
 import { Alert, PageHeader } from "@/components/ui";
-import { RateForm, TestEmailButton } from "./forms";
+import { RateForm, RefreshRateButton, TestEmailButton } from "./forms";
 
 export const metadata = { title: "Settings" };
 
@@ -21,17 +22,15 @@ function Status({ ok, children }: { ok: boolean; children: React.ReactNode }) {
 
 export default async function AdminSettings() {
   const admin = await requireAdmin();
-  let settings: Record<string, unknown> = {};
   let settingsError = "";
   if (adminStoreConfigured()) {
-    try { settings = await getSettings(); } catch (e) {
+    try { await getSettings(); } catch (e) {
       settingsError = e instanceof StoreError && (e.code === "42P01" || e.code === "PGRST205")
         ? "The settings table is missing. Run supabase/leadloop/checkout_admin.sql in Supabase to save settings here."
         : e instanceof StoreError ? e.message : "Could not load settings.";
     }
   }
-  const saved = Number(settings.usd_rate);
-  const rate = Number.isFinite(saved) && saved > 0 ? saved : EXCHANGE_RATE;
+  const info = await getRateInfo();
   const gw = gatewayStatus();
 
   return (
@@ -39,10 +38,24 @@ export default async function AdminSettings() {
       <PageHeader title="Settings" description="Checkout settings and how the site is connected." />
       {settingsError && <Alert tone="warning" className="mb-6">{settingsError}</Alert>}
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="card">
-          <h2 className="font-semibold">Exchange rate</h2>
-          <p className="muted mb-4 mt-1 text-sm">Customers paying in US dollars are charged at this rate.</p>
-          <RateForm current={rate} source={Number.isFinite(saved) && saved > 0 ? "saved here" : "default"} />
+        <section className="card lg:row-span-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="font-semibold">Exchange rate</h2>
+              <p className="muted mt-1 text-sm">What customers paying in US dollars are charged.</p>
+            </div>
+            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${info.mode === "live" && !info.fallback ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" : "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300"}`}>
+              {info.mode === "live" ? (info.fallback ? "Live (using backup)" : "● Live") : "Fixed"}
+            </span>
+          </div>
+          <div className="my-4 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-4 text-sm dark:bg-white/5">
+            <div><p className="text-xs text-slate-500">Checkout charges</p><p className="text-lg font-bold">₦{info.rate.toLocaleString("en-US")}</p><p className="text-xs text-slate-500">per US$1</p></div>
+            <div><p className="text-xs text-slate-500">Market rate</p><p className="text-lg font-bold">{info.market ? `₦${info.market.toLocaleString("en-US")}` : "Unavailable"}</p>
+              <p className="text-xs text-slate-500">{info.marketUpdatedAt ? `Published ${new Date(info.marketUpdatedAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos" })}` : "open.er-api.com"}</p></div>
+          </div>
+          <RateForm info={info} />
+          <div className="mt-4 border-t border-slate-100 pt-4 dark:border-white/10"><RefreshRateButton /></div>
+          <p className="hint mt-3">Each invoice keeps the rate it was created with, so changes never affect invoices already sent.</p>
         </section>
 
         <section className="card">

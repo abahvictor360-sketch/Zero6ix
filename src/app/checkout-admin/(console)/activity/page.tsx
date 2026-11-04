@@ -25,7 +25,8 @@ const LABELS: Record<string, string> = {
   message_new: "Marked message new",
   message_note_saved: "Saved message note",
   message_deleted: "Deleted message",
-  usd_rate_changed: "Changed USD rate",
+  usd_rate_changed: "Changed exchange rate settings",
+  rate_refreshed: "Refreshed market rate",
   link_created: "Created payment link",
   link_emailed: "Emailed payment link",
 };
@@ -35,9 +36,10 @@ function describe(r: LogRow) {
   const bits: string[] = [];
   if (typeof d.name === "string") bits.push(d.name);
   if (typeof d.invoice === "string") bits.push(d.invoice);
-  if (r.action === "usd_rate_changed") bits.push(`₦${Number(d.to).toLocaleString("en-US")}`);
+  if (r.action === "usd_rate_changed") bits.push(d.mode === "live" ? `live, market + ${d.markup}% (backup ₦${Number(d.to).toLocaleString("en-US")})` : `fixed ₦${Number(d.to).toLocaleString("en-US")}`);
+  if (r.action === "rate_refreshed" && d.rate) bits.push(`₦${Number(d.rate).toLocaleString("en-US")}`);
   if (r.action === "item_updated" && d.from !== undefined) bits.push(`₦${Number(d.from).toLocaleString("en-US")} → ₦${Number(d.to).toLocaleString("en-US")}`);
-  if (typeof d.method === "string" && r.action !== "sign_in") bits.push(d.method.replace("_", " "));
+  if (typeof d.method === "string" && r.action !== "sign_in" && r.action !== "usd_rate_changed") bits.push(d.method.replace("_", " "));
   if (r.action === "sign_in" && typeof d.method === "string") bits.push(d.method === "password" ? "with password" : "with email link");
   if (typeof d.to === "string") bits.push(`to ${d.to}`);
   if (typeof d.count === "number") bits.push(`${d.count} orders`);

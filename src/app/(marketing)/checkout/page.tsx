@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { currenciesFor } from "@/lib/payfx/catalog";
-import { getUsdRate } from "@/lib/payfx/settings";
+import { getRateInfo, MARKET_REFRESH_SECONDS } from "@/lib/payfx/settings";
 import { getProducts } from "@/lib/payfx/products";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { gatewayStatus } from "@/lib/payfx/gateways";
@@ -18,7 +18,8 @@ export const dynamic = "force-dynamic";
 
 export default async function PayfxPage({ searchParams }: { searchParams: Promise<{ item?: string }> }) {
   const { item } = await searchParams;
-  const [{ items: products }, usdRate] = await Promise.all([getProducts(), getUsdRate()]);
+  const [{ items: products }, rateInfo] = await Promise.all([getProducts(), getRateInfo()]);
+  const usdRate = rateInfo.rate;
   const items = products.map((i) => ({ ...i, logoSvg: logoSvg(i.logo), logoTitle: LOGOS[i.logo].title }));
   const single = items.find((i) => i.id === item) ?? null;
 
@@ -27,6 +28,7 @@ export default async function PayfxPage({ searchParams }: { searchParams: Promis
       items={single ? [single] : items}
       single={Boolean(single)}
       rate={usdRate}
+      liveRate={rateInfo.mode === "live" && !rateInfo.fallback ? { refreshSeconds: MARKET_REFRESH_SECONDS } : null}
       currencies={currenciesFor(usdRate)}
       gateways={gatewayStatus()}
       ready={storeConfigured()}

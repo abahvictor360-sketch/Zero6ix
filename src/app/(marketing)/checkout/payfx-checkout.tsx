@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, FileSearch, Loader2, Lock, ShieldCheck } from "lucide-react";
 import type { CurrencyCode, PayfxItem } from "@/lib/payfx/catalog";
 
@@ -16,8 +17,15 @@ const GATEWAY_INFO = {
 } as const;
 
 export function PayfxCheckout({
-  items, single, rate, currencies, gateways, ready,
-}: { items: Item[]; single: boolean; rate: number; currencies: Currencies; gateways: Gateways; ready: boolean }) {
+  items, single, rate, currencies, gateways, ready, liveRate = null,
+}: { items: Item[]; single: boolean; rate: number; currencies: Currencies; gateways: Gateways; ready: boolean; liveRate?: { refreshSeconds: number } | null }) {
+  const router = useRouter();
+  // Live rate: re-render from the server every few minutes so prices follow the market.
+  useEffect(() => {
+    if (!liveRate) return;
+    const t = setInterval(() => { if (document.visibilityState === "visible") router.refresh(); }, Math.max(60, Math.min(liveRate.refreshSeconds, 300)) * 1000);
+    return () => clearInterval(t);
+  }, [liveRate, router]);
   const [selected, setSelected] = useState<string[]>(() => items.filter((i) => single || !i.test).map((i) => i.id));
   const [currency, setCurrency] = useState<CurrencyCode>("NGN");
   const [gateway, setGateway] = useState<"flutterwave" | "paystack">("paystack");
@@ -104,6 +112,9 @@ export function PayfxCheckout({
             {!single && <span className="mr-3 text-lime-400">07</span>}{heading}
           </h1>
           <p className="mt-3 max-w-2xl text-white/75">
+            {liveRate
+              ? <span className="mr-1 inline-flex items-center gap-1.5 rounded-full bg-lime-400/15 px-2 py-0.5 text-xs font-semibold text-lime-300"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-lime-400" aria-hidden /> Live rate</span>
+              : null}
             Exchange rate: US$1 = ₦{rate.toLocaleString("en-US")}.{" "}
             {single ? "Enter your details, then choose how to pay." : "Select the services you are paying for, or open one to pay for it alone."}
           </p>

@@ -1,14 +1,21 @@
 import Link from "next/link";
 import {
   ArrowRight, BadgeCheck, BookOpen, CreditCard, Globe2, GraduationCap, Laptop, Lock, Megaphone,
-  Package, PlaneTakeoff, Quote, Scale, ShieldCheck, Sparkles, Star, Timer,
+  Building2, Package, PlaneTakeoff, Plane, Scale, ShieldCheck, Sparkles, Timer, Users,
 } from "lucide-react";
 import { RateWidget } from "@/components/site/rate-widget";
 import { FaqList, faqJsonLd } from "@/components/site/faq-list";
 import { getFeeSettings, getPublicRates } from "@/lib/settings";
-import { FAQS, ITEM_STORES, SERVICE_CATEGORIES, STEPS, TESTIMONIALS } from "@/lib/content";
+import { FAQS, ITEM_STORES, SERVICE_CATEGORIES, STEPS } from "@/lib/content";
 import { formatMoney } from "@/lib/format";
-import { accountsEnabled, requestCta } from "@/lib/site";
+import { accountsEnabled, requestCta, site } from "@/lib/site";
+
+const WHO = [
+  { icon: GraduationCap, t: "Students & applicants", d: "Exam, application, evaluation and visa fees — IELTS, TOEFL, WES, UCAS, SEVIS and more." },
+  { icon: Users, t: "Freelancers & creatives", d: "Software, subscriptions, ad credits and tools when your card is declined or your region isn't supported." },
+  { icon: Plane, t: "Africans in the diaspora", d: "Living abroad but paying with Naira or another African currency? We bridge the gap for you and your family." },
+  { icon: Building2, t: "Businesses & organisations", d: "SMEs, schools, NGOs and startups paying for team tools in bulk, with proper invoices and statements." },
+];
 
 const CATEGORY_ICONS = { software: Laptop, exams: GraduationCap, visa: PlaneTakeoff, web: Globe2, learning: BookOpen, ads: Megaphone } as const;
 
@@ -149,7 +156,7 @@ export default async function HomePage() {
           {[
             { icon: Timer, t: "Fast, reliable payments", d: "Most service payments done the same day." },
             { icon: Globe2, t: "Global coverage", d: "We pay vendors in USD, GBP, EUR, CAD, AED, CNY and more — you pay in Naira or another African currency." },
-            { icon: Sparkles, t: "Human support", d: "Real people on WhatsApp, email and chat." },
+            { icon: Sparkles, t: "Human support", d: "Real people by phone, email and our contact form." },
             { icon: ShieldCheck, t: "Secure & compliant", d: "KYC, encrypted data, audited operations." },
           ].map(({ icon: Icon, t, d }) => (
             <li key={t} className="card p-5">
@@ -161,23 +168,21 @@ export default async function HomePage() {
         </ul>
       </section>
 
-      {/* Testimonials */}
+      {/* Who we serve */}
       <section className="bg-brand-900 py-20 text-white dark:bg-[#071a13]">
         <div className="container">
-          <h2 className="h2 text-center">Loved by students, freelancers and teams</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow !text-lime-300">Who we serve</p>
+            <h2 className="h2 mt-4">Built for Africans, at home and abroad</h2>
+            <p className="mt-4 text-white/70">You pay in Naira or your local African currency. We pay the vendor in USD, GBP, EUR and more.</p>
+          </div>
           <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {TESTIMONIALS.map((t) => (
-              <figure key={t.name} className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-                <Quote className="h-6 w-6 text-lime-400" />
-                <div className="mt-3 flex gap-0.5 text-lime-400" aria-label="5 out of 5 stars">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-                </div>
-                <blockquote className="mt-3 text-sm leading-6 text-white/85">“{t.quote}”</blockquote>
-                <figcaption className="mt-5 text-sm">
-                  <span className="font-semibold">{t.name}</span>
-                  <span className="block text-white/60">{t.role}</span>
-                </figcaption>
-              </figure>
+            {WHO.map(({ icon: Icon, t, d }) => (
+              <div key={t} className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-lime-400 text-brand-950"><Icon className="h-5 w-5" /></span>
+                <p className="mt-5 font-semibold">{t}</p>
+                <p className="mt-2 text-sm leading-6 text-white/70">{d}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -188,7 +193,7 @@ export default async function HomePage() {
         <div>
           <p className="eyebrow">FAQs</p>
           <h2 className="h2 mt-4">Questions? Answers.</h2>
-          <p className="muted mt-4">Can&apos;t find what you need? <Link href="/contact" className="font-semibold text-brand-700 underline dark:text-lime-400">Contact us</Link> or chat with us on WhatsApp.</p>
+          <p className="muted mt-4">Can&apos;t find what you need? <Link href="/contact" className="font-semibold text-brand-700 underline dark:text-lime-400">Contact us</Link> or call us on {site.phone}.</p>
         </div>
         <FaqList items={FAQS.slice(0, 6)} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }} />

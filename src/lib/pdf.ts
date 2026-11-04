@@ -47,7 +47,7 @@ async function base(title: string, number: string, date: string) {
   c.y = 735;
   text(c, site.name, 40, 9, { bold: true });
   c.y -= 12; text(c, site.address, 40, 8, { color: GREY });
-  c.y -= 11; text(c, `${site.email}  |  ${site.phone}  |  ${site.rcNumber}`, 40, 8, { color: GREY });
+  c.y -= 11; text(c, [site.email, site.phone, site.company, site.rcNumber].filter(Boolean).join("  |  "), 40, 8, { color: GREY });
   return { doc, c };
 }
 

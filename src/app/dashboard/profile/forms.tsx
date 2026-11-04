@@ -2,13 +2,13 @@
 import { useActionState } from "react";
 import { updateProfile, uploadKycDocument } from "../actions";
 import { Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import type { ActionState } from "@/lib/validation";
 
 export function ProfileForm({ profile }: { profile: { full_name: string; address_line: string; city: string; state: string; notify_email: boolean; notify_whatsapp: boolean } }) {
-  const [state, action] = useActionState<ActionState, FormData>(updateProfile, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(updateProfile, {});
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={actionPending} className="space-y-4">
       <FormMessage state={state} />
       <Field label="Full name" name="full_name" error={fieldError(state, "full_name")}>
         <input id="full_name" name="full_name" className="input" defaultValue={profile.full_name} required />
@@ -25,14 +25,14 @@ export function ProfileForm({ profile }: { profile: { full_name: string; address
         <p className="hint">In-app notifications are always on.</p>
       </fieldset>
       <SubmitButton className="btn btn-dark btn-sm" pendingText="Saving…">Save changes</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function KycUploadForm({ organisationId }: { organisationId?: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(uploadKycDocument, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(uploadKycDocument, {});
   return (
-    <form action={action} className="grid gap-4 sm:grid-cols-3 sm:items-end">
+    <ActionForm action={action} pending={actionPending} className="grid gap-4 sm:grid-cols-3 sm:items-end">
       <div className="sm:col-span-3"><FormMessage state={state} /></div>
       {organisationId && <input type="hidden" name="organisation_id" value={organisationId} />}
       <Field label="Document type" name="doc_type">
@@ -51,6 +51,6 @@ export function KycUploadForm({ organisationId }: { organisationId?: string }) {
           className="block w-full text-sm file:mr-2 file:rounded-full file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm dark:file:bg-white/10 dark:file:text-white" />
       </Field>
       <div className="sm:col-span-3"><SubmitButton className="btn btn-dark btn-sm" pendingText="Uploading…">Upload document</SubmitButton></div>
-    </form>
+    </ActionForm>
   );
 }

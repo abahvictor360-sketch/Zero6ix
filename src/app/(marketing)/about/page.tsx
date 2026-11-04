@@ -9,7 +9,7 @@ const VALUES = [
   { icon: Eye, t: "Transparency", d: "Every quote shows the exchange rate, our fee and shipping. No surprises." },
   { icon: Scale, t: "Compliance first", d: "Every request is reviewed by a person. We only handle legal goods and services." },
   { icon: ShieldCheck, t: "Security", d: "Payments via licensed gateways, encrypted credentials, verified accounts and audit trails." },
-  { icon: HeartHandshake, t: "Real support", d: "Talk to humans on WhatsApp, email or chat — not an endless bot loop." },
+  { icon: HeartHandshake, t: "Real support", d: "Talk to real people by phone, email or our contact form — not an endless bot loop." },
 ];
 
 export default function AboutPage() {
@@ -37,7 +37,7 @@ export default function AboutPage() {
             You tell us what you need, we send you a clear quote in Naira or your local African currency, you pay securely, and we pay the vendor in their currency.
             For physical items, we buy, receive at our hubs abroad and ship to your door with tracking.
           </p>
-          <Link {...requestCta("service")} className="btn btn-dark">{accountsEnabled ? "Create a free account" : "Chat with us on WhatsApp"}</Link>
+          <Link {...requestCta("service")} className="btn btn-dark">{accountsEnabled ? "Create a free account" : "Contact us"}</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {VALUES.map(({ icon: Icon, t, d }) => (

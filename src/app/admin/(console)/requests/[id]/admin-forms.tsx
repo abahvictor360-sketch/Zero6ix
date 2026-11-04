@@ -3,7 +3,7 @@ import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { Eye, Send } from "lucide-react";
 import { rejectRequest, revealCredentials, saveShipment, sendQuote, staffMessage, updateStatus, uploadProof } from "@/app/admin/actions";
 import { Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import { computeQuote } from "@/lib/pricing";
 import { formatMoney } from "@/lib/format";
 import { STATUS_LABELS } from "@/lib/status";
@@ -21,7 +21,7 @@ export function QuoteBuilder({
   fees: FeeSettings;
   shipping: ShippingRate[];
 }) {
-  const [state, action] = useActionState<ActionState, FormData>(sendQuote, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(sendQuote, {});
   const [amount, setAmount] = useState(String(defaults.amount || ""));
   const [currency, setCurrency] = useState(defaults.currency);
   const [rateOverride, setRateOverride] = useState("");
@@ -44,7 +44,7 @@ export function QuoteBuilder({
   const margin = preview && rate ? preview.subtotalNgn - Number(amount) * rate.buy_rate : 0;
 
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={actionPending} className="space-y-4">
       <FormMessage state={state} />
       <input type="hidden" name="request_id" value={requestId} />
       <div className="grid grid-cols-2 gap-3">
@@ -93,7 +93,7 @@ export function QuoteBuilder({
       )}
       <SubmitButton className="btn btn-dark w-full" pendingText="Sending quote…"><Send className="h-4 w-4" /> Send quote & payment link</SubmitButton>
       <p className="hint">Rate locks for {fees.quote_validity_hours}h. Sending a new quote supersedes the previous one.</p>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -102,38 +102,38 @@ function Row({ k, v }: { k: React.ReactNode; v: React.ReactNode }) {
 }
 
 export function StatusForm({ requestId, options }: { requestId: string; options: RequestStatus[] }) {
-  const [state, action] = useActionState<ActionState, FormData>(updateStatus, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(updateStatus, {});
   if (!options.length) return <p className="muted text-sm">No further status changes available.</p>;
   return (
-    <form action={action} className="space-y-3">
+    <ActionForm action={action} pending={actionPending} className="space-y-3">
       <FormMessage state={state} />
       <input type="hidden" name="request_id" value={requestId} />
       <select name="status" className="input" aria-label="New status">{options.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}</select>
       <textarea name="note" rows={2} className="input" placeholder="Note shown to client (optional)" aria-label="Note" />
       <SubmitButton className="btn btn-outline btn-sm" pendingText="Updating…">Update status</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function RejectForm({ requestId }: { requestId: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(rejectRequest, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(rejectRequest, {});
   return (
-    <form action={action} className="space-y-3">
+    <ActionForm action={action} pending={actionPending} className="space-y-3">
       <FormMessage state={state} />
       <input type="hidden" name="request_id" value={requestId} />
       <textarea name="reason" rows={2} className="input" placeholder="Reason (sent to the client)" aria-label="Rejection reason" required />
       {fieldError(state, "reason") && <p className="field-error">{fieldError(state, "reason")?.[0]}</p>}
       <SubmitButton className="btn btn-danger btn-sm" pendingText="Rejecting…">Reject request</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function ProofForm({ requestId }: { requestId: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(uploadProof, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(uploadProof, {});
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => { if (state.ok) ref.current?.reset(); }, [state]);
   return (
-    <form ref={ref} action={action} className="space-y-3">
+    <ActionForm ref={ref} action={action} pending={actionPending} className="space-y-3">
       <FormMessage state={state} />
       <input type="hidden" name="request_id" value={requestId} />
       <select name="kind" className="input" aria-label="Kind">
@@ -149,14 +149,14 @@ export function ProofForm({ requestId }: { requestId: string }) {
         className="block w-full text-sm file:mr-2 file:rounded-full file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 dark:file:bg-white/10 dark:file:text-white" />
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="visible_to_client" defaultChecked className="rounded text-brand-700" /> Visible to client</label>
       <SubmitButton className="btn btn-outline btn-sm" pendingText="Uploading…">Upload</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function ShipmentForm({ requestId, shipment }: { requestId: string; shipment: Shipment | null }) {
-  const [state, action] = useActionState<ActionState, FormData>(saveShipment, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(saveShipment, {});
   return (
-    <form action={action} className="grid grid-cols-2 gap-3">
+    <ActionForm action={action} pending={actionPending} className="grid grid-cols-2 gap-3">
       <div className="col-span-2"><FormMessage state={state} /></div>
       <input type="hidden" name="request_id" value={requestId} />
       <select name="status" defaultValue={shipment?.status ?? "awaiting_purchase"} className="input col-span-2" aria-label="Shipment status">
@@ -169,16 +169,16 @@ export function ShipmentForm({ requestId, shipment }: { requestId: string; shipm
       <input name="estimated_delivery" type="date" defaultValue={shipment?.estimated_delivery ?? ""} className="input" aria-label="Estimated delivery" />
       <input name="weight_kg" inputMode="decimal" defaultValue={shipment?.weight_kg ?? ""} className="input" placeholder="Weight kg" aria-label="Weight" />
       <div className="col-span-2"><SubmitButton className="btn btn-outline btn-sm" pendingText="Saving…">Save shipment</SubmitButton></div>
-    </form>
+    </ActionForm>
   );
 }
 
 export function StaffMessageForm({ requestId }: { requestId: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(staffMessage, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(staffMessage, {});
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => { if (state.ok) ref.current?.reset(); }, [state]);
   return (
-    <form ref={ref} action={action} className="mt-4 space-y-2">
+    <ActionForm ref={ref} action={action} pending={actionPending} className="mt-4 space-y-2">
       {state.error && <FormMessage state={state} />}
       <input type="hidden" name="request_id" value={requestId} />
       <textarea name="body" rows={3} className="input" placeholder="Reply to client…" required aria-label="Message" />
@@ -186,12 +186,12 @@ export function StaffMessageForm({ requestId }: { requestId: string }) {
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="internal" className="rounded text-amber-600" /> Internal note (staff only)</label>
         <SubmitButton className="btn btn-dark btn-sm" pendingText="Sending…"><Send className="h-3.5 w-3.5" /> Send</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 
 export function RevealCredentials({ requestId }: { requestId: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(revealCredentials, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(revealCredentials, {});
   const creds = state.data as { username: string; password: string; extra: string } | undefined;
   return creds ? (
     <dl className="space-y-2 rounded-2xl bg-amber-50 p-3 font-mono text-xs dark:bg-amber-950/30">
@@ -201,10 +201,10 @@ export function RevealCredentials({ requestId }: { requestId: string }) {
       <p className="font-sans text-[11px] text-amber-700">This view has been recorded in the audit log.</p>
     </dl>
   ) : (
-    <form action={action}>
+    <ActionForm action={action} pending={actionPending}>
       {state.error && <FormMessage state={state} />}
       <input type="hidden" name="request_id" value={requestId} />
       <SubmitButton className="btn btn-outline btn-sm" pendingText="Decrypting…"><Eye className="h-3.5 w-3.5" /> Reveal (audited)</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

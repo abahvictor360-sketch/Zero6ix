@@ -4,11 +4,11 @@ import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import { signUp } from "../actions";
 import { Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import type { ActionState } from "@/lib/validation";
 
 export function SignupForm() {
-  const [state, action] = useActionState<ActionState, FormData>(signUp, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(signUp, {});
   const [type, setType] = useState<"individual" | "organisation">("individual");
 
   if (state.ok) {
@@ -22,7 +22,7 @@ export function SignupForm() {
   }
 
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={actionPending} className="space-y-4">
       <FormMessage state={state} />
       <fieldset>
         <legend className="label">Account type</legend>
@@ -59,6 +59,6 @@ export function SignupForm() {
       </label>
       {fieldError(state, "terms") && <p className="field-error">{fieldError(state, "terms")?.[0]}</p>}
       <SubmitButton className="btn btn-dark w-full" pendingText="Creating account…">Create account</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

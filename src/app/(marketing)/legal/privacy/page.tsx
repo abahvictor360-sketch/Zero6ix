@@ -8,7 +8,7 @@ export default function PrivacyPage() {
     <>
       <h1 className="text-3xl font-bold">Privacy Policy</h1>
       <p className="text-sm text-slate-500">Last updated: 4 November 2026</p>
-      <p>This policy explains how {site.name} collects, uses and protects your personal data in line with the Nigeria Data Protection Act 2023 (NDPA) and related regulations.</p>
+      <p>This policy explains how {site.company} (&quot;we&quot;), operator of {site.name}, collects, uses and protects your personal data in line with the Nigeria Data Protection Act 2023 (NDPA) and related regulations.</p>
 
       <h2>Data we collect</h2>
       <ul>
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <li><strong>Verification data:</strong> government ID and, for organisations, registration documents — only when required.</li>
         <li><strong>Order data:</strong> requests, product links, quotes, payment references, shipping details, messages and uploaded files.</li>
         <li><strong>Service credentials:</strong> only if you choose to share them for an order; stored encrypted (AES-256-GCM).</li>
-        <li><strong>WhatsApp conversations</strong> with our bot and agents.</li>
+        <li><strong>Messages you send us</strong> via our contact form, email, phone or WhatsApp.</li>
         <li><strong>Technical data:</strong> IP address, device and log data used for security and fraud prevention.</li>
       </ul>
       <p>We do <strong>not</strong> collect or store your card details — these are handled by our PCI-DSS compliant payment providers.</p>
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <ul>
         <li>To provide our services: review requests, issue quotes, process payments, pay vendors and deliver items (contract).</li>
         <li>To verify identity and prevent fraud, money laundering and abuse (legal obligation & legitimate interest).</li>
-        <li>To send service notifications by email, WhatsApp and in-app (contract). You can adjust optional notifications in your profile.</li>
+        <li>To send service notifications by email, WhatsApp and in-app (contract). You can opt out of optional messages at any time by contacting us.</li>
         <li>To keep financial records as required by law.</li>
       </ul>
 
@@ -43,6 +43,9 @@ export default function PrivacyPage() {
 
       <h2>Your rights</h2>
       <p>You may request access to, correction of, or deletion of your data, object to processing, or request portability, subject to legal retention requirements. Contact <a href={`mailto:${site.email}`}>{site.email}</a>. You may also complain to the Nigeria Data Protection Commission (NDPC).</p>
+
+      <h2>Contact us</h2>
+      <p>{site.company}, {site.address}. Email: <a href={`mailto:${site.email}`}>{site.email}</a> · Phone: {site.phone}.</p>
 
       <h2>Cookies</h2>
       <p>We use essential cookies to keep you signed in and remember preferences such as dark mode. We do not use advertising cookies.</p>

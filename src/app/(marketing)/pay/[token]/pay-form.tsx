@@ -2,7 +2,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { Lock } from "lucide-react";
 import { startPayment } from "./actions";
-import { FormMessage, SubmitButton } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton } from "@/components/forms";
 import type { ActionState } from "@/lib/validation";
 
 export function Countdown({ until }: { until: string }) {
@@ -19,10 +19,10 @@ export function Countdown({ until }: { until: string }) {
 }
 
 export function PayForm({ token, total }: { token: string; total: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(startPayment, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(startPayment, {});
   const [provider, setProvider] = useState<"paystack" | "flutterwave">("paystack");
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={actionPending} className="space-y-4">
       <FormMessage state={state} />
       <input type="hidden" name="token" value={token} />
       <fieldset>
@@ -39,6 +39,6 @@ export function PayForm({ token, total }: { token: string; total: string }) {
       </fieldset>
       <SubmitButton className="btn btn-dark btn-lg w-full" pendingText="Redirecting to secure checkout…"><Lock className="h-4 w-4" /> Pay {total}</SubmitButton>
       <p className="text-center text-xs text-slate-500">You&apos;ll be redirected to {provider === "paystack" ? "Paystack" : "Flutterwave"}&apos;s secure page. We never see or store your card details.</p>
-    </form>
+    </ActionForm>
   );
 }

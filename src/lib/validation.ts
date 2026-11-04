@@ -72,6 +72,8 @@ export const contactSchema = z.object({
   name: trimmed(120).min(2, "Enter your name"),
   email: z.string().trim().email("Enter a valid email").max(200),
   phone: z.string().trim().max(30).optional().transform((v) => (v ? normalizePhone(v) ?? v : undefined)),
+  enquiry: z.enum(["service", "item", "business", "other"]).optional().default("other"),
+  country: z.string().trim().max(60).optional().transform((v) => (v ? v : undefined)),
   subject: trimmed(160).min(3, "Enter a subject"),
   message: trimmed(5000).min(10, "Message should be at least 10 characters"),
   website: z.string().max(0).optional(), // honeypot

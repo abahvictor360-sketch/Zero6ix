@@ -3,14 +3,14 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { sendLoginOtp, signIn, verifyLoginOtp } from "../actions";
 import { Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import type { ActionState } from "@/lib/validation";
 
 export function LoginForm({ next }: { next?: string }) {
   const [mode, setMode] = useState<"email" | "phone">("email");
-  const [state, action] = useActionState<ActionState, FormData>(signIn, {});
-  const [otpState, otpAction] = useActionState<ActionState, FormData>(sendLoginOtp, {});
-  const [verifyState, verifyAction] = useActionState<ActionState, FormData>(verifyLoginOtp, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(signIn, {});
+  const [otpState, otpAction, otpActionPending] = useActionState<ActionState, FormData>(sendLoginOtp, {});
+  const [verifyState, verifyAction, verifyActionPending] = useActionState<ActionState, FormData>(verifyLoginOtp, {});
   const phone = (verifyState.data?.phone ?? otpState.data?.phone) as string | undefined;
 
   return (
@@ -25,7 +25,7 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       {mode === "email" ? (
-        <form action={action} className="space-y-4">
+        <ActionForm action={action} pending={actionPending} className="space-y-4">
           <FormMessage state={state} />
           <input type="hidden" name="next" value={next ?? ""} />
           <Field label="Email" name="email" error={fieldError(state, "email")}>
@@ -38,17 +38,17 @@ export function LoginForm({ next }: { next?: string }) {
             <Link href="/forgot-password" className="font-medium text-brand-700 hover:underline dark:text-lime-400">Forgot password?</Link>
           </div>
           <SubmitButton className="btn btn-dark w-full" pendingText="Signing in…">Log in</SubmitButton>
-        </form>
+        </ActionForm>
       ) : !phone ? (
-        <form action={otpAction} className="space-y-4">
+        <ActionForm action={otpAction} pending={otpActionPending} className="space-y-4">
           <FormMessage state={otpState} />
           <Field label="Phone number" name="phone" hint="Use the number verified on your account" error={fieldError(otpState, "phone")}>
             <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="0803 123 4567" className="input" required />
           </Field>
           <SubmitButton className="btn btn-dark w-full" pendingText="Sending…">Send code</SubmitButton>
-        </form>
+        </ActionForm>
       ) : (
-        <form action={verifyAction} className="space-y-4">
+        <ActionForm action={verifyAction} pending={verifyActionPending} className="space-y-4">
           <FormMessage state={verifyState.error ? verifyState : otpState} />
           <input type="hidden" name="phone" value={phone} />
           <input type="hidden" name="next" value={next ?? ""} />
@@ -56,7 +56,7 @@ export function LoginForm({ next }: { next?: string }) {
             <input id="token" name="token" inputMode="numeric" autoComplete="one-time-code" maxLength={6} className="input text-center text-xl tracking-[0.5em]" required />
           </Field>
           <SubmitButton className="btn btn-dark w-full" pendingText="Verifying…">Verify & log in</SubmitButton>
-        </form>
+        </ActionForm>
       )}
     </div>
   );

@@ -31,7 +31,7 @@ export default function RefundPage() {
       </ul>
 
       <h2>How to request a refund</h2>
-      <p>Message us from the order page in your dashboard or email <a href={`mailto:${site.email}`}>{site.email}</a> with your order ID within 14 days of the issue. Approved refunds are returned to the original payment method or your Nigerian bank account within 3–10 working days.</p>
+      <p>Contact us through our <a href="/contact">contact page</a>, call {site.phone} or email <a href={`mailto:${site.email}`}>{site.email}</a> with your order ID within 14 days of the issue. Approved refunds are returned to the original payment method or your Nigerian bank account within 3–10 working days.</p>
 
       <h2>Damaged or incorrect items</h2>
       <p>Report damaged or incorrect items within 48 hours of delivery with photos. Where the vendor is at fault, we&apos;ll manage the return or replacement with the vendor; return shipping may apply.</p>

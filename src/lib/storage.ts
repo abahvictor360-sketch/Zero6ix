@@ -13,6 +13,17 @@ const SIGNATURES: { mime: string; ext: string; test: (b: Uint8Array) => boolean 
 
 export class UploadError extends Error {}
 
+/** Check size and real content type (magic bytes). Throws UploadError. */
+export async function validateFile(file: File, maxBytes: number) {
+  if (!file || file.size === 0) throw new UploadError("No file selected.");
+  if (file.size > maxBytes) throw new UploadError(`File is too large (max ${Math.round(maxBytes / 1024 / 1024)}MB).`);
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const sig = SIGNATURES.find((s) => s.test(bytes));
+  if (!sig) throw new UploadError("Only JPG, PNG, WEBP or PDF files are allowed.");
+  const name = file.name.replace(/[^\w.\- ]/g, "_").slice(0, 120) || `upload.${sig.ext}`;
+  return { bytes, sig, name };
+}
+
 /**
  * Validate an uploaded file by size and *content* (magic bytes), not by the
  * client-supplied MIME type, then store it in a private bucket.
@@ -23,11 +34,7 @@ export async function uploadFile(
   file: File,
   maxBytes = 10 * 1024 * 1024,
 ): Promise<{ path: string; mime: string; size: number; name: string }> {
-  if (!file || file.size === 0) throw new UploadError("No file selected.");
-  if (file.size > maxBytes) throw new UploadError(`File is too large (max ${Math.round(maxBytes / 1024 / 1024)}MB).`);
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const sig = SIGNATURES.find((s) => s.test(bytes));
-  if (!sig) throw new UploadError("Only JPG, PNG, WEBP or PDF files are allowed.");
+  const { bytes, sig } = await validateFile(file, maxBytes);
 
   const safeFolder = folder.replace(/[^a-zA-Z0-9/_-]/g, "");
   const path = `${safeFolder}/${randomUUID()}.${sig.ext}`;

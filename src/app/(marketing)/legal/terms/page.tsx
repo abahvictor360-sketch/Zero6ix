@@ -11,7 +11,7 @@ export default function TermsPage() {
       <h1 className="text-3xl font-bold">Terms of Service</h1>
       <p className="text-sm text-slate-500">Last updated: {UPDATED}</p>
 
-      <p>These Terms govern your use of {site.name} (&quot;we&quot;, &quot;us&quot;), including our website, WhatsApp channel and related services. By creating an account or submitting a request you agree to these Terms.</p>
+      <p>These Terms govern your use of {site.name}, a service operated by {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""} (&quot;we&quot;, &quot;us&quot;), including our website, phone, email and WhatsApp channels and related services. By contacting us with a request, creating an account or making a payment you agree to these Terms.</p>
 
       <h2>1. What we do</h2>
       <p>We act as your agent to pay for online services and purchase goods from vendors that you choose, using foreign currency, and — for physical goods — to receive and ship them to you in Nigeria. We are not the seller of the goods or services and are not responsible for the vendor&apos;s products, except as described in our Refund Policy.</p>
@@ -35,7 +35,7 @@ export default function TermsPage() {
       </ul>
 
       <h2>5. Account credentials you share</h2>
-      <p>Where a service requires us to log in to your account, you authorise us to use the credentials solely to complete your order. Credentials are encrypted, access is restricted and logged, and you may delete them from your dashboard once the order is complete. We recommend changing your password afterwards.</p>
+      <p>Where a service requires us to log in to your account, you authorise us to use the credentials solely to complete your order. Credentials are encrypted, access is restricted and logged, and they are deleted once the order is complete (or earlier on request). We recommend changing your password afterwards.</p>
 
       <h2>6. Shipping, customs & delivery</h2>
       <p>Delivery timelines are estimates. You are responsible for providing an accurate delivery address and for any customs duties beyond those included in your quote. Items seized by customs because they were misdescribed by you are not eligible for refund.</p>
@@ -47,13 +47,13 @@ export default function TermsPage() {
       <p>We may suspend or close accounts that breach these Terms, provide false information, or are associated with fraud or chargeback abuse. We may report suspected unlawful activity to the relevant authorities.</p>
 
       <h2>9. Changes</h2>
-      <p>We may update these Terms from time to time. Material changes will be notified by email or in your dashboard. Continued use after changes take effect means you accept them.</p>
+      <p>We may update these Terms from time to time. Material changes will be notified by email or on this page. Continued use after changes take effect means you accept them.</p>
 
       <h2>10. Governing law</h2>
       <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Disputes will first be addressed through our support team and, failing resolution, by the courts of Rivers State.</p>
 
       <h2>11. Contact</h2>
-      <p>{site.name}, {site.address}. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      <p>{site.company} (trading as {site.name}), {site.address}. Phone: <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
     </>
   );
 }

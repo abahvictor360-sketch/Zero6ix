@@ -3,16 +3,16 @@ import { useActionState } from "react";
 import { ExternalLink, PackageSearch } from "lucide-react";
 import { trackOrder, type TrackState } from "./actions";
 import { Field, StatusBadge, Alert } from "@/components/ui";
-import { SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, SubmitButton, fieldError } from "@/components/forms";
 import { RequestTimeline } from "@/components/request-timeline";
 import { formatDate } from "@/lib/format";
 
 export function TrackForm({ initialRef }: { initialRef?: string }) {
-  const [state, action] = useActionState<TrackState, FormData>(trackOrder, {});
+  const [state, action, actionPending] = useActionState<TrackState, FormData>(trackOrder, {});
   const r = state.result;
   return (
     <div className="space-y-6">
-      <form action={action} className="card grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+      <ActionForm action={action} pending={actionPending} className="card grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <Field label="Order ID" name="reference" error={fieldError(state, "reference")}>
           <input id="reference" name="reference" className="input uppercase" placeholder="WP-100123" defaultValue={initialRef} required autoComplete="off" />
         </Field>
@@ -20,7 +20,7 @@ export function TrackForm({ initialRef }: { initialRef?: string }) {
           <input id="contact" name="contact" className="input" placeholder="you@email.com or 0803…" required />
         </Field>
         <SubmitButton className="btn btn-dark h-[42px]" pendingText="Checking…"><PackageSearch className="h-4 w-4" /> Track</SubmitButton>
-      </form>
+      </ActionForm>
       {state.error && !state.fieldErrors && <Alert tone="error">{state.error}</Alert>}
       {r && (
         <div className="card">

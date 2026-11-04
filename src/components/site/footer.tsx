@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Lock, ShieldCheck, Scale } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { accountsEnabled, site, whatsappLink } from "@/lib/site";
+import { accountsEnabled, site } from "@/lib/site";
 
 const COLS = [
   { title: "Product", links: [["Services", "/services"], ["Shop & Ship", "/shop-and-ship"], ["Pricing & calculator", "/pricing"], ...(accountsEnabled ? [["Track an order", "/track"]] : [])] },
-  { title: "Company", links: [["About us", "/about"], ["Contact", "/contact"], ["FAQ", "/faq"], ["WhatsApp us", whatsappLink()]] },
+  { title: "Company", links: [["About us", "/about"], ["Contact us", "/contact"], ["FAQ", "/faq"]] },
   { title: "Legal", links: [["Terms of Service", "/legal/terms"], ["Privacy Policy", "/legal/privacy"], ["Refund Policy", "/legal/refund"], ["Prohibited Items", "/legal/prohibited-items"]] },
 ];
 
@@ -37,8 +37,8 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="container flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:justify-between">
-          <p>© {new Date().getFullYear()} {site.name}. {site.rcNumber}. {site.address}</p>
-          <p>We never store your card details.</p>
+          <p className="max-w-3xl">© {new Date().getFullYear()} {site.name} — a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}. {site.address}. {site.phone} · {site.email}</p>
+          <p className="shrink-0">We never store your card details.</p>
         </div>
       </div>
     </footer>

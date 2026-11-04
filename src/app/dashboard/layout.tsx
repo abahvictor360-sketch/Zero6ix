@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AppShell, type NavItem } from "@/components/app-shell";
-import { WhatsAppButton } from "@/components/site/whatsapp-button";
+import { ContactButton } from "@/components/site/contact-button";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/(auth)/actions";
@@ -37,7 +37,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       signOutAction={signOut}
     >
       {children}
-      <div className="hidden lg:block"><WhatsAppButton /></div>
+      <div className="hidden lg:block"><ContactButton /></div>
     </AppShell>
   );
 }

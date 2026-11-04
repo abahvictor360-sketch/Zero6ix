@@ -26,7 +26,7 @@ Built with **Next.js 15 (App Router) · TypeScript · Tailwind CSS · Supabase (
 
 | Area | What's included |
 |---|---|
-| **Public site** | Home (hero, how it works, categories, live rate widget, testimonials, FAQs, CTAs), Services, Shop & Ship (shipping fee table), Pricing with fee calculator, Track Order, About, Contact (form + attachment + WhatsApp), FAQ, Terms, Privacy, Refund, Prohibited Items. Floating WhatsApp button on every page. Light/dark mode. |
+| **Public site** | Home (hero, how it works, categories, live rate widget, who we serve, FAQs, CTAs), Services, Shop & Ship (shipping fee table), Pricing with fee calculator, Track Order, About, Contact (enquiry form with attachment — saved to the database and/or emailed to the team), FAQ, Terms, Privacy, Refund, Prohibited Items. Floating “Contact us” button on every page. Light/dark mode. |
 | **Auth** | Email + password sign-up with email confirmation, phone verification by SMS OTP, phone-OTP login, password reset. Organisation sign-up creates the org automatically. |
 | **Client dashboard** | Service or item requests (multi-item, variants, delivery address), mandatory legal-confirmation checkbox, status badges and timeline, quote breakdown + pay button, messages with attachments, proof/receipts, shipment tracking, encrypted credential sharing (deletable), payment history with invoice/receipt PDFs, profile & KYC uploads, notifications. |
 | **Organisations** | Team members (owner/admin/member) with email invites, bulk requests (up to 50 per batch), monthly PDF statements, organisation KYC (CAC). |
@@ -219,7 +219,7 @@ The SQL migrations and seed were verified against PostgreSQL 16, with stubs for 
 ## Go-live checklist
 
 - [ ] Have a Nigerian lawyer review Terms, Privacy (NDPA 2023), Refund and Prohibited Items pages (`src/app/(marketing)/legal/*`).
-- [ ] Replace the **sample testimonials** in `src/lib/content.ts` with real, consented quotes.
+- [ ] Add testimonials only once you have real, consented customer quotes.
 - [ ] Set real business details (`NEXT_PUBLIC_*`), RC number and office address.
 - [ ] Do **not** run `seed.sql` in production (it creates demo users); create staff with `npm run create-admin`.
 - [ ] Switch Paystack/Flutterwave to live keys; confirm webhooks deliver (check Admin → Audit log for `payment.confirmed`).

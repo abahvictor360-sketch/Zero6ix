@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Package, Plus, Receipt, Trash2 } from "lucide-react";
 import { submitItemRequest, submitServiceRequest } from "../../actions";
 import { Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import { CURRENCIES, type ActionState } from "@/lib/validation";
 
 interface Props {
@@ -65,9 +65,9 @@ export function NewRequestForm({ initialType, orgs, shippingOrigins, defaults }:
 }
 
 function ServiceForm({ orgs, defaults }: Pick<Props, "orgs" | "defaults">) {
-  const [state, action] = useActionState<ActionState, FormData>(submitServiceRequest, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(submitServiceRequest, {});
   return (
-    <form action={action} className="card space-y-5">
+    <ActionForm action={action} pending={actionPending} className="card space-y-5">
       <input type="hidden" name="type" value="service" />
       <FormMessage state={state} />
       <OrgSelect orgs={orgs} />
@@ -98,16 +98,16 @@ function ServiceForm({ orgs, defaults }: Pick<Props, "orgs" | "defaults">) {
       </Field>
       <LegalCheckbox error={fieldError(state, "legal_confirmed")} />
       <SubmitButton className="btn btn-dark w-full sm:w-auto" pendingText="Submitting…">Submit request</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 function ItemForm({ orgs, defaults, shippingOrigins }: Pick<Props, "orgs" | "defaults" | "shippingOrigins">) {
-  const [state, action] = useActionState<ActionState, FormData>(submitItemRequest, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(submitItemRequest, {});
   const [rows, setRows] = useState([0]);
   const [nextId, setNextId] = useState(1);
   return (
-    <form action={action} className="card space-y-5">
+    <ActionForm action={action} pending={actionPending} className="card space-y-5">
       <input type="hidden" name="type" value="item" />
       <FormMessage state={state} />
       <OrgSelect orgs={orgs} />
@@ -180,6 +180,6 @@ function ItemForm({ orgs, defaults, shippingOrigins }: Pick<Props, "orgs" | "def
       </Field>
       <LegalCheckbox error={fieldError(state, "legal_confirmed")} />
       <SubmitButton className="btn btn-dark w-full sm:w-auto" pendingText="Submitting…">Submit request</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

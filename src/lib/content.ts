@@ -1,6 +1,5 @@
 /**
- * Marketing copy. Testimonials below are SAMPLE content for launch — replace
- * them with real, consented customer quotes before going live.
+ * Marketing copy. Add testimonials only with real, consented customer quotes.
  */
 export const STEPS = [
   { title: "Submit a request", body: "Tell us the service to pay for or paste the product link. Takes about 2 minutes." },
@@ -55,13 +54,6 @@ export const SERVICE_CATEGORIES = [
 ];
 
 export const ITEM_STORES = ["Amazon", "eBay", "AliExpress", "Walmart", "Best Buy", "ASOS", "Etsy", "Apple Store", "Shein", "Target"];
-
-export const TESTIMONIALS = [
-  { name: "Chiamaka O.", role: "Graduate student, Enugu", quote: "Paid my WES and two university application fees in one afternoon. The quote showed every naira — no surprises." },
-  { name: "Seyi A.", role: "Freelance designer, Lagos", quote: "My card kept getting declined for Figma and Adobe. Web Purchase sorted both within hours and sent the receipts." },
-  { name: "Ibrahim M.", role: "Operations lead, Kaduna NGO", quote: "We pay for 14 software seats monthly through our organisation account. One statement, one invoice — our auditors love it." },
-  { name: "Ngozi E.", role: "Small business owner, Abuja", quote: "Ordered spare parts from eBay that no Nigerian store had. Tracking updates all the way to my door." },
-];
 
 export const FAQS = [
   { q: "What can I pay for with Web Purchase?", a: "Any legal online service or item: software subscriptions, exam and application fees, visa fees, domains and hosting, courses, conference tickets, ad credits, and physical goods from stores like Amazon, eBay and AliExpress." },

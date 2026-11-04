@@ -5,14 +5,14 @@ import {
   addKeyword, getKycDocumentUrl, replyWhatsApp, saveFees, saveRate, saveShippingRate, setUserRole, syncRatesNow,
 } from "@/app/admin/actions";
 import { Alert, Field } from "@/components/ui";
-import { FormMessage, SubmitButton, fieldError } from "@/components/forms";
+import { ActionForm, FormMessage, SubmitButton, fieldError } from "@/components/forms";
 import type { ActionState } from "@/lib/validation";
 import type { ExchangeRate, FeeSettings, ShippingRate } from "@/lib/types";
 
 export function RateRowForm({ rate }: { rate?: ExchangeRate }) {
-  const [state, action] = useActionState<ActionState, FormData>(saveRate, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(saveRate, {});
   return (
-    <form action={action} className="grid items-end gap-2 rounded-2xl border border-slate-200 p-4 dark:border-white/10 sm:grid-cols-[80px_1fr_70px_1fr_1fr_110px_90px_auto_auto]">
+    <ActionForm action={action} pending={actionPending} className="grid items-end gap-2 rounded-2xl border border-slate-200 p-4 dark:border-white/10 sm:grid-cols-[80px_1fr_70px_1fr_1fr_110px_90px_auto_auto]">
       <div className="sm:col-span-9"><FormMessage state={state} /></div>
       <Field label="Code" name={`currency-${rate?.currency ?? "new"}`}>
         <input name="currency" defaultValue={rate?.currency} readOnly={!!rate} className="input uppercase" maxLength={3} required aria-label="Currency code" />
@@ -28,7 +28,7 @@ export function RateRowForm({ rate }: { rate?: ExchangeRate }) {
       <label className="flex items-center gap-1.5 pb-3 text-xs"><input type="checkbox" name="is_active" defaultChecked={rate?.is_active ?? true} className="rounded" /> Active</label>
       <SubmitButton className="btn btn-dark btn-sm mb-1" pendingText="…">Save</SubmitButton>
       {rate?.api_rate && <p className="hint sm:col-span-9">Market (API): ₦{Number(rate.api_rate).toLocaleString("en-NG")} · spread {(((Number(rate.sell_rate) - Number(rate.api_rate)) / Number(rate.api_rate)) * 100).toFixed(2)}%</p>}
-    </form>
+    </ActionForm>
   );
 }
 
@@ -48,9 +48,9 @@ export function SyncRatesButton() {
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function FeesForm({ fees }: { fees: FeeSettings }) {
-  const [state, action] = useActionState<ActionState, FormData>(saveFees, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(saveFees, {});
   return (
-    <form action={action} className="grid gap-4 sm:grid-cols-2">
+    <ActionForm action={action} pending={actionPending} className="grid gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2"><FormMessage state={state} /></div>
       <Field label="Percentage fee (%)" name="percentage_fee" error={fieldError(state, "percentage_fee")}><input id="percentage_fee" name="percentage_fee" defaultValue={fees.percentage_fee} className="input" inputMode="decimal" /></Field>
       <Field label="Flat fee (₦)" name="flat_fee_ngn"><input id="flat_fee_ngn" name="flat_fee_ngn" defaultValue={fees.flat_fee_ngn} className="input" inputMode="decimal" /></Field>
@@ -72,14 +72,14 @@ export function FeesForm({ fees }: { fees: FeeSettings }) {
         <p className="hint">Opens · Closes · Saturday closes</p>
       </fieldset>
       <div><SubmitButton pendingText="Saving…">Save fee settings</SubmitButton></div>
-    </form>
+    </ActionForm>
   );
 }
 
 export function ShippingRateForm({ rate }: { rate?: ShippingRate }) {
-  const [state, action] = useActionState<ActionState, FormData>(saveShippingRate, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(saveShippingRate, {});
   return (
-    <form action={action} className="grid items-end gap-2 sm:grid-cols-[70px_1.5fr_1fr_1fr_80px_80px_auto_auto]">
+    <ActionForm action={action} pending={actionPending} className="grid items-end gap-2 sm:grid-cols-[70px_1.5fr_1fr_1fr_80px_80px_auto_auto]">
       <div className="sm:col-span-8">{state.error && <FormMessage state={state} />}</div>
       <input name="origin_region" defaultValue={rate?.origin_region} readOnly={!!rate} className="input uppercase" placeholder="US" aria-label="Origin code" required />
       <input name="label" defaultValue={rate?.label} className="input" placeholder="United States → Nigeria" aria-label="Label" required />
@@ -89,62 +89,62 @@ export function ShippingRateForm({ rate }: { rate?: ShippingRate }) {
       <input name="delivery_days_max" defaultValue={rate?.delivery_days_max} className="input" placeholder="Max days" aria-label="Max days" required />
       <label className="flex items-center gap-1 pb-3 text-xs"><input type="checkbox" name="is_active" defaultChecked={rate?.is_active ?? true} className="rounded" /> Active</label>
       <SubmitButton className="btn btn-dark btn-sm mb-1" pendingText="…">{state.ok ? "Saved ✓" : "Save"}</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function KeywordForm() {
-  const [state, action] = useActionState<ActionState, FormData>(addKeyword, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(addKeyword, {});
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => { if (state.ok) ref.current?.reset(); }, [state]);
   return (
-    <form ref={ref} action={action} className="grid gap-2 sm:grid-cols-[1fr_1fr_140px_auto]">
+    <ActionForm ref={ref} action={action} pending={actionPending} className="grid gap-2 sm:grid-cols-[1fr_1fr_140px_auto]">
       <div className="sm:col-span-4"><FormMessage state={state} /></div>
       <input name="keyword" className="input" placeholder="keyword or phrase" required aria-label="Keyword" />
       <input name="category" className="input" placeholder="category (e.g. weapons)" required aria-label="Category" />
       <select name="severity" className="input" aria-label="Severity"><option value="flag">Flag for review</option><option value="block">Block</option></select>
       <SubmitButton className="btn btn-dark" pendingText="…">Add</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function RoleForm() {
-  const [state, action] = useActionState<ActionState, FormData>(setUserRole, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(setUserRole, {});
   return (
-    <form action={action} className="grid gap-2 sm:grid-cols-[1fr_180px_auto]">
+    <ActionForm action={action} pending={actionPending} className="grid gap-2 sm:grid-cols-[1fr_180px_auto]">
       <div className="sm:col-span-3"><FormMessage state={state} /></div>
       <input name="email" type="email" className="input" placeholder="user@email.com" required aria-label="Email" />
       <select name="role" className="input" aria-label="Role">
         <option value="support">Support</option><option value="operations">Operations</option><option value="super_admin">Super Admin</option><option value="client">Client (remove staff access)</option>
       </select>
       <SubmitButton className="btn btn-dark" pendingText="…">Set role</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function KycViewButton({ docId }: { docId: string }) {
-  const [state, action] = useActionState<ActionState, FormData>(getKycDocumentUrl, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(getKycDocumentUrl, {});
   const url = state.data?.url as string | undefined;
   useEffect(() => { if (url) window.open(url, "_blank", "noopener,noreferrer"); }, [url]);
   return (
-    <form action={action}>
+    <ActionForm action={action} pending={actionPending}>
       <input type="hidden" name="doc_id" value={docId} />
       <button className="inline-flex items-center gap-1 text-xs font-medium underline">View <ExternalLink className="h-3 w-3" /></button>
-    </form>
+    </ActionForm>
   );
 }
 
 export function WhatsAppReplyForm({ conversationId, windowOpen }: { conversationId: string; windowOpen: boolean }) {
-  const [state, action] = useActionState<ActionState, FormData>(replyWhatsApp, {});
+  const [state, action, actionPending] = useActionState<ActionState, FormData>(replyWhatsApp, {});
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => { if (state.ok) ref.current?.reset(); }, [state]);
   if (!windowOpen) return <Alert tone="warning">The 24-hour reply window has closed. The customer must message again before you can reply freely.</Alert>;
   return (
-    <form ref={ref} action={action} className="flex gap-2">
+    <ActionForm ref={ref} action={action} pending={actionPending} className="flex gap-2">
       <input type="hidden" name="conversation_id" value={conversationId} />
       <input name="body" className="input" placeholder="Type a reply…" required aria-label="Reply" autoComplete="off" />
       <SubmitButton className="btn btn-dark" pendingText="…"><Send className="h-4 w-4" /></SubmitButton>
       {state.error && <p className="field-error">{state.error}</p>}
-    </form>
+    </ActionForm>
   );
 }

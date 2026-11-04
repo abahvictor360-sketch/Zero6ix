@@ -1,41 +1,56 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Building2, Clock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { ContactForm } from "./contact-form";
-import { WhatsAppIcon } from "@/components/ui";
-import { site, whatsappLink } from "@/lib/site";
-import { isServiceRoleConfigured } from "@/lib/env";
+import { site } from "@/lib/site";
 import { getFeeSettings } from "@/lib/settings";
 import { describeBusinessHours } from "@/lib/business-hours";
 
-export const metadata: Metadata = { title: "Contact us", description: "Reach Web Purchase by WhatsApp, email, phone or our contact form." };
+export const metadata: Metadata = {
+  title: "Contact us",
+  description: `Contact ${site.name} by phone, email or our contact form. ${site.address}.`,
+};
 
 export default async function ContactPage() {
   const fees = await getFeeSettings();
+  const details = [
+    { icon: Phone, label: "Phone & WhatsApp", value: site.phone, href: `tel:${site.phone.replace(/\s/g, "")}` },
+    { icon: Mail, label: "Email", value: site.email, href: `mailto:${site.email}` },
+    { icon: MapPin, label: "Office", value: site.address },
+    { icon: Clock, label: "Business hours", value: describeBusinessHours(fees.business_hours) },
+  ];
   return (
-    <section className="container grid gap-10 py-16 lg:grid-cols-[1fr_1.4fr]">
-      <div>
-        <p className="eyebrow">Contact</p>
-        <h1 className="h2 mt-4">We&apos;re here to help</h1>
-        <p className="muted mt-3">The fastest way to reach us is WhatsApp. For anything else, send us a message.</p>
-        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-lg mt-6 bg-[#25D366] text-white hover:bg-[#1ebe5b]">
-          <WhatsAppIcon /> Chat on WhatsApp
-        </a>
-        <ul className="mt-8 space-y-4 text-sm">
-          <li className="flex gap-3"><Mail className="h-5 w-5 text-brand-600 dark:text-lime-400" /><a href={`mailto:${site.email}`} className="hover:underline">{site.email}</a></li>
-          <li className="flex gap-3"><Phone className="h-5 w-5 text-brand-600 dark:text-lime-400" /><a href={`tel:${site.phone.replace(/\s/g, "")}`} className="hover:underline">{site.phone}</a></li>
-          <li className="flex gap-3"><MapPin className="h-5 w-5 text-brand-600 dark:text-lime-400" /><span>{site.address}</span></li>
-          <li className="flex gap-3"><Clock className="h-5 w-5 text-brand-600 dark:text-lime-400" /><span>{describeBusinessHours(fees.business_hours)}</span></li>
-        </ul>
-      </div>
-      {isServiceRoleConfigured() ? <ContactForm /> : (
-        <div className="card grid content-start gap-4">
-          <h2 className="text-xl font-semibold">Send us a message</h2>
-          <p className="muted text-sm">Tell us what you need to pay for or buy — include links, amounts and currency — and we&apos;ll reply with a quote in Naira or your local African currency.</p>
-          <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-[#25D366] text-white hover:bg-[#1ebe5b]"><WhatsAppIcon /> WhatsApp {site.phone}</a>
-          <a href={`mailto:${site.email}?subject=${encodeURIComponent("Request for Web Purchase")}`} className="btn btn-outline btn-lg"><Mail className="h-4 w-4" /> Email {site.email}</a>
-          <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="btn btn-outline btn-lg"><Phone className="h-4 w-4" /> Call {site.phone}</a>
+    <>
+      <section className="bg-brand-900 py-14 text-white dark:bg-[#06140f]">
+        <div className="container max-w-3xl text-center">
+          <p className="eyebrow !text-lime-300">Contact us</p>
+          <h1 className="h1 mt-4">Let&apos;s get it paid for you</h1>
+          <p className="mt-4 text-lg text-white/75">
+            Whether you&apos;re in Nigeria or abroad, tell us what you need and we&apos;ll send a clear quote in Naira or your local African currency.
+          </p>
         </div>
-      )}
-    </section>
+      </section>
+
+      <section className="container grid gap-8 py-14 lg:grid-cols-[1fr_1.5fr]">
+        <aside className="space-y-4">
+          <ul className="card divide-y divide-slate-100 p-0 dark:divide-white/10">
+            {details.map(({ icon: Icon, label, value, href }) => (
+              <li key={label} className="flex gap-4 p-5">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime-400/25 text-brand-700 ring-1 ring-lime-400 dark:text-lime-300"><Icon className="h-4 w-4" /></span>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
+                  {href ? <a href={href} className="mt-0.5 block break-words font-medium hover:underline">{value}</a> : <p className="mt-0.5 font-medium">{value}</p>}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="card-dark space-y-3 p-5 text-sm">
+            <p className="flex items-center gap-2 font-semibold"><Building2 className="h-4 w-4 text-lime-400" /> {site.company}</p>
+            <p className="text-white/75">{site.name} is a service of {site.company}{site.rcNumber ? ` (${site.rcNumber})` : ""}, registered in Nigeria.</p>
+            <p className="flex items-start gap-2 text-white/75"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-lime-400" /> Legal requests only. Payments are processed securely by licensed payment providers — we never see or store your card details.</p>
+          </div>
+        </aside>
+        <ContactForm email={site.email} />
+      </section>
+    </>
   );
 }

@@ -8,6 +8,7 @@ interface EmailInput {
   paragraphs: string[];
   cta?: { label: string; url: string };
   attachments?: { filename: string; content: Buffer }[];
+  replyTo?: string;
 }
 
 const esc = (s: string) =>
@@ -24,14 +25,14 @@ ${paragraphs.map((p) => `<p style="font-size:15px;line-height:1.6;margin:0 0 12p
 ${cta ? `<p style="margin:24px 0"><a href="${esc(cta.url)}" style="background:#cdf548;color:#072a1d;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600;display:inline-block">${esc(cta.label)}</a></p>` : ""}
 </td></tr>
 <tr><td style="padding:16px 28px;background:#f8fafc;font-size:12px;color:#64748b">
-Legal requests only. ${esc(site.name)} · ${esc(site.address)}<br/>Need help? Reply to this email or WhatsApp us on +${esc(site.whatsapp)}.
+Legal requests only. ${esc(site.name)} · ${esc(site.address)}<br/>Need help? Reply to this email or call ${esc(site.phone)}.
 </td></tr></table></td></tr></table></body></html>`;
 }
 
 /** Send an email through Resend's HTTP API. No-ops (with a log) when not configured. */
 export async function sendEmail(input: EmailInput): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? `${site.name} <no-reply@webpurchase.ng>`;
+  const from = process.env.EMAIL_FROM ?? `${site.name} <onboarding@resend.dev>`;
   if (!key) {
     console.info(`[email] RESEND_API_KEY not set — skipping "${input.subject}" to ${input.to}`);
     return false;
@@ -44,7 +45,7 @@ export async function sendEmail(input: EmailInput): Promise<boolean> {
       to: Array.isArray(input.to) ? input.to : [input.to],
       subject: input.subject,
       html: renderEmail(input),
-      reply_to: site.email,
+      reply_to: input.replyTo ?? site.email,
       attachments: input.attachments?.map((a) => ({ filename: a.filename, content: a.content.toString("base64") })),
     }),
   });

@@ -43,7 +43,27 @@ export default async function AdminCustomers({ searchParams }: { searchParams: P
       {!customers.length ? (
         <EmptyState title="No customers yet" description="Customers appear once someone starts a checkout." />
       ) : (
-        <div className="card overflow-hidden p-0">
+        <>
+        <ul className="space-y-3 md:hidden">
+          {customers.map((c) => (
+            <li key={c.email}>
+              <Link href={`/checkout-admin/orders?q=${encodeURIComponent(c.email)}`} className="card block p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{c.name || c.email}</p>
+                    <p className="truncate text-xs text-slate-500">{c.email}{c.company ? ` · ${c.company}` : ""}</p>
+                    {c.phone && <p className="text-xs text-slate-500">{c.phone}</p>}
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-bold">{money(c.paidNgn)}</p>
+                    <p className="text-xs text-slate-500">{c.orders} order{c.orders === 1 ? "" : "s"} · {c.paidOrders} paid</p>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="card hidden overflow-hidden p-0 md:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-white/5">
@@ -72,6 +92,7 @@ export default async function AdminCustomers({ searchParams }: { searchParams: P
             </table>
           </div>
         </div>
+        </>
       )}
     </>
   );

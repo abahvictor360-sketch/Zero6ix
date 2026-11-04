@@ -123,7 +123,7 @@ export default async function AdminOrderPage({ params, searchParams }: {
           </section>
         </div>
 
-        <aside className="space-y-6">
+        <aside className="order-first space-y-6 lg:order-none">
           {!paid && (
             <section className="card">
               <h2 className="font-semibold">Payment link</h2>

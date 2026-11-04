@@ -52,14 +52,14 @@ export function LinkForm({ items, currencies, usdRate }: { items: Item[]; curren
         </div>
 
         {items.length > 0 && (
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 lg:grid-cols-2">
             {items.map((i) => (
-              <label key={i.id} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3 text-sm has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-white/10 dark:has-[:checked]:border-lime-400 dark:has-[:checked]:bg-lime-400/10">
+              <label key={i.id} className="flex min-w-0 cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3 text-sm has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-white/10 dark:has-[:checked]:border-lime-400 dark:has-[:checked]:bg-lime-400/10">
                 <input type="checkbox" name="items" value={i.id} checked={picked.includes(i.id)}
                   onChange={(e) => setPicked((p) => (e.target.checked ? [...p, i.id] : p.filter((x) => x !== i.id)))} className="h-4 w-4 accent-brand-700" />
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-100 dark:bg-white/10" dangerouslySetInnerHTML={{ __html: i.svg }} />
                 <span className="min-w-0 flex-1"><span className="block truncate font-medium">{i.label}</span><span className="text-xs text-slate-500">{i.period}</span></span>
-                <span className="shrink-0 font-semibold">{fmt(i.amount, "NGN")}</span>
+                <span className="shrink-0 text-right text-sm font-semibold">{fmt(i.amount, "NGN")}</span>
               </label>
             ))}
           </div>
@@ -68,7 +68,8 @@ export function LinkForm({ items, currencies, usdRate }: { items: Item[]; curren
         <div className="space-y-3">
           <p className="text-sm font-medium">Custom amounts</p>
           {rows.map((r, n) => (
-            <div key={r.key} className="grid gap-2 rounded-2xl border border-slate-200 p-3 dark:border-white/10 sm:grid-cols-[1fr_160px_130px_auto]">
+            <div key={r.key} className="relative grid gap-2 rounded-2xl border border-slate-200 p-3 pt-10 dark:border-white/10 sm:grid-cols-[1fr_160px_130px_auto] sm:pt-3">
+              <span className="absolute left-3 top-3 text-xs font-semibold text-slate-500 sm:hidden">Amount {n + 1}</span>
               <div>
                 <input name={`custom_desc_${n}`} className="input" placeholder="What it's for, e.g. WES evaluation fee" aria-label={`Description ${n + 1}`} maxLength={120} />
                 {err(`custom_desc_${n}`) && <p className="field-error">{err(`custom_desc_${n}`)?.[0]}</p>}
@@ -78,9 +79,9 @@ export function LinkForm({ items, currencies, usdRate }: { items: Item[]; curren
                   value={r.amount} onChange={(e) => setRows((rs) => rs.map((x) => (x.key === r.key ? { ...x, amount: e.target.value } : x)))} />
                 {err(`custom_amount_${n}`) && <p className="field-error">{err(`custom_amount_${n}`)?.[0]}</p>}
               </div>
-              <input name={`custom_period_${n}`} className="input" placeholder="One time" aria-label={`Period ${n + 1}`} list="link-periods" maxLength={40} />
+              <input name={`custom_period_${n}`} className="input" placeholder="Period: One time" aria-label={`Period ${n + 1}`} list="link-periods" maxLength={40} />
               <button type="button" onClick={() => setRows((rs) => (rs.length > 1 ? rs.filter((x) => x.key !== r.key) : [{ key: Date.now(), amount: "" }]))}
-                className="btn btn-outline btn-sm self-start" aria-label="Remove this line"><X className="h-4 w-4" /></button>
+                className="btn btn-outline btn-sm absolute right-2 top-2 !px-2 sm:static sm:self-start sm:!px-3.5" aria-label="Remove this line"><X className="h-4 w-4" /></button>
               <input name={`custom_note_${n}`} className="input sm:col-span-4" placeholder="Details shown on the invoice (optional)" aria-label={`Details ${n + 1}`} maxLength={300} />
             </div>
           ))}

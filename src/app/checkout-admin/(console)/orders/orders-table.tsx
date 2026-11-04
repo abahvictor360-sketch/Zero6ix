@@ -8,7 +8,30 @@ const date = (s?: string) => (s ? new Date(s).toLocaleString("en-GB", { day: "2-
 export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
   if (!orders.length) return <EmptyState title="No orders yet" description="Orders appear here once someone starts a checkout." />;
   return (
-    <div className="card overflow-hidden p-0">
+    <>
+    {/* Phones: one card per order */}
+    <ul className="space-y-3 md:hidden">
+      {orders.map((o) => (
+        <li key={o.ref}>
+          <Link href={`/checkout-admin/orders/${encodeURIComponent(o.ref)}`} className="card block p-4 active:bg-slate-50 dark:active:bg-white/5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-brand-700 dark:text-lime-400">{o.invoiceNumber}</p>
+                <p className="truncate font-medium">{o.customer?.name || o.email}</p>
+                <p className="truncate text-xs text-slate-500">{o.email}</p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="font-bold">{money(o.total, o.currency)}</p>
+                <div className="mt-1">{o.status === "paid" ? <Pill tone="green">Paid</Pill> : <Pill tone="amber">Pending</Pill>}</div>
+              </div>
+            </div>
+            <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{(o.items ?? []).map((i) => i.subtitle ? `${i.name} (${i.subtitle})` : i.name).join(", ")}</p>
+            <p className="mt-1 text-xs text-slate-500">{gatewayName(o.gateway)} · {date(o.paidAt ?? o.createdAt)}</p>
+          </Link>
+        </li>
+      ))}
+    </ul>
+    <div className="card hidden overflow-hidden p-0 md:block">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] text-sm">
           <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-white/5">
@@ -47,5 +70,6 @@ export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
         </table>
       </div>
     </div>
+    </>
   );
 }

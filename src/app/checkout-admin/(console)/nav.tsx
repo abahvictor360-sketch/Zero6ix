@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { Activity, LayoutDashboard, Link2, Mail, Package, Receipt, Settings, Users } from "lucide-react";
 
 const LINKS = [
@@ -16,8 +17,13 @@ const LINKS = [
 
 export function AdminNav({ badges = {} }: { badges?: Record<string, number> }) {
   const path = usePathname();
+  const ref = useRef<HTMLElement>(null);
+  // On phones the menu scrolls sideways: keep the current page's tab in view.
+  useEffect(() => {
+    ref.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [path]);
   return (
-    <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 text-sm [scrollbar-width:none]" aria-label="Admin">
+    <nav ref={ref} className="-mx-4 flex gap-1 overflow-x-auto px-4 text-sm [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] md:[mask-image:none] [&::-webkit-scrollbar]:hidden" aria-label="Admin">
       {LINKS.map(({ href, label, icon: Icon }) => {
         const active = href === "/checkout-admin" ? path === href : path.startsWith(href);
         const badge = badges[href] ?? 0;

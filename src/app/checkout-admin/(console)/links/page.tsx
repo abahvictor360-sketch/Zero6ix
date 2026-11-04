@@ -27,7 +27,28 @@ export default async function AdminLinks() {
           action={<Link href="/checkout-admin/links/new" className="btn btn-dark btn-sm"><Link2 className="h-4 w-4" /> Create your first link</Link>}
         />
       ) : (
-        <div className="card overflow-hidden p-0">
+        <>
+        <ul className="space-y-3 md:hidden">
+          {links.map((o) => (
+            <li key={o.ref}>
+              <Link href={`/checkout-admin/links/${encodeURIComponent(o.ref)}`} className="card block p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-brand-700 dark:text-lime-400">{o.invoiceNumber}</p>
+                    <p className="truncate font-medium">{o.customer?.name}</p>
+                    <p className="truncate text-xs text-slate-500">{o.email}</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-bold">{money(o.total, o.currency)}</p>
+                    <div className="mt-1">{o.status === "paid" ? <Pill tone="green">Paid</Pill> : linkExpired(o) ? <Pill>Expired</Pill> : <Pill tone="amber">Waiting</Pill>}</div>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">Created {day(o.createdAt)}{o.status !== "paid" ? ` · Expires ${day(o.link?.expiresAt)}` : ""}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="card hidden overflow-hidden p-0 md:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-white/5">
@@ -55,6 +76,7 @@ export default async function AdminLinks() {
             </table>
           </div>
         </div>
+        </>
       )}
     </>
   );

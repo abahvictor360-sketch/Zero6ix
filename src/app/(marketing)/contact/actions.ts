@@ -143,7 +143,11 @@ export async function submitContact(_: ActionState, form: FormData): Promise<Act
     ],
     attachments: attachment ? [attachment] : undefined,
   });
-  if (!delivered && !id) return { error: `We couldn't send your message right now. Please email ${site.email} or call ${site.phone}.` };
+  if (!delivered && !id) {
+    // Resend refused (e.g. testing mode before the domain is verified): don't lose the enquiry.
+    if (await sendViaFormSubmit(d, ENQUIRY[d.enquiry])) return { ok: true, message: SENT };
+    return { ok: false, data: { fallback: "mailto" } };
+  }
 
   await Promise.allSettled([
     id ? notifyStaff(`New contact message: ${d.subject}`, `${d.name} (${d.email}) wrote: ${d.message.slice(0, 200)}`, `/admin/contacts#${id}`, ["support", "super_admin"]) : Promise.resolve(),

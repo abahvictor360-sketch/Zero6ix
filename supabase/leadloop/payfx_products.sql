@@ -27,7 +27,6 @@ insert into public.payfx_products (id, name, subtitle, period, purpose, amount_n
   ('anthropic-api-claude', 'Anthropic API', 'Claude', '12 months', 'AI that verifies clock-in selfies and shelf photos, and answers staff questions through Ask Xtend.', 477750, 'claude', false, 10),
   ('google-maps-api', 'Google Maps API', null, '12 months', 'Location service that confirms which shop staff clock in from and looks up stores during bulk uploads.', 641550, 'googlemaps', false, 20),
   ('apple-developer', 'Apple Developer account', null, '12 months', 'Yearly membership that lets Xtend be listed on the App Store for iPhone users.', 155000, 'apple', false, 30),
-  ('website-deployment', 'Website deployment', null, 'One time', 'One-off launch of the website on the server, optimised to be found on search engines and AI answers.', 350000, 'deploy', false, 40),
   ('anthropic-api-x-metrics', 'Anthropic API', 'X Metrics', '12 months', 'AI that reads stock and expiry photos and writes the monthly X Metrics performance report.', 204750, 'anthropic', false, 50),
   ('supabase-addon', 'Supabase add-on', null, '12 months', 'Extra database capacity for X Metrics records: supply, stock, sales, expiry dates and photos.', 163800, 'supabase', false, 60),
   ('vps-upgrade', 'VPS upgrade', 'Hostinger', '24 months', 'More memory and disk space on the server to handle X Metrics reports and data exports.', 163800, 'hostinger', false, 70),
@@ -39,4 +38,4 @@ on conflict (id) do update set
   active = true, updated_at = now();
 
 -- Test items are not offered.
-delete from public.payfx_products where is_test;
+delete from public.payfx_products where is_test or id = 'website-deployment';

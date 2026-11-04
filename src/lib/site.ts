@@ -8,7 +8,7 @@ export const site = {
   address: process.env.NEXT_PUBLIC_OFFICE_ADDRESS ?? "28 Chief Charles Street, off Peace Drive, Trans Amadi, Port Harcourt, Rivers State, Nigeria",
   company: process.env.NEXT_PUBLIC_COMPANY_NAME ?? "Zero6ix Limited",
   // Shown only when set (e.g. "RC 1234567").
-  rcNumber: process.env.NEXT_PUBLIC_RC_NUMBER ?? "",
+  rcNumber: process.env.NEXT_PUBLIC_RC_NUMBER ?? "RC 8922251",
 };
 
 export function whatsappLink(text = "Hi Web Purchase, I'd like to make a request.") {

@@ -11,8 +11,8 @@ type Gateways = Record<"flutterwave" | "paystack", { on: boolean; currencies: st
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 const GATEWAY_INFO = {
-  flutterwave: { name: "Flutterwave", sub: "Card, bank transfer, USSD", mark: "F", cls: "bg-[#F5A623] text-white" },
   paystack: { name: "Paystack", sub: "Card, bank, transfer, USSD", mark: "P", cls: "bg-[#0BA4DB] text-white" },
+  flutterwave: { name: "Flutterwave", sub: "Card, bank transfer, USSD", mark: "F", cls: "bg-[#F5A623] text-white" },
 } as const;
 
 export function PayfxCheckout({
@@ -20,7 +20,7 @@ export function PayfxCheckout({
 }: { items: Item[]; single: boolean; rate: number; currencies: Currencies; gateways: Gateways; ready: boolean }) {
   const [selected, setSelected] = useState<string[]>(() => items.filter((i) => single || !i.test).map((i) => i.id));
   const [currency, setCurrency] = useState<CurrencyCode>("NGN");
-  const [gateway, setGateway] = useState<"flutterwave" | "paystack">("flutterwave");
+  const [gateway, setGateway] = useState<"flutterwave" | "paystack">("paystack");
   const [error, setError] = useState<string | null>(null);
   const [errorLink, setErrorLink] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -218,7 +218,7 @@ export function PayfxCheckout({
             </button>
             <p className="flex items-start gap-2 text-xs text-slate-500">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
-              You get an invoice listing every item. It is marked paid once the payment is confirmed. Card details are handled by Flutterwave or Paystack, never by us.
+              You get an invoice listing every item. It is marked paid once the payment is confirmed. Card details are handled by Paystack or Flutterwave, never by us.
             </p>
           </form>
         </aside>

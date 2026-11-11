@@ -88,9 +88,12 @@ export interface OrderSummary extends PayfxOrder { email: string }
 
 interface OrderRow { ref: string; invoice_number: string; status: PayfxOrder["status"]; email: string; data: PayfxOrder }
 
-export async function listOrders(opts: { status?: "paid" | "pending"; q?: string; limit?: number; linksOnly?: boolean } = {}) {
+export async function listOrders(opts: { status?: "paid" | "pending" | "review"; q?: string; limit?: number; linksOnly?: boolean } = {}) {
   const params = new URLSearchParams({ select: "ref,invoice_number,status,email,data", order: "data->>createdAt.desc", limit: String(opts.limit ?? 200) });
-  if (opts.status) params.set("status", `eq.${opts.status}`);
+  if (opts.status === "review") {
+    params.set("status", "eq.pending");
+    params.set("data->transfer->>status", "eq.submitted");
+  } else if (opts.status) params.set("status", `eq.${opts.status}`);
   if (opts.linksOnly) params.set("data->>source", "eq.admin-link");
   const q = opts.q?.trim().replace(/[,()*%]/g, " ").trim();
   if (q) params.set("or", `(invoice_number.ilike.*${q}*,email.ilike.*${q}*,ref.ilike.*${q}*)`);
@@ -183,5 +186,16 @@ export async function storeContactMessage(m: Omit<MessageRow, "id" | "created_at
   } catch (e) {
     console.warn("[contact] could not store message in leadloop", e instanceof Error ? e.message : e);
     return false;
+  }
+}
+
+/** Unpaid orders with a bank transfer receipt waiting for an admin. */
+export async function countTransfersToReview() {
+  if (!adminStoreConfigured()) return 0;
+  try {
+    const rows = await rest<{ ref: string }[]>("payfx_orders?select=ref&status=eq.pending&data->transfer->>status=eq.submitted&limit=500");
+    return rows.length;
+  } catch {
+    return 0;
   }
 }

@@ -5,6 +5,8 @@ import { GATEWAYS, type GatewayId } from "@/lib/payfx/gateways";
 import { createOrder, newOrderRef, storeConfigured } from "@/lib/payfx/store";
 import { siteBase } from "@/lib/payfx/orders";
 import { getUsdRate } from "@/lib/payfx/settings";
+import { getBankSettings, transferAvailable } from "@/lib/payfx/transfer";
+import { toTransferView } from "@/lib/payfx/transfer-view";
 import { site } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -27,15 +29,21 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim().toLowerCase();
-  const gateway = String(body.gateway ?? "") as GatewayId;
+  const gateway = String(body.gateway ?? "") as GatewayId | "transfer";
   const currency: CurrencyCode = body.currency === "USD" ? "USD" : "NGN";
 
   if (!name || !/^\S+@\S+\.\S+$/.test(email)) return NextResponse.json({ error: "Enter your name and a valid email." }, { status: 400 });
-  if (!(gateway in GATEWAYS)) return NextResponse.json({ error: "Choose Flutterwave or Paystack." }, { status: 400 });
-  const gw = GATEWAYS[gateway];
-  if (!gw.configured()) return NextResponse.json({ error: `${gatewayName(gateway)} is not available right now.` }, { status: 400 });
-  if (!gw.currencies().includes(currency)) {
-    return NextResponse.json({ error: `${gatewayName(gateway)} does not accept ${currency}. Choose another payment method or currency.` }, { status: 400 });
+  const bank = await getBankSettings();
+  if (gateway === "transfer") {
+    if (!transferAvailable(bank)) return NextResponse.json({ error: "Bank transfer is not available right now. Please choose another payment method." }, { status: 400 });
+    if (currency !== "NGN") return NextResponse.json({ error: "Bank transfer is in Naira only. Switch the currency to NGN." }, { status: 400 });
+  } else {
+    if (!(gateway in GATEWAYS)) return NextResponse.json({ error: "Choose a payment method." }, { status: 400 });
+    const gw = GATEWAYS[gateway];
+    if (!gw.configured()) return NextResponse.json({ error: `${gatewayName(gateway)} is not available right now.` }, { status: 400 });
+    if (!gw.currencies().includes(currency)) {
+      return NextResponse.json({ error: `${gatewayName(gateway)} does not accept ${currency}. Choose another payment method or currency.` }, { status: 400 });
+    }
   }
   if (!storeConfigured()) return NextResponse.json({ error: "Checkout is not set up yet. Please contact us." }, { status: 503 });
 
@@ -69,6 +77,9 @@ export async function POST(request: Request) {
       ngnTotal: lines.reduce((s, l) => s + l.ngnAmount, 0),
       createdAt: new Date().toISOString(),
       source: "webpurchase.app/checkout",
+      ...(gateway === "transfer"
+        ? { transfer: { status: "awaiting_receipt" as const, dueAt: new Date(Date.now() + bank.windowMinutes * 60_000).toISOString(), receipts: [] } }
+        : {}),
     });
   } catch (e) {
     console.error("[payfx] create order failed", e);
@@ -76,9 +87,12 @@ export async function POST(request: Request) {
   }
 
   const invoiceUrl = `/checkout/invoice/${order.ref}`;
+  if (gateway === "transfer") {
+    return NextResponse.json({ transfer: toTransferView(order, bank), invoiceUrl, linkUrl: `/checkout/link/${order.ref}?pay=transfer` });
+  }
   try {
     const callback = `${siteBase(request)}/checkout/callback/${order.payRef}`;
-    const url = gateway === "paystack"
+    const url = order.gateway === "paystack"
       ? await GATEWAYS.paystack.initialize(order, callback)
       : await GATEWAYS.flutterwave.initialize(order, callback, site.name);
     return NextResponse.json({ checkoutUrl: url, invoiceUrl });

@@ -15,6 +15,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ ref:
   const invoice = `${base}/checkout/invoice/${order.ref}`;
   if (order.status === "paid") return NextResponse.redirect(invoice);
   if (linkExpired(order)) return NextResponse.redirect(`${base}/checkout/link/${order.ref}`);
+  // Bank transfer orders: show the account details and receipt upload.
+  if (order.gateway === "transfer") return NextResponse.redirect(`${base}/checkout/link/${order.ref}?pay=transfer`);
   try {
     // The previous attempt may have gone through after all.
     order = (await confirmPayment(order.payRef).catch(() => null)) ?? order;

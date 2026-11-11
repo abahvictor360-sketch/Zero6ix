@@ -52,4 +52,4 @@ export const ITEMS_BY_ID = new Map(ITEMS.map((i) => [i.id, i]));
 export const money = (n: number, currency: CurrencyCode = "NGN") =>
   `${CURRENCIES[currency].symbol}${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export const gatewayName = (g: string) => ({ flutterwave: "Flutterwave", paystack: "Paystack" })[g] ?? g;
+export const gatewayName = (g: string) => ({ flutterwave: "Flutterwave", paystack: "Paystack", transfer: "Bank transfer" } as Record<string, string>)[g] ?? g;

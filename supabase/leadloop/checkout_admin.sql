@@ -84,3 +84,8 @@ create table if not exists public.payfx_contact_messages (
 create index if not exists payfx_contact_messages_created_idx on public.payfx_contact_messages (created_at desc);
 alter table public.payfx_contact_messages enable row level security;
 revoke all on public.payfx_contact_messages from anon, authenticated;
+
+-- Private bucket for bank-transfer receipts (the website also creates it automatically on first upload).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('payfx-receipts', 'payfx-receipts', false, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
+on conflict (id) do nothing;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { currenciesFor } from "@/lib/payfx/catalog";
 import { getRateInfo, MARKET_REFRESH_SECONDS } from "@/lib/payfx/settings";
+import { getBankSettings, transferAvailable } from "@/lib/payfx/transfer";
 import { getProducts } from "@/lib/payfx/products";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { gatewayStatus } from "@/lib/payfx/gateways";
@@ -18,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PayfxPage({ searchParams }: { searchParams: Promise<{ item?: string }> }) {
   const { item } = await searchParams;
-  const [{ items: products }, rateInfo] = await Promise.all([getProducts(), getRateInfo()]);
+  const [{ items: products }, rateInfo, bank] = await Promise.all([getProducts(), getRateInfo(), getBankSettings()]);
   const usdRate = rateInfo.rate;
   const items = products.map((i) => ({ ...i, logoSvg: logoSvg(i.logo), logoTitle: LOGOS[i.logo].title }));
   const single = items.find((i) => i.id === item) ?? null;
@@ -30,7 +31,7 @@ export default async function PayfxPage({ searchParams }: { searchParams: Promis
       rate={usdRate}
       liveRate={rateInfo.mode === "live" && !rateInfo.fallback ? { refreshSeconds: MARKET_REFRESH_SECONDS } : null}
       currencies={currenciesFor(usdRate)}
-      gateways={gatewayStatus()}
+      gateways={{ ...gatewayStatus(), transfer: { on: transferAvailable(bank), currencies: ["NGN"] } }}
       ready={storeConfigured()}
     />
   );

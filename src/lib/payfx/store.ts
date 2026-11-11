@@ -23,11 +23,32 @@ export interface PayfxLine {
   logo: LogoKey;
 }
 
+export interface TransferReceipt {
+  path: string;
+  name: string;
+  mime: string;
+  size: number;
+  uploadedAt: string;
+  senderName?: string;
+  note?: string;
+}
+
+export interface TransferInfo {
+  /** "awaiting_receipt": chose transfer, nothing uploaded; "submitted": receipt waiting for the admin. */
+  status: "awaiting_receipt" | "submitted" | "rejected" | "confirmed";
+  /** End of the countdown shown to the customer. */
+  dueAt?: string;
+  receipts: TransferReceipt[];
+  rejectedReason?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+}
+
 export interface PayfxOrder {
   ref: string;
   invoiceNumber: string;
   status: "pending" | "paid";
-  gateway: "flutterwave" | "paystack";
+  gateway: "flutterwave" | "paystack" | "transfer";
   payRef: string;
   attempts?: number;
   customer: { name: string; email: string; phone: string; company: string };
@@ -47,6 +68,8 @@ export interface PayfxOrder {
   manualPayment?: { method: string; reference: string; note: string; by: string };
   /** Private note from the admin (never shown to the customer). */
   adminNote?: string;
+  /** Direct bank transfer: receipts the customer uploaded and the admin's decision. */
+  transfer?: TransferInfo;
   /** Set on payment links created in the admin (/checkout/link/<ref>). */
   link?: { createdBy: string; message?: string; expiresAt?: string };
 }

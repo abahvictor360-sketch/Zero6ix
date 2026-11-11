@@ -3,6 +3,12 @@ import { money, gatewayName } from "@/lib/payfx/catalog";
 import type { OrderSummary } from "@/lib/payfx/admin-store";
 import { EmptyState, Pill } from "@/components/ui";
 
+function StatusPill({ o }: { o: OrderSummary }) {
+  if (o.status === "paid") return <Pill tone="green">Paid</Pill>;
+  if (o.transfer?.status === "submitted") return <Pill tone="blue">Receipt to check</Pill>;
+  return <Pill tone="amber">Pending</Pill>;
+}
+
 const date = (s?: string) => (s ? new Date(s).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos" }) : "–");
 
 export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
@@ -22,7 +28,7 @@ export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
               </div>
               <div className="shrink-0 text-right">
                 <p className="font-bold">{money(o.total, o.currency)}</p>
-                <div className="mt-1">{o.status === "paid" ? <Pill tone="green">Paid</Pill> : <Pill tone="amber">Pending</Pill>}</div>
+                <div className="mt-1"><StatusPill o={o} /></div>
               </div>
             </div>
             <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{(o.items ?? []).map((i) => i.subtitle ? `${i.name} (${i.subtitle})` : i.name).join(", ")}</p>
@@ -62,7 +68,7 @@ export function OrdersTable({ orders }: { orders: OrderSummary[] }) {
                   {money(o.total, o.currency)}
                   {o.currency !== "NGN" && <div className="text-xs font-normal text-slate-500">{money(o.ngnTotal)}</div>}
                 </td>
-                <td className="px-4 py-3">{o.status === "paid" ? <Pill tone="green">Paid</Pill> : <Pill tone="amber">Pending</Pill>}</td>
+                <td className="px-4 py-3"><StatusPill o={o} /></td>
                 <td className="px-4 py-3 whitespace-nowrap text-slate-500">{date(o.paidAt ?? o.createdAt)}</td>
               </tr>
             ))}

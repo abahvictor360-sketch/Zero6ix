@@ -66,6 +66,16 @@ export default async function AdminOverview() {
       <PageHeader title="Overview" description="Checkout payments at a glance." actions={<><Link href="/checkout-admin/items/new" className="btn btn-outline btn-sm">Add item</Link><Link href="/checkout-admin/links/new" className="btn btn-dark btn-sm">Create payment link</Link></>} />
       {error && <Alert tone="error" className="mb-6">{error}</Alert>}
 
+      {(() => {
+        const toCheck = orders.filter((o) => o.status === "pending" && o.transfer?.status === "submitted");
+        return toCheck.length > 0 && (
+          <Link href="/checkout-admin/orders?status=review" className="mb-6 flex items-center justify-between gap-3 rounded-2xl border-2 border-sky-300 bg-sky-50 px-4 py-3 text-sky-900 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-200">
+            <span><strong>{toCheck.length} bank transfer{toCheck.length === 1 ? "" : "s"} to confirm</strong> · {money(sum(toCheck))} waiting. Check your account, then confirm.</span>
+            <span className="shrink-0 text-sm font-semibold">Review →</span>
+          </Link>
+        );
+      })()}
+
       {setupDone < setup.length && (
         <section className="card mb-6">
           <h2 className="font-semibold">Finish setting up ({setupDone}/{setup.length})</h2>

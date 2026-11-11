@@ -9,7 +9,7 @@ export const metadata = { title: "Orders" };
 
 export default async function AdminOrders({ searchParams }: { searchParams: Promise<{ status?: string; q?: string; notice?: string; error?: string }> }) {
   const sp = await searchParams;
-  const status = sp.status === "paid" || sp.status === "pending" ? sp.status : undefined;
+  const status = sp.status === "paid" || sp.status === "pending" || sp.status === "review" ? sp.status : undefined;
   let error = "";
   const orders = await listOrders({ status, q: sp.q }).catch((e) => { error = e instanceof StoreError ? e.message : "Could not load orders."; return []; });
   const tab = (s: string | undefined, label: string) => (
@@ -25,7 +25,7 @@ export default async function AdminOrders({ searchParams }: { searchParams: Prom
       />
       <Flash notice={sp.notice} error={sp.error} />
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex gap-2">{tab(undefined, "All")}{tab("paid", "Paid")}{tab("pending", "Pending")}</div>
+        <div className="flex flex-wrap gap-2">{tab(undefined, "All")}{tab("review", "Receipts to check")}{tab("paid", "Paid")}{tab("pending", "Pending")}</div>
         <form className="flex gap-2">
           {status && <input type="hidden" name="status" value={status} />}
           <input name="q" defaultValue={sp.q} className="input !py-2" placeholder="Invoice no. or email" aria-label="Search orders" />

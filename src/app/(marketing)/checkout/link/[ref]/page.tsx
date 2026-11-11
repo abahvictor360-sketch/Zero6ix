@@ -7,6 +7,10 @@ import { confirmPayment } from "@/lib/payfx/orders";
 import { money } from "@/lib/payfx/catalog";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { site } from "@/lib/site";
+import { getBankSettings, transferAvailable } from "@/lib/payfx/transfer";
+import { toTransferView } from "@/lib/payfx/transfer-view";
+import { TransferButton } from "@/components/payfx/transfer-modal";
+import { GATEWAYS } from "@/lib/payfx/gateways";
 
 export const metadata: Metadata = {
   title: "Payment request",
@@ -18,8 +22,8 @@ export const dynamic = "force-dynamic";
 const dateStr = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Lagos" }) : "");
 
 /** Customer-facing page for a payment link created in the admin. */
-export default async function PaymentLinkPage({ params }: { params: Promise<{ ref: string }> }) {
-  const { ref } = await params;
+export default async function PaymentLinkPage({ params, searchParams }: { params: Promise<{ ref: string }>; searchParams: Promise<{ pay?: string }> }) {
+  const [{ ref }, sp, bank] = await Promise.all([params, searchParams, getBankSettings()]);
   let order = await getOrder(ref).catch(() => null);
   if (!order) notFound();
   // Catch payments whose redirect back was missed.
@@ -28,6 +32,10 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ re
   const expired = linkExpired(order);
   const total = money(order.total, order.currency);
   const first = order.customer.name.split(" ")[0];
+  const canTransfer = !paid && !expired && order.currency === "NGN" && transferAvailable(bank);
+  const gw = order.gateway === "transfer" ? null : GATEWAYS[order.gateway];
+  const canCard = !paid && !expired && order.gateway !== "transfer" && Boolean(gw?.configured());
+  const awaiting = !paid && order.transfer?.status === "submitted";
 
   return (
     <section className="container max-w-xl py-10 sm:py-14">
@@ -85,16 +93,44 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ re
             </div>
           </div>
 
+          {awaiting && (
+            <div className="flex items-start gap-3 rounded-2xl bg-sky-50 p-4 text-sky-900 dark:bg-sky-950/40 dark:text-sky-200">
+              <Clock className="mt-0.5 h-5 w-5 shrink-0" />
+              <div>
+                <p className="font-semibold">Transfer receipt received</p>
+                <p className="mt-0.5 text-sm">We&apos;re confirming your bank transfer and will email you once it&apos;s done. No need to pay again.</p>
+              </div>
+            </div>
+          )}
+
           {!paid && !expired && (
             <div className="space-y-3">
-              <a href={`/checkout/pay/${order.ref}`} className="btn btn-primary btn-lg w-full">
-                <Lock className="h-4 w-4" /> Pay {total} with Paystack
-              </a>
-              <p className="flex items-center justify-center gap-2 text-xs text-slate-500">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logos/paystack.svg" alt="" width={14} height={14} className="h-3.5 w-3.5" />
-                Card, bank transfer or USSD. Secured by Paystack.
-              </p>
+              {canCard && (
+                <>
+                  <a href={`/checkout/pay/${order.ref}`} className="btn btn-primary btn-lg w-full">
+                    <Lock className="h-4 w-4" /> Pay {total} with {order.gateway === "flutterwave" ? "Flutterwave" : "Paystack"}
+                  </a>
+                  <p className="flex items-center justify-center gap-2 text-xs text-slate-500">
+                    {order.gateway === "paystack" && <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/logos/paystack.svg" alt="" width={14} height={14} className="h-3.5 w-3.5" />
+                    </>}
+                    Card, bank transfer or USSD. Secured by {order.gateway === "flutterwave" ? "Flutterwave" : "Paystack"}.
+                  </p>
+                </>
+              )}
+              {canTransfer && (
+                <>
+                  {canCard && <p className="text-center text-xs font-semibold uppercase tracking-wide text-slate-400">or</p>}
+                  <TransferButton
+                    view={toTransferView(order, bank)}
+                    autoOpen={sp.pay === "transfer"}
+                    className={canCard ? "btn btn-outline btn-lg w-full" : "btn btn-primary btn-lg w-full"}
+                    label={awaiting ? "Bank details and receipts" : canCard ? `Pay by direct bank transfer (${bank.bank})` : `Pay ${total} by bank transfer`}
+                  />
+                </>
+              )}
+              {!canCard && !canTransfer && <p className="text-center text-sm text-slate-500">Online payment is not available right now. Please <Link href="/contact" className="underline">contact us</Link> to pay.</p>}
               {order.link?.expiresAt && <p className="text-center text-xs text-slate-500">This link expires on {dateStr(order.link.expiresAt)}.</p>}
             </div>
           )}

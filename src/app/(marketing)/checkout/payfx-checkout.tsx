@@ -4,16 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, FileSearch, Loader2, Lock, ShieldCheck } from "lucide-react";
 import type { CurrencyCode, PayfxItem } from "@/lib/payfx/catalog";
+import type { TransferView } from "@/lib/payfx/transfer-view";
+import { TransferModal } from "@/components/payfx/transfer-modal";
 
 type Item = PayfxItem & { logoSvg: string; logoTitle: string };
 type Currencies = Record<CurrencyCode, { code: CurrencyCode; symbol: string; perNgn: number }>;
-type Gateways = Record<"flutterwave" | "paystack", { on: boolean; currencies: string[] }>;
+type GatewayKey = "paystack" | "flutterwave" | "transfer";
+type Gateways = Record<GatewayKey, { on: boolean; currencies: string[] }>;
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 const GATEWAY_INFO = {
   paystack: { name: "Paystack", sub: "Card, bank, transfer, USSD", mark: "P", cls: "bg-white ring-1 ring-slate-200", logo: "/logos/paystack.svg" },
   flutterwave: { name: "Flutterwave", sub: "Card, bank transfer, USSD", mark: "F", cls: "bg-[#F5A623] text-white", logo: undefined as string | undefined },
+  transfer: { name: "Direct bank transfer", sub: "Pay into our Fidelity Bank account, then upload your receipt", mark: "₦", cls: "bg-brand-900 text-lime-400", logo: undefined as string | undefined },
 } as const;
 
 export function PayfxCheckout({
@@ -28,7 +32,9 @@ export function PayfxCheckout({
   }, [liveRate, router]);
   const [selected, setSelected] = useState<string[]>(() => items.filter((i) => single || !i.test).map((i) => i.id));
   const [currency, setCurrency] = useState<CurrencyCode>("NGN");
-  const [gateway, setGateway] = useState<"flutterwave" | "paystack">("paystack");
+  const [gateway, setGateway] = useState<GatewayKey>("paystack");
+  const [transfer, setTransfer] = useState<{ view: TransferView; link: string } | null>(null);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorLink, setErrorLink] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,8 +53,8 @@ export function PayfxCheckout({
   // Keep a usable gateway selected when the currency changes.
   useEffect(() => {
     if (!gatewayOk(gateway)) {
-      const other = gateway === "flutterwave" ? "paystack" : "flutterwave";
-      if (gatewayOk(other)) setGateway(other);
+      const other = (["paystack", "flutterwave", "transfer"] as GatewayKey[]).find((g) => gatewayOk(g));
+      if (other) setGateway(other);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency]);
@@ -81,6 +87,7 @@ export function PayfxCheckout({
       const res = await fetch("/api/payfx/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json();
       if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
+      if (data.transfer) { setTransfer({ view: data.transfer, link: data.linkUrl }); setTransferOpen(true); setBusy(false); return; }
       setError(data.error || "Something went wrong."); setErrorLink(data.invoiceUrl ?? null);
     } catch {
       setError("Network error. Please try again.");
@@ -228,13 +235,23 @@ export function PayfxCheckout({
               </p>
             )}
             <button type="submit" className="btn btn-dark btn-lg w-full" disabled={busy || !selected.length || !ready}>
-              {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Redirecting to payment…</> : <><Lock className="h-4 w-4" /> Pay {total > 0 ? money(total) : "now"}</>}
+              {busy
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> {gateway === "transfer" ? "Preparing your invoice…" : "Redirecting to payment…"}</>
+                : <><Lock className="h-4 w-4" /> {gateway === "transfer" ? `Pay ${total > 0 ? money(total) : ""} by bank transfer` : `Pay ${total > 0 ? money(total) : "now"}`}</>}
             </button>
+            {transfer && !transferOpen && (
+              <p className="rounded-xl bg-brand-50 px-3 py-2 text-sm text-brand-900 dark:bg-lime-400/10 dark:text-lime-200">
+                Invoice {transfer.view.invoiceNumber} is saved.{" "}
+                <button type="button" onClick={() => setTransferOpen(true)} className="font-semibold underline">Show bank details</button>{" "}
+                or <a href={transfer.link} className="font-semibold underline">open it later</a>.
+              </p>
+            )}
             <p className="flex items-start gap-2 text-xs text-slate-500">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
               You get an invoice listing every item. It is marked paid once the payment is confirmed. Card details are handled by Paystack or Flutterwave, never by us.
             </p>
           </form>
+          {transfer && <TransferModal view={transfer.view} open={transferOpen} onClose={() => setTransferOpen(false)} />}
         </aside>
       </section>
 

@@ -150,7 +150,9 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       { q: "How much does Web Purchase charge?", a: "Our service fee is 5% of the Naira amount plus ₦1,000, with a minimum fee of ₦2,500. Shipping is added for physical items. There are no hidden charges or card surcharges." },
       { q: "How is the price calculated?", a: "Total = (foreign amount × our exchange rate) + service fee (+ shipping for physical items). The quote shows each line and locks the exchange rate for 24 hours." },
-      { q: "How do I pay?", a: "You pay through a secure payment link powered by Paystack or Flutterwave, by card, bank transfer or USSD. We never see or store your card details." },
+      { q: "How do I pay?", a: "You pay through a secure payment link powered by Paystack or Flutterwave, by card, bank transfer or USSD, or by direct bank transfer to our company account. We never see or store your card details." },
+      { q: "Can I pay by direct bank transfer?", a: "Yes. At checkout or on your payment link, choose Direct bank transfer. You'll see the exact amount and our account details: Fidelity Bank, 5601812020, ZERO6IX LIMITED. Transfer the exact amount with your invoice number as the description, then upload a screenshot or PDF of your bank receipt on the same screen." },
+      { q: "How long does it take to confirm a bank transfer?", a: "We confirm transfers as soon as the money shows in our account, usually within a few hours on business days. You get an email with your receipt once it's confirmed. Only pay into ZERO6IX LIMITED's Fidelity Bank account shown on our website; we will never ask you to pay into a personal account." },
       { q: "What if my quote expires?", a: "Quotes lock the exchange rate for 24 hours. If it expires, just tell us and we'll re-issue it at the current rate." },
     ],
   },

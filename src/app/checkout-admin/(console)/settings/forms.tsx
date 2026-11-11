@@ -3,7 +3,7 @@ import { useActionState, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import type { RateInfo } from "@/lib/payfx/settings";
 import { ActionForm, FormMessage, SubmitButton } from "@/components/forms";
-import { refreshRateAction, saveRateAction, testEmailAction } from "../../actions";
+import { refreshRateAction, saveBankAction, saveRateAction, testEmailAction } from "../../actions";
 
 const fmtN = (n: number) => `₦${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
 
@@ -72,6 +72,43 @@ export function TestEmailButton() {
     <ActionForm action={() => action()} pending={pending} className="space-y-2">
       <SubmitButton className="btn btn-outline btn-sm" pendingText="Sending…">Send me a test email</SubmitButton>
       <FormMessage state={state} />
+    </ActionForm>
+  );
+}
+
+export function BankForm({ bank }: { bank: { enabled: boolean; bank: string; accountNumber: string; accountName: string; windowMinutes: number } }) {
+  const [state, action, pending] = useActionState(saveBankAction, null);
+  const err = (k: string) => state?.fieldErrors?.[k]?.[0];
+  return (
+    <ActionForm action={action} pending={pending} className="space-y-3">
+      <label className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3 text-sm dark:border-white/10">
+        <input type="checkbox" name="enabled" defaultChecked={bank.enabled} className="h-4 w-4 accent-brand-700" />
+        <span><strong className="block">Offer bank transfer at checkout</strong><span className="text-slate-500">Customers transfer, upload a receipt, and you confirm it.</span></span>
+      </label>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor="bank" className="label">Bank</label>
+          <input id="bank" name="bank" className="input" defaultValue={bank.bank} />
+          {err("bank") && <p className="field-error">{err("bank")}</p>}
+        </div>
+        <div>
+          <label htmlFor="accountNumber" className="label">Account number</label>
+          <input id="accountNumber" name="accountNumber" className="input font-mono" inputMode="numeric" defaultValue={bank.accountNumber} />
+          {err("accountNumber") && <p className="field-error">{err("accountNumber")}</p>}
+        </div>
+        <div>
+          <label htmlFor="accountName" className="label">Account name</label>
+          <input id="accountName" name="accountName" className="input" defaultValue={bank.accountName} />
+          {err("accountName") && <p className="field-error">{err("accountName")}</p>}
+        </div>
+        <div>
+          <label htmlFor="windowMinutes" className="label">Countdown (minutes)</label>
+          <input id="windowMinutes" name="windowMinutes" className="input" inputMode="numeric" defaultValue={bank.windowMinutes} />
+          {err("windowMinutes") && <p className="field-error">{err("windowMinutes")}</p>}
+        </div>
+      </div>
+      <FormMessage state={state} />
+      <SubmitButton className="btn btn-dark" pendingText="Saving…">Save bank details</SubmitButton>
     </ActionForm>
   );
 }

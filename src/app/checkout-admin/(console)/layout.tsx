@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ExternalLink, LogOut } from "lucide-react";
 import { requireAdmin } from "@/lib/payfx/admin-auth";
-import { adminStoreConfigured, countNewMessages } from "@/lib/payfx/admin-store";
+import { adminStoreConfigured, countNewMessages, countTransfersToReview } from "@/lib/payfx/admin-store";
 import { Alert } from "@/components/ui";
 import { logoutAction } from "../actions";
 import { AdminMark } from "../mark";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
-  const newMessages = adminStoreConfigured() ? await countNewMessages() : 0;
+  const [newMessages, toReview] = adminStoreConfigured() ? await Promise.all([countNewMessages(), countTransfersToReview()]) : [0, 0];
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-white/10 dark:bg-brand-950/95">
@@ -31,7 +31,7 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
           </div>
         </div>
         <div className="mx-auto max-w-6xl px-4 py-2">
-          <AdminNav badges={{ "/checkout-admin/messages": newMessages }} />
+          <AdminNav badges={{ "/checkout-admin/messages": newMessages, "/checkout-admin/orders": toReview }} />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6 sm:py-8">

@@ -12,6 +12,7 @@ import {
 } from "@/lib/payfx/admin-store";
 import { createOrder, getOrder, newOrderRef, storeConfigured, updateOrder } from "@/lib/payfx/store";
 import { GATEWAYS } from "@/lib/payfx/gateways";
+import { getBankSettings } from "@/lib/payfx/transfer";
 import { confirmPayment } from "@/lib/payfx/orders";
 import { convert, gatewayName, money, round2 } from "@/lib/payfx/catalog";
 import { getProductsById, PRODUCTS_TAG } from "@/lib/payfx/products";
@@ -222,6 +223,7 @@ export async function markPaidAction(form: FormData) {
         channel: `${METHOD_LABEL[p.data.method]} (recorded by admin)`,
         transactionId: p.data.reference || undefined,
         manualPayment: { method: p.data.method, reference: p.data.reference ?? "", note: p.data.note ?? "", by: admin },
+        ...(order.transfer ? { transfer: { ...order.transfer, status: "confirmed" as const, reviewedBy: admin, reviewedAt: new Date().toISOString() } } : {}),
       });
       await logAdmin(admin, "order_marked_paid", ref, { invoice: order.invoiceNumber, method: p.data.method, reference: p.data.reference, note: p.data.note });
     }
@@ -505,4 +507,104 @@ export async function createPaymentLinkAction(_: ActionState | null, form: FormD
   }
   revalidatePath(ADMIN_BASE, "layout");
   redirect(back(`/links/${encodeURIComponent(ref)}`, { created: "1", ...(d.send_email ? { emailed: "1" } : {}) }));
+}
+
+/* ================= Bank transfers ================= */
+
+export async function confirmTransferAction(form: FormData) {
+  const admin = await requireAdmin();
+  const ref = String(form.get("ref") ?? "");
+  const reference = String(form.get("reference") ?? "").trim().slice(0, 120);
+  let msg: Record<string, string>;
+  try {
+    const order = await getOrder(ref);
+    if (!order) redirect(back("/orders", { error: "Order not found." }));
+    if (order.status === "paid") redirect(back(orderPath(ref), { notice: "This order is already paid." }));
+    const bank = await getBankSettings();
+    const now = new Date().toISOString();
+    await updateOrder(ref, {
+      status: "paid",
+      paidAt: now,
+      paidRef: reference || "BANK-TRANSFER",
+      transactionId: reference || undefined,
+      channel: `Bank transfer to ${bank.bank}`,
+      manualPayment: { method: "bank_transfer", reference, note: "Transfer receipt confirmed", by: admin },
+      transfer: { ...(order.transfer ?? { receipts: [] }), status: "confirmed", reviewedBy: admin, reviewedAt: now, rejectedReason: undefined },
+    });
+    await logAdmin(admin, "transfer_confirmed", ref, { invoice: order.invoiceNumber, reference, total: order.total });
+    const base = await siteUrl();
+    const sent = await sendEmail({
+      to: order.customer.email,
+      subject: `Payment confirmed: ${order.invoiceNumber}`,
+      heading: `Payment received. Thank you, ${order.customer.name.split(" ")[0] || "there"}!`,
+      paragraphs: [
+        `We've confirmed your bank transfer of ${money(order.total, order.currency)} for invoice ${order.invoiceNumber}.`,
+        "Your receipt is ready to view and download.",
+      ],
+      cta: { label: "View receipt", url: `${base}/checkout/link/${order.ref}` },
+    });
+    msg = { notice: `Payment confirmed and marked paid.${sent ? ` ${order.customer.email} was emailed their receipt.` : ""}` };
+  } catch (e) {
+    unstable_rethrow(e);
+    msg = { error: errText(e) };
+  }
+  revalidatePath(ADMIN_BASE, "layout");
+  redirect(back(orderPath(ref), msg));
+}
+
+export async function rejectTransferAction(form: FormData) {
+  const admin = await requireAdmin();
+  const ref = String(form.get("ref") ?? "");
+  const reason = String(form.get("reason") ?? "").trim().slice(0, 300) || "we could not find this payment in our account";
+  let msg: Record<string, string>;
+  try {
+    const order = await getOrder(ref);
+    if (!order) redirect(back("/orders", { error: "Order not found." }));
+    if (order.status === "paid") redirect(back(orderPath(ref), { error: "This order is already paid." }));
+    await updateOrder(ref, {
+      transfer: { ...(order.transfer ?? { receipts: [] }), status: "rejected", rejectedReason: reason, reviewedBy: admin, reviewedAt: new Date().toISOString() },
+    });
+    await logAdmin(admin, "transfer_rejected", ref, { invoice: order.invoiceNumber, reason });
+    const base = await siteUrl();
+    await sendEmail({
+      to: order.customer.email,
+      subject: `We couldn't confirm your transfer for ${order.invoiceNumber}`,
+      heading: `Hello ${order.customer.name.split(" ")[0] || "there"}`,
+      paragraphs: [
+        `We couldn't confirm your bank transfer for invoice ${order.invoiceNumber} yet: ${reason}.`,
+        "If you've paid, please upload a clearer receipt (showing the amount, date and our account number) or reply to this email. If not, you can still complete the payment using the link below.",
+      ],
+      cta: { label: "Upload a new receipt", url: `${base}/checkout/link/${order.ref}?pay=transfer` },
+    });
+    msg = { notice: "Receipt rejected. The customer was emailed and can upload a new one." };
+  } catch (e) {
+    unstable_rethrow(e);
+    msg = { error: errText(e) };
+  }
+  revalidatePath(ADMIN_BASE, "layout");
+  redirect(back(orderPath(ref), msg));
+}
+
+export async function saveBankAction(_: ActionState | null, form: FormData): Promise<ActionState> {
+  const admin = await requireAdmin();
+  const bank = String(form.get("bank") ?? "").trim().slice(0, 80);
+  const accountNumber = String(form.get("accountNumber") ?? "").replace(/\s/g, "");
+  const accountName = String(form.get("accountName") ?? "").trim().slice(0, 120);
+  const windowMinutes = Math.round(Number(form.get("windowMinutes")));
+  const enabled = form.get("enabled") === "on";
+  const fieldErrors: Record<string, string[]> = {};
+  if (bank.length < 2) fieldErrors.bank = ["Enter the bank name"];
+  if (!/^\d{10}$/.test(accountNumber)) fieldErrors.accountNumber = ["Nigerian account numbers have 10 digits"];
+  if (accountName.length < 2) fieldErrors.accountName = ["Enter the account name"];
+  if (!(windowMinutes >= 5 && windowMinutes <= 1440)) fieldErrors.windowMinutes = ["Between 5 and 1440 minutes"];
+  if (Object.keys(fieldErrors).length) return { error: "Please fix the highlighted fields.", fieldErrors };
+  try {
+    await setSetting("bank_account", { enabled, bank, accountNumber, accountName, windowMinutes }, admin);
+    await logAdmin(admin, "bank_settings_changed", "bank_account", { enabled, bank, accountNumber, windowMinutes });
+  } catch (e) {
+    return { error: errText(e) };
+  }
+  revalidateTag(SETTINGS_TAG);
+  revalidatePath("/checkout");
+  return { ok: true, message: enabled ? `Saved. Customers can pay by transfer to ${bank} ${accountNumber} (${accountName}).` : "Saved. Bank transfer is switched off at checkout." };
 }

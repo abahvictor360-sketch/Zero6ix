@@ -12,6 +12,8 @@ export const baseRef = (payRef: string) => String(payRef || "").replace(/-R\d+$/
 export async function confirmPayment(payRef: string, transactionId?: string): Promise<PayfxOrder | null> {
   const order = await getOrder(baseRef(payRef));
   if (!order || order.status === "paid") return order;
+  // Bank transfers are confirmed by an admin, not by a gateway.
+  if (order.gateway === "transfer") return order;
   const gw = GATEWAYS[order.gateway];
   if (!gw?.configured()) return order;
   const result = await gw.verify(order, payRef, transactionId);

@@ -7,7 +7,8 @@ import { gatewayStatus } from "@/lib/payfx/gateways";
 import { envValue } from "@/lib/env";
 import { site } from "@/lib/site";
 import { Alert, PageHeader } from "@/components/ui";
-import { RateForm, RefreshRateButton, TestEmailButton } from "./forms";
+import { BankForm, RateForm, RefreshRateButton, TestEmailButton } from "./forms";
+import { getBankSettings } from "@/lib/payfx/transfer";
 
 export const metadata = { title: "Settings" };
 
@@ -30,7 +31,7 @@ export default async function AdminSettings() {
         : e instanceof StoreError ? e.message : "Could not load settings.";
     }
   }
-  const info = await getRateInfo();
+  const [info, bank] = await Promise.all([getRateInfo(), getBankSettings()]);
   const gw = gatewayStatus();
 
   return (
@@ -56,6 +57,12 @@ export default async function AdminSettings() {
           <RateForm info={info} />
           <div className="mt-4 border-t border-slate-100 pt-4 dark:border-white/10"><RefreshRateButton /></div>
           <p className="hint mt-3">Each invoice keeps the rate it was created with, so changes never affect invoices already sent.</p>
+        </section>
+
+        <section className="card">
+          <h2 className="font-semibold">Bank transfer</h2>
+          <p className="muted mb-4 mt-1 text-sm">The account customers pay into when they choose direct bank transfer.</p>
+          <BankForm bank={bank} />
         </section>
 
         <section className="card">

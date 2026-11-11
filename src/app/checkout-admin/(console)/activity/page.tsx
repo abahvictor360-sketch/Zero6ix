@@ -27,6 +27,9 @@ const LABELS: Record<string, string> = {
   message_deleted: "Deleted message",
   usd_rate_changed: "Changed exchange rate settings",
   rate_refreshed: "Refreshed market rate",
+  transfer_confirmed: "Confirmed bank transfer",
+  transfer_rejected: "Rejected transfer receipt",
+  bank_settings_changed: "Changed bank transfer details",
   link_created: "Created payment link",
   link_emailed: "Emailed payment link",
 };

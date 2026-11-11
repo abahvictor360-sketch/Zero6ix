@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Download, ExternalLink, FileText, Mail, Phone, Receipt, RefreshCw, Trash2, Undo2 } from "lucide-react";
+import { ArrowLeft, Building2, CheckCircle2, Download, ExternalLink, FileText, Mail, Phone, Receipt, RefreshCw, Trash2, Undo2, XCircle } from "lucide-react";
+import { getBankSettings, receiptUrl } from "@/lib/payfx/transfer";
 import { getOrder } from "@/lib/payfx/store";
 import { StoreError } from "@/lib/payfx/admin-store";
 import { gatewayName, money } from "@/lib/payfx/catalog";
@@ -13,7 +14,7 @@ import { linkExpired } from "@/lib/payfx/store";
 import { ShareLink } from "../../links/share-link";
 import { SubmitButton } from "@/components/forms";
 import {
-  deleteOrderAction, emailCustomerAction, markPaidAction, markUnpaidAction, saveOrderNoteAction, verifyOrderAction,
+  confirmTransferAction, deleteOrderAction, emailCustomerAction, markPaidAction, markUnpaidAction, rejectTransferAction, saveOrderNoteAction, verifyOrderAction,
 } from "../../../actions";
 import { ConfirmForm } from "../../confirm-form";
 import { Flash } from "../../flash";
@@ -44,6 +45,12 @@ export default async function AdminOrderPage({ params, searchParams }: {
   }
   if (!order) notFound();
   const paid = order.status === "paid";
+  const transfer = order.transfer;
+  const [bank, receipts] = await Promise.all([
+    getBankSettings(),
+    Promise.all((transfer?.receipts ?? []).map(async (r) => ({ ...r, url: await receiptUrl(r.path) }))),
+  ]);
+  const when2 = (s?: string) => (s ? new Date(s).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos" }) : "");
   const pdf = (q: string) => `/checkout/invoice/${order.ref}/pdf?${q}`;
 
   return (
@@ -124,10 +131,66 @@ export default async function AdminOrderPage({ params, searchParams }: {
         </div>
 
         <aside className="order-first space-y-6 lg:order-none">
+          {transfer && (
+            <section className={`card ${transfer.status === "submitted" && !paid ? "ring-2 ring-sky-400" : ""}`}>
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="flex items-center gap-2 font-semibold"><Building2 className="h-4 w-4" /> Bank transfer</h2>
+                {paid || transfer.status === "confirmed" ? <Pill tone="green">Confirmed</Pill>
+                  : transfer.status === "submitted" ? <Pill tone="blue">Receipt to check</Pill>
+                  : transfer.status === "rejected" ? <Pill tone="red">Rejected</Pill>
+                  : <Pill tone="amber">No receipt yet</Pill>}
+              </div>
+              <p className="mt-1 text-xs text-slate-500">To {bank.bank} {bank.accountNumber} · narration {order.invoiceNumber} · amount {money(order.total, order.currency)}</p>
+
+              {receipts.length > 0 ? (
+                <ul className="mt-3 space-y-3">
+                  {receipts.slice().reverse().map((r) => (
+                    <li key={r.path} className="rounded-2xl border border-slate-200 p-3 text-sm dark:border-white/10">
+                      {r.url && r.mime.startsWith("image/") ? (
+                        <a href={r.url} target="_blank" rel="noreferrer" className="block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={r.url} alt={`Receipt ${r.name}`} className="max-h-72 w-full rounded-lg bg-slate-50 object-contain dark:bg-white/5" />
+                        </a>
+                      ) : r.url ? (
+                        <a href={r.url} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm w-full"><FileText className="h-4 w-4" /> Open PDF receipt</a>
+                      ) : <p className="text-xs text-red-600">Couldn&apos;t load this file.</p>}
+                      <p className="mt-2 text-xs text-slate-500">
+                        Uploaded {when2(r.uploadedAt)}{r.senderName ? ` · from ${r.senderName}` : ""}
+                      </p>
+                      {r.note && <p className="mt-1 text-xs">“{r.note}”</p>}
+                      {r.url && <a href={r.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs font-medium text-brand-700 underline dark:text-lime-400">Open full size</a>}
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="mt-3 text-sm text-slate-500">The customer chose bank transfer but hasn&apos;t uploaded a receipt yet.</p>}
+
+              {transfer.status === "rejected" && transfer.rejectedReason && <p className="mt-3 text-xs text-red-700 dark:text-red-300">Rejected: {transfer.rejectedReason}</p>}
+
+              {!paid && receipts.length > 0 && (
+                <div className="mt-4 space-y-3 border-t border-slate-100 pt-4 dark:border-white/10">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Check your {bank.bank} account for a credit of <strong>{money(order.total, order.currency)}</strong> before confirming.</p>
+                  <ConfirmForm action={confirmTransferAction} message={`Confirm you received ${money(order.total, order.currency)} in ${bank.bank}? The order becomes paid and the customer gets their receipt.`} className="space-y-2">
+                    <input type="hidden" name="ref" value={order.ref} />
+                    <input name="reference" className="input" placeholder="Bank reference / session ID (optional)" maxLength={120} />
+                    <button className="btn btn-dark btn-sm w-full"><CheckCircle2 className="h-4 w-4" /> Payment received, confirm</button>
+                  </ConfirmForm>
+                  <details>
+                    <summary className="cursor-pointer text-sm text-red-700 dark:text-red-300">Not received? Reject this receipt</summary>
+                    <ConfirmForm action={rejectTransferAction} message="Reject this receipt? The customer will be emailed to upload a new one." className="mt-2 space-y-2">
+                      <input type="hidden" name="ref" value={order.ref} />
+                      <input name="reason" className="input" placeholder="Reason, e.g. amount doesn't match" maxLength={300} />
+                      <button className="btn btn-sm w-full border border-red-200 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40"><XCircle className="h-4 w-4" /> Reject receipt</button>
+                    </ConfirmForm>
+                  </details>
+                </div>
+              )}
+            </section>
+          )}
+
           {!paid && (
             <section className="card">
               <h2 className="font-semibold">Payment link</h2>
-              <p className="mt-1 text-xs text-slate-500">{linkExpired(order) ? "This link has expired." : "Send this to the customer to pay with " + (order.gateway === "paystack" ? "Paystack" : "Flutterwave") + "."}</p>
+              <p className="mt-1 text-xs text-slate-500">{linkExpired(order) ? "This link has expired." : "Send this to the customer to pay " + (order.gateway === "transfer" ? "by bank transfer" : "with " + (order.gateway === "paystack" ? "Paystack" : "Flutterwave")) + "."}</p>
               <div className="mt-3">
                 <ShareLink compact url={`${base}/checkout/link/${order.ref}`} text={`Hello ${order.customer.name.split(" ")[0]}, here is your ${site.name} payment link for ${money(order.total, order.currency)} (invoice ${order.invoiceNumber}):`} />
               </div>
@@ -145,7 +208,7 @@ export default async function AdminOrderPage({ params, searchParams }: {
 
           <section className="card space-y-3">
             <h2 className="font-semibold">Actions</h2>
-            {!paid && (
+            {!paid && order.gateway !== "transfer" && (
               <form action={verifyOrderAction}>
                 <input type="hidden" name="ref" value={order.ref} />
                 <SubmitButton className="btn btn-dark btn-sm w-full" pendingText="Checking…"><RefreshCw className="h-4 w-4" /> Check payment with {gatewayName(order.gateway)}</SubmitButton>
@@ -166,7 +229,7 @@ export default async function AdminOrderPage({ params, searchParams }: {
             )}
           </section>
 
-          {!paid && (
+          {!paid && transfer?.status !== "submitted" && (
             <section className="card">
               <h2 className="font-semibold">Record a payment</h2>
               <p className="mt-1 text-xs text-slate-500">If the customer paid outside the gateway, e.g. by bank transfer.</p>

@@ -25,7 +25,7 @@ create policy payfx_products_public_read on public.payfx_products
 revoke insert, update, delete on public.payfx_products from anon, authenticated;
 
 insert into public.payfx_products (id, name, subtitle, period, purpose, amount_ngn, logo, is_test, sort_order) values
-  ('anthropic-api-claude', 'Anthropic API key', null, '12 months', 'AI that verifies clock-in selfies and shelf photos, answers staff questions through Ask Xtend, reads stock and expiry photos, and writes the monthly X Metrics performance report.', 682500, 'anthropic', false, 10),
+  ('anthropic-api-claude', 'Anthropic API key', null, '12 months', 'API key for Ask Xtend, Staff Assistant and X Metrics.', 682500, 'anthropic', false, 10),
   ('google-maps-api', 'Google Maps API', null, '12 months', 'Location service that confirms which shop staff clock in from and looks up stores during bulk uploads.', 641550, 'googlemaps', false, 20),
   ('apple-developer', 'Apple Developer account', null, '12 months', 'Yearly membership that lets Xtend be listed on the App Store for iPhone users.', 155000, 'apple', false, 30),
   ('supabase-addon', 'Supabase add-on', null, '12 months', 'Extra database capacity for X Metrics records: supply, stock, sales, expiry dates and photos.', 163800, 'supabase', false, 60),

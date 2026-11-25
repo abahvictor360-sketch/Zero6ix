@@ -37,10 +37,9 @@ export interface PayfxItem {
 
 /** Built-in fallback list. The live list comes from the leadloop table public.payfx_products. */
 export const ITEMS: PayfxItem[] = [
-  { id: "anthropic-api-claude", name: "Anthropic API", subtitle: "Claude", period: "12 months", purpose: "AI that verifies clock-in selfies and shelf photos, and answers staff questions through Ask Xtend.", amount: 477750, logo: "claude" },
+  { id: "anthropic-api-claude", name: "Anthropic API key", period: "12 months", purpose: "AI that verifies clock-in selfies and shelf photos, answers staff questions through Ask Xtend, reads stock and expiry photos, and writes the monthly X Metrics performance report.", amount: 682500, logo: "anthropic" },
   { id: "google-maps-api", name: "Google Maps API", period: "12 months", purpose: "Location service that confirms which shop staff clock in from and looks up stores during bulk uploads.", amount: 641550, logo: "googlemaps" },
   { id: "apple-developer", name: "Apple Developer account", period: "12 months", purpose: "Yearly membership that lets Xtend be listed on the App Store for iPhone users.", amount: 155000, logo: "apple" },
-  { id: "anthropic-api-x-metrics", name: "Anthropic API", subtitle: "X Metrics", period: "12 months", purpose: "AI that reads stock and expiry photos and writes the monthly X Metrics performance report.", amount: 204750, logo: "anthropic" },
   { id: "supabase-addon", name: "Supabase add-on", period: "12 months", purpose: "Extra database capacity for X Metrics records: supply, stock, sales, expiry dates and photos.", amount: 163800, logo: "supabase" },
   { id: "vps-upgrade", name: "VPS upgrade", subtitle: "Hostinger", period: "24 months", purpose: "More memory and disk space on the server to handle X Metrics reports and data exports.", amount: 163800, logo: "hostinger" },
   { id: "daily-backup", name: "Daily online backup", period: "12 months", purpose: "Encrypted daily copy of all company data, kept off the main server for quick recovery.", amount: 123800, logo: "backup" },

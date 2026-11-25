@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Pencil, Plus } from "lucide-react";
-import { listProducts, StoreError, type ProductRow } from "@/lib/payfx/admin-store";
+import { listOrders, listProducts, StoreError, type ProductRow } from "@/lib/payfx/admin-store";
 import { money, type LogoKey } from "@/lib/payfx/catalog";
 import { LOGOS, logoSvg } from "@/lib/payfx/icons";
 import { Alert, EmptyState, PageHeader, Pill } from "@/components/ui";
@@ -22,13 +22,18 @@ export default async function AdminItems({ searchParams }: { searchParams: Promi
       ? "The items table does not exist in the database yet. Run supabase/leadloop/checkout_admin.sql in the Supabase SQL editor (leadloop project), or approve the setup request."
       : e instanceof StoreError ? e.message : "Could not load items.";
   }
+  // Which paid invoice took each item off the checkout page.
+  const paidIn = new Map<string, { invoice: string; ref: string }>();
+  for (const o of await listOrders({ status: "paid", limit: 2000 }).catch(() => [])) {
+    for (const l of o.items ?? []) if (!paidIn.has(l.id)) paidIn.set(l.id, { invoice: o.invoiceNumber, ref: o.ref });
+  }
   const total = rows.filter((r) => r.active).reduce((s, r) => s + r.amount_ngn, 0);
 
   return (
     <>
       <PageHeader
         title="Items"
-        description="What customers can pay for on the checkout page. Changes show on the site within a minute."
+        description="What customers can pay for on the checkout page. An item comes off the page automatically once it's paid for. Changes show on the site within a minute."
         actions={<Link href="/checkout-admin/items/new" className="btn btn-dark btn-sm"><Plus className="h-4 w-4" /> Add item</Link>}
       />
       {sp.saved && <Alert tone="success" className="mb-4">Item saved.</Alert>}
@@ -50,7 +55,9 @@ export default async function AdminItems({ searchParams }: { searchParams: Promi
                       <div className="flex flex-wrap items-center gap-2">
                         <strong>{r.name}</strong>
                         {r.subtitle && <span className="text-sm text-slate-500">({r.subtitle})</span>}
-                        {r.active ? <Pill tone="green">Live</Pill> : <Pill>Hidden</Pill>}
+                        {r.active ? <Pill tone="green">Live</Pill> : paidIn.has(r.id) ? (
+                          <Link href={`/checkout-admin/orders/${encodeURIComponent(paidIn.get(r.id)!.ref)}`}><Pill tone="blue">Paid · {paidIn.get(r.id)!.invoice}</Pill></Link>
+                        ) : <Pill>Hidden</Pill>}
                       </div>
                       <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{r.purpose}</p>
                       <p className="mt-1 text-xs text-slate-500">{r.period} · Order {r.sort_order} · ID {r.id}</p>
@@ -63,7 +70,7 @@ export default async function AdminItems({ searchParams }: { searchParams: Promi
                       <form action={toggleProductAction}>
                         <input type="hidden" name="id" value={r.id} />
                         <input type="hidden" name="active" value={String(!r.active)} />
-                        <button className="btn btn-outline btn-sm">{r.active ? "Hide" : "Show"}</button>
+                        <button className="btn btn-outline btn-sm">{r.active ? "Hide" : paidIn.has(r.id) ? "Show again" : "Show"}</button>
                       </form>
                       <DeleteButton id={r.id} name={r.subtitle ? `${r.name} (${r.subtitle})` : r.name} />
                     </div>

@@ -36,7 +36,8 @@ export async function getProducts(): Promise<{ items: PayfxItem[]; source: "data
         id: r.id, name: r.name, subtitle: r.subtitle ?? undefined, period: r.period, purpose: r.purpose,
         amount: Number(r.amount_ngn), logo: (r.logo in LOGOS ? r.logo : "other") as LogoKey, test: r.is_test || undefined,
       }));
-    return items.length ? { items, source: "database" } : { items: ITEMS, source: "built-in" };
+    // An empty list is real (every item paid or hidden): don't fall back to the built-in list.
+    return { items, source: "database" };
   } catch (e) {
     console.error("[payfx] products from database failed, using built-in list", e);
     return { items: ITEMS, source: "built-in" };

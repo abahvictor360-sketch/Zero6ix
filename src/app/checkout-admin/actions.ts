@@ -13,6 +13,7 @@ import {
 import { createOrder, getOrder, newOrderRef, storeConfigured, updateOrder } from "@/lib/payfx/store";
 import { GATEWAYS } from "@/lib/payfx/gateways";
 import { getBankSettings } from "@/lib/payfx/transfer";
+import { removePaidItems, restoreItems } from "@/lib/payfx/fulfil";
 import { confirmPayment } from "@/lib/payfx/orders";
 import { convert, gatewayName, money, round2 } from "@/lib/payfx/catalog";
 import { getProductsById, PRODUCTS_TAG } from "@/lib/payfx/products";
@@ -225,7 +226,8 @@ export async function markPaidAction(form: FormData) {
         manualPayment: { method: p.data.method, reference: p.data.reference ?? "", note: p.data.note ?? "", by: admin },
         ...(order.transfer ? { transfer: { ...order.transfer, status: "confirmed" as const, reviewedBy: admin, reviewedAt: new Date().toISOString() } } : {}),
       });
-      await logAdmin(admin, "order_marked_paid", ref, { invoice: order.invoiceNumber, method: p.data.method, reference: p.data.reference, note: p.data.note });
+      const removed = await removePaidItems(order);
+      await logAdmin(admin, "order_marked_paid", ref, { invoice: order.invoiceNumber, method: p.data.method, reference: p.data.reference, note: p.data.note, itemsRemoved: removed });
     }
   } catch (e) {
     unstable_rethrow(e);
@@ -242,7 +244,8 @@ export async function markUnpaidAction(form: FormData) {
     const order = await getOrder(ref);
     if (order?.status === "paid") {
       await updateOrder(ref, { status: "pending", paidAt: undefined, paidRef: undefined, channel: undefined, transactionId: undefined });
-      await logAdmin(admin, "order_marked_unpaid", ref, { invoice: order.invoiceNumber });
+      const restored = await restoreItems(order);
+      await logAdmin(admin, "order_marked_unpaid", ref, { invoice: order.invoiceNumber, itemsRestored: restored });
     }
   } catch (e) {
     redirect(back(orderPath(ref), { error: errText(e) }));
@@ -531,7 +534,8 @@ export async function confirmTransferAction(form: FormData) {
       manualPayment: { method: "bank_transfer", reference, note: "Transfer receipt confirmed", by: admin },
       transfer: { ...(order.transfer ?? { receipts: [] }), status: "confirmed", reviewedBy: admin, reviewedAt: now, rejectedReason: undefined },
     });
-    await logAdmin(admin, "transfer_confirmed", ref, { invoice: order.invoiceNumber, reference, total: order.total });
+    const removed = await removePaidItems(order);
+    await logAdmin(admin, "transfer_confirmed", ref, { invoice: order.invoiceNumber, reference, total: order.total, itemsRemoved: removed });
     const base = await siteUrl();
     const sent = await sendEmail({
       to: order.customer.email,

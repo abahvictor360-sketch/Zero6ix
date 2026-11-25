@@ -1,6 +1,7 @@
 import "server-only";
 import { GATEWAYS } from "./gateways";
 import { getOrder, updateOrder, type PayfxOrder } from "./store";
+import { removePaidItems } from "./fulfil";
 
 /** Each checkout attempt has its own reference: REF, then REF-R1, REF-R2… for retries. */
 export const baseRef = (payRef: string) => String(payRef || "").replace(/-R\d+$/, "");
@@ -18,13 +19,16 @@ export async function confirmPayment(payRef: string, transactionId?: string): Pr
   if (!gw?.configured()) return order;
   const result = await gw.verify(order, payRef, transactionId);
   if (!result.paid) return order;
-  return updateOrder(order.ref, {
+  const paid = await updateOrder(order.ref, {
     status: "paid",
     paidAt: result.paidAt || new Date().toISOString(),
     paidRef: payRef,
     transactionId: result.transactionId,
     channel: result.channel,
   });
+  // Paid items come off the checkout page.
+  await removePaidItems(order);
+  return paid;
 }
 
 export function siteBase(request: Request) {

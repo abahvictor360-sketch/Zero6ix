@@ -199,3 +199,14 @@ export async function countTransfersToReview() {
     return 0;
   }
 }
+
+/** Show or hide checkout items by id (used when an order with those items is paid or set back to unpaid). */
+export async function setProductsActive(ids: string[], active: boolean) {
+  const clean = [...new Set(ids)].filter((id) => /^[a-z0-9-]{2,60}$/.test(id) && !id.startsWith("custom-"));
+  if (!clean.length || !adminStoreConfigured()) return [];
+  const rows = await rest<{ id: string }[]>(`payfx_products?id=in.(${clean.join(",")})&active=eq.${!active}`, {
+    method: "PATCH",
+    body: JSON.stringify({ active, updated_at: new Date().toISOString() }),
+  });
+  return rows.map((r) => r.id);
+}

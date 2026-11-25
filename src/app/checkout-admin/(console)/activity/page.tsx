@@ -46,6 +46,8 @@ function describe(r: LogRow) {
   if (r.action === "sign_in" && typeof d.method === "string") bits.push(d.method === "password" ? "with password" : "with email link");
   if (typeof d.to === "string") bits.push(`to ${d.to}`);
   if (typeof d.count === "number") bits.push(`${d.count} orders`);
+  if (Array.isArray(d.itemsRemoved) && d.itemsRemoved.length) bits.push(`took ${d.itemsRemoved.length} item${d.itemsRemoved.length === 1 ? "" : "s"} off checkout`);
+  if (Array.isArray(d.itemsRestored) && d.itemsRestored.length) bits.push(`put ${d.itemsRestored.length} item${d.itemsRestored.length === 1 ? "" : "s"} back on checkout`);
   return bits.join(" · ");
 }
 

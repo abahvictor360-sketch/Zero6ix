@@ -434,8 +434,15 @@ export async function createPaymentLinkAction(_: ActionState | null, form: FormD
   if (!parsed.success) return zodErrorState(parsed.error);
   const d = parsed.data;
 
-  if (!GATEWAYS.paystack.configured()) return { error: "Paystack is not connected yet. Add PAYSTACK_SECRET_KEY in Vercel and redeploy." };
-  if (!GATEWAYS.paystack.currencies().includes(d.currency)) return { error: `Your Paystack account is set up for ${GATEWAYS.paystack.currencies().join(", ")} only. Choose NGN.` };
+  // The link offers every connected gateway that takes this currency (plus bank transfer for Naira).
+  const usable = (["paystack", "flutterwave"] as const).filter((g) => GATEWAYS[g].configured() && GATEWAYS[g].currencies().includes(d.currency));
+  const bankOn = d.currency === "NGN" && (await getBankSettings()).enabled;
+  if (!usable.length && !bankOn) {
+    return { error: d.currency === "USD"
+      ? "No connected gateway takes US dollars yet. Choose Naira."
+      : "No payment method is connected yet. Add PAYSTACK_SECRET_KEY or FLUTTERWAVE_SECRET_KEY in Vercel, or turn on bank transfer in Settings." };
+  }
+  const linkGateway = usable[0] ?? "transfer";
   if (!storeConfigured()) return { error: "The database key is not set, so the link can't be saved." };
 
   const [products, usdRate] = await Promise.all([getProductsById(), getUsdRate()]);
@@ -473,7 +480,7 @@ export async function createPaymentLinkAction(_: ActionState | null, form: FormD
     const order = await createOrder({
       ref,
       status: "pending",
-      gateway: "paystack",
+      gateway: linkGateway,
       payRef: ref,
       customer: { name: d.name, email: d.email, phone: d.phone, company: d.company },
       currency: d.currency,
@@ -497,7 +504,7 @@ export async function createPaymentLinkAction(_: ActionState | null, form: FormD
         paragraphs: [
           `${site.name} has sent you a payment request of ${money(order.total, order.currency)} (invoice ${invoiceNumber}).`,
           ...(d.message ? [d.message] : []),
-          "Tap the button to see the details and pay securely with Paystack by card, bank transfer or USSD.",
+          `Tap the button to see the details and pay securely${usable.length ? ` with ${usable.map((g) => (g === "paystack" ? "Paystack" : "Flutterwave")).join(" or ")} by card, bank transfer or USSD` : ""}${bankOn ? `${usable.length ? ", or" : ""} by direct transfer to our bank account` : ""}.`,
           ...(expiresAt ? [`This link expires on ${new Date(expiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.`] : []),
           `Genuine ${site.name} links always start with ${(process.env.NEXT_PUBLIC_SITE_URL ?? site.url).replace(/\/$/, "")}/checkout/. We will never ask for your card PIN or OTP.`,
         ],

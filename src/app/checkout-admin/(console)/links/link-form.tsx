@@ -33,7 +33,7 @@ export function LinkForm({ items, currencies, usdRate }: { items: Item[]; curren
           <Field label="Full name" name="name" required error={err("name")}>
             <input id="name" name="name" className="input" autoComplete="off" required />
           </Field>
-          <Field label="Email" name="email" required error={err("email")} hint="Paystack sends the receipt here.">
+          <Field label="Email" name="email" required error={err("email")} hint="Receipts and the link are sent here.">
             <input id="email" name="email" type="email" className="input" autoComplete="off" required />
           </Field>
           <Field label="Phone" name="phone" error={err("phone")}>
@@ -95,7 +95,7 @@ export function LinkForm({ items, currencies, usdRate }: { items: Item[]; curren
       <section className="card space-y-4">
         <h2 className="font-semibold">Link options</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Currency" name="currency" hint={currencies.includes("USD") ? `US$ uses ₦${usdRate.toLocaleString("en-US")} per US$1.` : "Your Paystack account takes Naira."}>
+          <Field label="Currency" name="currency" hint={currencies.includes("USD") ? `US$ uses ₦${usdRate.toLocaleString("en-US")} per US$1. Bank transfer is Naira only.` : "Your connected payment methods take Naira."}>
             <select id="currency" name="currency" className="input" value={currency} onChange={(e) => setCurrency(e.target.value as "NGN" | "USD")}>
               {currencies.map((c) => <option key={c} value={c}>{c === "NGN" ? "Naira (₦)" : "US dollars (US$)"}</option>)}
             </select>

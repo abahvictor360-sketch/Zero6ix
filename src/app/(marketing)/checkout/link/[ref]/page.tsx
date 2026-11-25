@@ -33,8 +33,11 @@ export default async function PaymentLinkPage({ params, searchParams }: { params
   const total = money(order.total, order.currency);
   const first = order.customer.name.split(" ")[0];
   const canTransfer = !paid && !expired && order.currency === "NGN" && transferAvailable(bank);
-  const gw = order.gateway === "transfer" ? null : GATEWAYS[order.gateway];
-  const canCard = !paid && !expired && order.gateway !== "transfer" && Boolean(gw?.configured());
+  // Every card gateway that's connected and takes this invoice's currency; the invoice's own gateway first.
+  const cardGateways = (["paystack", "flutterwave"] as const)
+    .filter((g) => GATEWAYS[g].configured() && GATEWAYS[g].currencies().includes(order.currency))
+    .sort((a, b) => Number(b === order.gateway) - Number(a === order.gateway));
+  const canCard = !paid && !expired && cardGateways.length > 0;
   const awaiting = !paid && order.transfer?.status === "submitted";
 
   return (
@@ -107,15 +110,18 @@ export default async function PaymentLinkPage({ params, searchParams }: { params
             <div className="space-y-3">
               {canCard && (
                 <>
-                  <a href={`/checkout/pay/${order.ref}`} className="btn btn-primary btn-lg w-full">
-                    <Lock className="h-4 w-4" /> Pay {total} with {order.gateway === "flutterwave" ? "Flutterwave" : "Paystack"}
-                  </a>
+                  <p className="text-sm font-semibold">Choose how to pay</p>
+                  {cardGateways.map((g, i) => (
+                    <a key={g} href={`/checkout/pay/${order.ref}?via=${g}`} className={`btn btn-lg w-full ${i === 0 ? "btn-primary" : "btn-outline"}`}>
+                      {g === "paystack"
+                        // eslint-disable-next-line @next/next/no-img-element
+                        ? <img src="/logos/paystack.svg" alt="" width={18} height={18} className="h-[18px] w-[18px] rounded bg-white p-0.5" />
+                        : <span className="grid h-[18px] w-[18px] place-items-center rounded bg-[#F5A623] text-[11px] font-bold text-white">F</span>}
+                      Pay {total} with {g === "paystack" ? "Paystack" : "Flutterwave"}
+                    </a>
+                  ))}
                   <p className="flex items-center justify-center gap-2 text-xs text-slate-500">
-                    {order.gateway === "paystack" && <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/logos/paystack.svg" alt="" width={14} height={14} className="h-3.5 w-3.5" />
-                    </>}
-                    Card, bank transfer or USSD. Secured by {order.gateway === "flutterwave" ? "Flutterwave" : "Paystack"}.
+                    <Lock className="h-3.5 w-3.5" /> Card, bank transfer or USSD. Secured by {cardGateways.map((g) => (g === "paystack" ? "Paystack" : "Flutterwave")).join(" and ")}.
                   </p>
                 </>
               )}
@@ -126,7 +132,7 @@ export default async function PaymentLinkPage({ params, searchParams }: { params
                     view={toTransferView(order, bank)}
                     autoOpen={sp.pay === "transfer"}
                     className={canCard ? "btn btn-outline btn-lg w-full" : "btn btn-primary btn-lg w-full"}
-                    label={awaiting ? "Bank details and receipts" : canCard ? `Pay by direct bank transfer (${bank.bank})` : `Pay ${total} by bank transfer`}
+                    label={awaiting ? "Bank details and receipts" : canCard ? "Pay by direct bank transfer" : `Pay ${total} by bank transfer`}
                   />
                 </>
               )}
